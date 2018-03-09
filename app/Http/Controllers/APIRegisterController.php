@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
@@ -11,17 +12,17 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class APIRegisterController extends Controller
 {
-    public function register(Request $request)
+    public function register(UserRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email'    => 'required|string|email|max:255|unique:users',
-            'name'     => 'required',
-            'password' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
-        }
+//        $validator = Validator::make($request->all(), [
+//            'email'    => 'required|string|email|max:255|unique:users',
+//            'name'     => 'required',
+//            'password' => 'required',
+//        ]);
+//
+//        if ($validator->fails()) {
+//            return response()->json($validator->errors(), HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
+//        }
 
         User::create([
             'name'     => $request->get('name'),

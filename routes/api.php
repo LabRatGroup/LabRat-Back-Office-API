@@ -15,3 +15,4 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('user/register', 'APIRegisterController@register');
 Route::post('user/login', 'APILoginController@login');
+Route::post('user', 'UserController@index');
