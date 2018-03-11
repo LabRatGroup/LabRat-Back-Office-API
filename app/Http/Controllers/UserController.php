@@ -52,6 +52,5 @@ class UserController extends ApiController
 
             return $this->responseInternalError('could_not_create_user');
         }
-
     }
 }

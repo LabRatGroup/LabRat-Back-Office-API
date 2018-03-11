@@ -2,15 +2,14 @@
 
 namespace Tests\Feature;
 
-
 use App\User;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class UserControllerTest extends TestCase
 {
-    use DatabaseMigrations;
+    use RefreshDatabase;
 
     /** @test */
     public function should_register_user()
@@ -19,7 +18,7 @@ class UserControllerTest extends TestCase
         $data = [
             'name'     => 'USER_NAME',
             'email'    => 'EMAIL@EMAIL.COM',
-            'password' => 'PASSPASSWORDWORD',
+            'password' => 'PASSWORD',
         ];
 
         // When
