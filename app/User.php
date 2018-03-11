@@ -21,13 +21,13 @@ class User extends Authenticatable
     protected $table = 'users';
 
     /** @var string */
-    private $name;
+    protected $name;
 
     /** @var string */
-    private $email;
+    protected $email;
 
     /** @var string */
-    private $password;
+    protected $password;
 
     /**
      * The attributes that are mass assignable.
