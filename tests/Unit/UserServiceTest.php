@@ -38,6 +38,7 @@ class UserServiceTest extends TestCase
 
         // Then
         $this->assertNotNull($user);
+        $this->assertEquals($user->password, $pwd);
         $this->assertDatabaseHas('users',
             [
                 'email' => $email
