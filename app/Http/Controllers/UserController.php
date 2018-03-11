@@ -47,7 +47,7 @@ class UserController extends ApiController
             $user = User::first();
             $token = JWTAuth::fromUser($user);
 
-            return $this->responseOk($token);
+            return $this->responseOk(['token' => $token]);
         } catch (Exception $e) {
 
             return $this->responseInternalError('could_not_create_user');
