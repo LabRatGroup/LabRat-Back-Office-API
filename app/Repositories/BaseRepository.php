@@ -12,6 +12,17 @@ abstract class BaseRepository
     protected $model;
 
     /**
+     * @param $id
+     * @return Model|static
+     */
+    public function findOneOrFailById($id)
+    {
+        return $this->getModel()
+            ->where('id', $id)
+            ->firstOrFail();
+    }
+
+    /**
      * @param array $attributes
      *
      * @return Model
