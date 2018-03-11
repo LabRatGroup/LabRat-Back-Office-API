@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class ApiController extends Controller
+abstract class ApiController extends Controller
 {
     const HTTP_OK_MESSAGE = 'api.client.messages.http_ok';
     const HTTP_CREATED_MESSAGE = 'api.client.messages.http_created';
@@ -119,6 +119,18 @@ class ApiController extends Controller
     {
         return $this->setStatusCode(HttpResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->setMessage($message, trans(self::HTTP_UNPROCESSABLE_ENTITY_MESSAGE))
+            ->responseWithError();
+    }
+
+    /**
+     * @param $message
+     *
+     * @return JsonResponse
+     */
+    public function responseAccessDenied($message = null)
+    {
+        return $this->setStatusCode(HttpResponse::HTTP_UNAUTHORIZED)
+            ->setMessage($message, trans(self::HTTP_UNAUTHORIZED))
             ->responseWithError();
     }
 

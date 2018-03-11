@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UserRequest extends FormRequest
 {
-
     use ApiRequest;
 
     /**
@@ -27,7 +26,7 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            'email'    => 'required|string|email|max:255|unique:users',
+            'email'    => 'required|email|max:255|unique:users',
             'name'     => 'required',
             'password' => 'required',
         ];
@@ -36,7 +35,12 @@ class UserRequest extends FormRequest
     public function messages()
     {
         return [
-            'name.required' => 'ouch!',
+            'email.required'    => 'Provide an email account.',
+            'email.email'       => 'A valid email account is required.',
+            'email.max'         => 'Email account should not exceed the 255 characters. .',
+            'email.unique'      => 'There is already registered user with that email account.',
+            'name.required'     => 'User full name is required.',
+            'password.required' => 'An account access password is required.'
         ];
     }
 }
