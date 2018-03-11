@@ -18,11 +18,7 @@ abstract class BaseRepository
      */
     public function create(array $attributes)
     {
-        $entity = $this->getModel();
-        $entity->fill($attributes);
-        $entity->save();
-
-        return $entity;
+        return $this->getModel()->create($attributes);
     }
 
     /**

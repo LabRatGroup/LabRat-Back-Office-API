@@ -20,12 +20,12 @@ class UserServiceTest extends TestCase
         // Given
         $email = 'EMAIL@EMAIL.COM';
         $name = 'USER_FULL_NAME';
-        $password = 'PASSWORD';
+        $pwd = 'PASSWORD';
         $data =
             [
                 'email'    => $email,
                 'name'     => $name,
-                'password' => $password,
+                'password' => $pwd,
             ];
 
         $model = new User();
@@ -38,7 +38,6 @@ class UserServiceTest extends TestCase
 
         // Then
         $this->assertNotNull($user);
-        $this->assertEquals($user->getEmail(), $email);
         $this->assertDatabaseHas('users',
             [
                 'email' => $email
