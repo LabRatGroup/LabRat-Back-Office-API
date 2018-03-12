@@ -6,7 +6,8 @@ version: 2
 jobs:
   build:
     docker:
-      - image: docker pull circleci/php:latest
+      # specify the version you desire here
+      - image:  circleci/php:latest
 
     working_directory: ~/repo
 
