@@ -18,6 +18,7 @@ abstract class ApiController extends Controller
     const HTTP_UNPROCESSABLE_ENTITY_MESSAGE = 'api.client.messages.http_unprocessable_entity';
     const HTTP_FORBIDDEN = 'api.client.messages.http_forbidden';
     const HTTP_DESTROY_ERROR = 'api.client.message.http_destroy_error';
+    const HTTP_UNAUTHORIZED = "api.client.message.http_unauthorized";
 
     /**
      * @var string
@@ -37,6 +38,7 @@ abstract class ApiController extends Controller
     /**
      * @param $data
      * @param $message
+     *
      * @return JsonResponse
      */
     public function responseOk($data, $message = null)
@@ -50,6 +52,7 @@ abstract class ApiController extends Controller
     /**
      * @param $data
      * @param $message
+     *
      * @return JsonResponse
      */
     public function responseCreated($data, $message = null)
@@ -63,6 +66,7 @@ abstract class ApiController extends Controller
     /**
      * @param $data
      * @param $message
+     *
      * @return JsonResponse
      */
     public function responseUpdated($data, $message = null)
@@ -75,7 +79,8 @@ abstract class ApiController extends Controller
 
     /**
      * @param null $data
-     * @param $message
+     * @param      $message
+     *
      * @return JsonResponse
      */
     public function responseDeleted($data = null, $message = null)

@@ -22,16 +22,14 @@ class UserControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson('/api/user/register', $data);
+        $response = $this->postJson('/api/register', $data);
 
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
         $response->assertJsonStructure(
             [
-                'data' => [
-                    'token',
-                ],
+                'data' => ['token',],
             ]
         );
 
@@ -42,16 +40,17 @@ class UserControllerTest extends TestCase
         );
     }
 
-    /** @test */
     public function should_login_user()
     {
         // Given
         $email = 'EMAIL@EMAIL.COM';
         $password = 'PASSWORD';
+
         factory(User::class)->create(
             [
+                'name'     => 'USER_NAME',
                 'email'    => $email,
-                'password' => bcrypt($password),
+                'password' => $password,
             ]
         );
 
@@ -62,15 +61,14 @@ class UserControllerTest extends TestCase
             ];
 
         // When
-        $response = $this->postJson('api/user/login', $data);
+        $response = $this->postJson('/api/login', $data);
 
         // Then
+        $this->assertDatabaseHas('users', ['email' => $email,]);
         $response->assertStatus(HttpResponse::HTTP_OK);
         $response->assertJsonStructure(
             [
-                'data' => [
-                    'token',
-                ],
+                'data' => ['token',],
             ]
         );
     }

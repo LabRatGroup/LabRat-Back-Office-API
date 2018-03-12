@@ -161,6 +161,11 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /**
+         * App local service providers...
+         */
+        \App\Providers\UserServiceProvider::class,
+
     ],
 
     /*

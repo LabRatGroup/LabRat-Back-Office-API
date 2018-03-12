@@ -9,7 +9,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class UserServiceTest extends TestCase
+class UserRepositoryTest extends TestCase
 {
 
     use RefreshDatabase, WithFaker;
@@ -30,15 +30,15 @@ class UserServiceTest extends TestCase
 
         $model = new User();
         $userRepository = new UserRepository($model);
-        $userService = new UserService($userRepository);
 
         // When
         /** @var User $user */
-        $user = $userService->create($data);
+        $user = $userRepository->create($data);
 
         // Then
         $this->assertNotNull($user);
-        $this->assertEquals($user->password, $pwd);
+        $this->assertNotNull($user->token);
+        $this->assertTrue(password_verify($pwd, $user->password));
         $this->assertDatabaseHas('users',
             [
                 'email' => $email

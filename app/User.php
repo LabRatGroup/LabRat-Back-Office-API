@@ -7,16 +7,19 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
- * @property int $id
- * @property mixed $name
- * @property mixed $email
- * @property mixed $password
+ * @property int    $id
+ * @property mixed  $name
+ * @property mixed  $email
+ * @property mixed  $password
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property string token
  */
 class User extends Authenticatable
 {
     use Notifiable;
+
+    const ITEM_TOKEN_LENGTH = 25;
 
     protected $table = 'users';
 
@@ -28,6 +31,17 @@ class User extends Authenticatable
 
     /** @var string */
     protected $password;
+
+    /** @var string */
+    protected $token;
+
+    /**
+     * @var array
+     */
+    protected $dates = [
+        'created_at',
+        'updated_at',
+    ];
 
     /**
      * The attributes that are mass assignable.
@@ -44,6 +58,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'token',
+        'created_at',
+        'updated_at',
     ];
 
     /**
