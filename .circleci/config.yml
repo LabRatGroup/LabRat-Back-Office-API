@@ -26,12 +26,12 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
-     - run: sudo apt-get install -y libsqlite3-dev
-     - run: cp .env.testing .env
-     - run: composer install -n --ignore-platform-reqs
-     - run: npm install
-     - run: npm run production
-     - run: vendor/bin/phpunit
+      - run: sudo apt-get install -y libsqlite3-dev
+      - run: cp .env.testing .env
+      - run: composer install -n --ignore-platform-reqs
+      - run: npm install
+      - run: npm run production
+      - run: vendor/bin/phpunit
 
       - save_cache:
           paths:
