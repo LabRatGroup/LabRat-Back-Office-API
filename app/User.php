@@ -23,17 +23,7 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
-    /** @var string */
-    protected $name;
-
-    /** @var string */
-    protected $email;
-
-    /** @var string */
-    protected $password;
-
-    /** @var string */
-    protected $token;
+   
 
     /**
      * @var array
