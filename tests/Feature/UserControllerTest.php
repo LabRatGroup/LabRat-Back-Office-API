@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserControllerTest extends TestCase
 {
@@ -22,7 +24,7 @@ class UserControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson('/api/register', $data);
+        $response = $this->postJson(route('user.register'), $data);
 
 
         // Then
@@ -40,6 +42,7 @@ class UserControllerTest extends TestCase
         );
     }
 
+    /** @test */
     public function should_login_user()
     {
         // Given
@@ -61,7 +64,7 @@ class UserControllerTest extends TestCase
             ];
 
         // When
-        $response = $this->postJson('/api/login', $data);
+        $response = $this->postJson(route('user.login'), $data);
 
         // Then
         $this->assertDatabaseHas('users', ['email' => $email,]);
@@ -71,5 +74,36 @@ class UserControllerTest extends TestCase
                 'data' => ['token',],
             ]
         );
+    }
+
+    /** @test */
+    public function should_logout_user()
+    {
+        // Given
+        // Given
+        $email = 'EMAIL@EMAIL.COM';
+        $password = 'PASSWORD';
+
+        $user = factory(User::class)->create(
+            [
+                'name'     => 'USER_NAME',
+                'email'    => $email,
+                'password' => $password,
+            ]
+        );
+
+        $data =
+            [
+                'email'    => $email,
+                'password' => $password,
+            ];
+
+        $this->be($user);
+        $token = auth()->tokenById($user->id);
+        $header = ['Authorization' => 'Bearer '.$token];
+
+        // When
+        $response = $this->postJson(route('user.logout'), [], $header);
+        $response->assertStatus(HttpResponse::HTTP_OK);
     }
 }
