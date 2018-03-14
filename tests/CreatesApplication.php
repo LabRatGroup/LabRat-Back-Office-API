@@ -15,6 +15,7 @@ trait CreatesApplication
     public function createApplication()
     {
         putenv('DB_CONNECTION=sqlite_testing');
+        putenv('JWT_SECRET=HHs01dhYDQ60cZqN5xAXfTv2YWJ4kv68');
 
         $app = require __DIR__ . '/../bootstrap/app.php';
 
