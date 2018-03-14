@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('register', 'UserController@register');
-Route::post('login', 'UserController@login');
-Route::post('user', 'UserController@index');
+Route::post('user', 'UserController@index')->name('user.index');
+Route::post('register', 'UserController@register')->name('user.register');
+Route::post('login', 'UserController@login')->name('user.login');
+Route::post('logout', 'UserController@logout')->name('user.logout');

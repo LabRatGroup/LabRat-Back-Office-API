@@ -5,14 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\UserRequest;
 use App\Repositories\UserRepository;
-use App\User;
 use http\Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
-use Tymon\JWTAuth\Facades\JWTAuth;
-
 
 class UserController extends ApiController
 {
@@ -29,18 +25,27 @@ class UserController extends ApiController
         $this->userRepository = $userRepositoty;
     }
 
-
+    /**
+     * @param UserRequest $request
+     *
+     * @return mixed
+     */
     public function index(UserRequest $request)
     {
         return Response::json($request);
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
 
         try {
-            if (!$token = JWTAuth::attempt($credentials)) {
+            if (!$token = auth()->attempt($credentials)) {
                 return $this->responseAccessDenied('invalid_credentials');
             }
         } catch (JWTException $e) {
@@ -51,11 +56,34 @@ class UserController extends ApiController
         return $this->responseOk(['token' => $token]);
     }
 
+    /**
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout()
+    {
+        try {
+            auth()->logout();
+
+            return $this->responseOk(null, 'You have successfully logged out.');
+        } catch (JWTException $e) {
+
+            return $this->responseInternalError('Failed to logout, please try again.');
+        }
+    }
+
+    /**
+     * @param UserRequest $request
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function register(UserRequest $request)
     {
         try {
-            $user = $this->userRepository->create($request->all());
-            $token = JWTAuth::fromUser($user);
+            $this->userRepository->create($request->all());
+            $credentials = $request->only('email', 'password');
+            if (!$token = auth()->attempt($credentials)) {
+                return $this->responseAccessDenied('invalid_credentials');
+            }
 
             return $this->responseOk(['token' => $token]);
         } catch (Exception $e) {
