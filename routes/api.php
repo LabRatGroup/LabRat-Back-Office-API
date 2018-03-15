@@ -13,7 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('user', 'UserController@index')->name('user.index');
+Route::post('recover', 'UserController@recover')->name('user.recover');
 Route::post('register', 'UserController@register')->name('user.register');
 Route::post('login', 'UserController@login')->name('user.login');
-Route::post('logout', 'UserController@logout')->name('user.logout');
+
+Route::group(['middleware' => ['jwt.auth']], function() {
+    Route::post('logout', 'UserController@logout')->name('user.logout');
+});

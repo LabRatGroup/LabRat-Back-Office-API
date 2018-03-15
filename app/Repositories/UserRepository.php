@@ -15,4 +15,11 @@ class UserRepository extends BaseRepository
     {
         $this->model = $model;
     }
+
+    public function findOneOrFailByEmail($email)
+    {
+        return $this->getModel()
+            ->where('email', '=', $email)
+            ->first();
+    }
 }
