@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\UserRequest;
 use App\Repositories\UserRepository;
-use http\Exception;
+use \Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
@@ -112,7 +112,34 @@ class UserController extends ApiController
                 $message->subject('Your Password Reset Link');
             });
 
-            return $this->responseOk([], 'A reset email has been sent! Please check your email.');
+            return $this->responseOk(null, 'A reset email has been sent! Please check your email.');
+        } catch (Exception $e) {
+
+            return $this->responseAccessDenied($e->getMessage());
+        }
+    }
+
+    /**
+     * Removes a user from the system.
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function unRegister(Request $request)
+    {
+        $params = $request->only(['email']);
+        $user = $this->userRepository->findOneOrFailByEmail($params['email']);
+
+        if (!$user) {
+            return $this->responseAccessDenied('Your email address was not found.');
+        }
+
+        try {
+            $this->userRepository->delete($user);
+            auth()->logout();
+
+            return $this->responseOk(null, 'Your account has been removed.');
         } catch (Exception $e) {
 
             return $this->responseAccessDenied($e->getMessage());

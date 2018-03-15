@@ -19,4 +19,5 @@ Route::post('login', 'UserController@login')->name('user.login');
 
 Route::group(['middleware' => ['jwt.auth']], function() {
     Route::post('logout', 'UserController@logout')->name('user.logout');
+    Route::post('un-register', 'UserController@unRegister')->name('user.un-register');
 });
