@@ -2,7 +2,9 @@
 
 namespace App;
 
+use App\Models\Role;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -61,6 +63,16 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'remember_token',
     ];
+
+
+    /**
+     * @return BelongsToMany
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class)
+            ->withTimestamps();
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
