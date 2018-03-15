@@ -3,13 +3,18 @@
 namespace App\Models;
 
 use App\User;
+use Carbon\Carbon;
 
 /**
- * @property \Carbon\Carbon $created_at
- * @property \Carbon\Carbon $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property int    $id
  */
 class Role extends BaseEntity
 {
+    const STANDARD_USER_ROLE = 'system-user';
+    const APP_INI_USER_ROLE = 'super-admin';
+
     protected $dates = [
         'created_at',
         'updated_at',
