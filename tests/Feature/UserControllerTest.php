@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -104,6 +105,34 @@ class UserControllerTest extends TestCase
 
         // When
         $response = $this->postJson(route('user.logout'), [], $header);
+        $response->assertStatus(HttpResponse::HTTP_OK);
+    }
+
+    /** @test */
+    public function should_recover_password()
+    {
+        // Given
+        // Given
+        $email = 'EMAIL@EMAIL.COM';
+        $password = 'PASSWORD';
+
+        $user = factory(User::class)->create(
+            [
+                'name'     => 'USER_NAME',
+                'email'    => $email,
+                'password' => $password,
+            ]
+        );
+
+        $data =
+            [
+                'email'    => $email,
+            ];
+
+        Mail::fake();
+
+        // When
+        $response = $this->postJson(route('user.recover'), $data);
         $response->assertStatus(HttpResponse::HTTP_OK);
     }
 }
