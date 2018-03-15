@@ -101,17 +101,18 @@ class UserControllerTest extends TestCase
 
         $this->be($user);
         $token = auth()->tokenById($user->id);
-        $header = ['Authorization' => 'Bearer '.$token];
+        $header = ['Authorization' => 'Bearer ' . $token];
 
         // When
         $response = $this->postJson(route('user.logout'), [], $header);
+
+        // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
     }
 
     /** @test */
     public function should_recover_password()
     {
-        // Given
         // Given
         $email = 'EMAIL@EMAIL.COM';
         $password = 'PASSWORD';
@@ -126,13 +127,44 @@ class UserControllerTest extends TestCase
 
         $data =
             [
-                'email'    => $email,
+                'email' => $email,
             ];
 
         Mail::fake();
 
         // When
         $response = $this->postJson(route('user.recover'), $data);
+
+        // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
+    }
+
+    /** @test */
+    public function should_remove_user()
+    {
+        // Given
+        $email = 'EMAIL@EMAIL.COM';
+
+        $user = factory(User::class)->create(
+            [
+                'email' => $email,
+            ]
+        );
+
+        $this->be($user);
+        $token = auth()->tokenById($user->id);
+        $header = ['Authorization' => 'Bearer ' . $token];
+
+        // When
+        $response = $this->postJson(route('user.un-register'), ['email'=>$email], $header);
+
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $this->assertDatabaseMissing('users',
+            [
+                'email' => $email,
+            ]
+        );
     }
 }
