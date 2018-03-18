@@ -3,6 +3,7 @@
 namespace App;
 
 use App\Models\Role;
+use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Notifications\Notifiable;
@@ -71,6 +72,15 @@ class User extends Authenticatable implements JWTSubject
     public function roles()
     {
         return $this->belongsToMany(Role::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class)
             ->withTimestamps();
     }
 
