@@ -42,6 +42,7 @@ class Team extends BaseEntity
     protected $hidden = [
         'token',
     ];
+
     /**
      * @return BelongsToMany
      */
