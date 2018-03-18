@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
 
@@ -16,5 +17,13 @@ abstract class TestCase extends BaseTestCase
         Artisan::call('db:seed', [
             '--database' => 'sqlite_testing'
         ]);
+    }
+
+    protected function getAuthHeader(User $user)
+    {
+        $this->be($user);
+        $token = auth()->tokenById($user->id);
+
+        return ['Authorization' => 'Bearer ' . $token];
     }
 }

@@ -5,11 +5,9 @@ namespace Tests\Feature;
 use App\Models\Role;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserControllerTest extends TestCase
 {
@@ -103,12 +101,8 @@ class UserControllerTest extends TestCase
             ]
         );
 
-        $this->be($user);
-        $token = auth()->tokenById($user->id);
-        $header = ['Authorization' => 'Bearer ' . $token];
-
         // When
-        $response = $this->postJson(route('user.logout'), [], $header);
+        $response = $this->postJson(route('user.logout'), [], $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -152,12 +146,8 @@ class UserControllerTest extends TestCase
             ]
         );
 
-        $this->be($user);
-        $token = auth()->tokenById($user->id);
-        $header = ['Authorization' => 'Bearer ' . $token];
-
         // When
-        $response = $this->postJson(route('user.un-register'), ['email' => $email], $header);
+        $response = $this->postJson(route('user.un-register'), ['email' => $email], $this->getAuthHeader($user));
 
 
         // Then
