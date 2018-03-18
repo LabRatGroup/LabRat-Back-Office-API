@@ -40,7 +40,7 @@ class InitializeUserRoleListener
     public function handle(RegisterUserEvent $event)
     {
 
-        if ($this->userRepository->count() == 0) {
+        if ($this->userRepository->count() == 1) {
             $role = $this->roleRepository->findOneRoleOrFailByAlias(Role::APP_INI_USER_ROLE);
         } else {
             $role = $this->roleRepository->findOneRoleOrFailByAlias(Role::STANDARD_USER_ROLE);

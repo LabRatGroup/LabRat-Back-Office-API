@@ -25,7 +25,7 @@ class UserRepository extends BaseRepository
 
     public function count()
     {
-        return $this->getModel()->count();
+        return $this->getModel()->newQuery()->count();
     }
 
 
