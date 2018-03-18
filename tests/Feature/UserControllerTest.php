@@ -5,11 +5,9 @@ namespace Tests\Feature;
 use App\Models\Role;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
-use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserControllerTest extends TestCase
 {
