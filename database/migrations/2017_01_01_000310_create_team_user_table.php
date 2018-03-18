@@ -11,7 +11,7 @@ class CreateTeamUserTable extends Migration
         Schema::create('team_user', function (Blueprint $table) {
             $table->increments('id');
             $table->string('validation_token')->nullable();
-            $table->unsignedInteger('item_id');
+            $table->unsignedInteger('team_id');
             $table->unsignedInteger('user_id');
             $table->unsignedInteger('role_id');
             $table->boolean('is_owner')->default(false);
@@ -23,7 +23,7 @@ class CreateTeamUserTable extends Migration
             $table->index('is_owner');
             $table->index('is_valid');
             $table->unique('validation_token');
-            $table->unique(['user_id', 'item_id',]);
+            $table->unique(['user_id', 'team_id',]);
         });
     }
 

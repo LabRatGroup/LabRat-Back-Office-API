@@ -8,17 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 trait Collaboration
 {
-
-    /**
-     * @return BelongsToMany
-     */
-    public function users()
-    {
-        return $this->belongsToMany(User::class)
-            ->withPivot('is_owner', 'user_id', 'item_id', 'is_owner', 'role_id')
-            ->withTimestamps();
-    }
-
     /**
      * @param User $user
      *

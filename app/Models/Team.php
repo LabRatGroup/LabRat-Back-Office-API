@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 /**
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property string token
+ * @property int    $id
  */
 class Team extends BaseEntity
 {
@@ -40,4 +42,14 @@ class Team extends BaseEntity
     protected $hidden = [
         'token',
     ];
+    /**
+     * @return BelongsToMany
+     */
+    public function users()
+    {
+        return $this->belongsToMany(User::class)
+            ->withPivot('is_owner', 'user_id', 'team_id', 'is_owner', 'role_id')
+            ->withTimestamps();
+    }
+
 }
