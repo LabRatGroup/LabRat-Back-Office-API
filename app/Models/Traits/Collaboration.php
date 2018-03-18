@@ -16,7 +16,7 @@ trait Collaboration
     public function isOwner(User $user)
     {
         foreach ($this->users as $member) {
-            if ($member->id == $user->id = $member->is_owner) return true;
+            if ($member->id == $user->id && $member->pivot->is_owner) return true;
         }
 
         return false;

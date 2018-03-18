@@ -140,6 +140,18 @@ abstract class ApiController extends Controller
     }
 
     /**
+     * @param $message
+     *
+     * @return JsonResponse
+     */
+    public function responseForbidden($message = null)
+    {
+        return $this->setStatusCode(HttpResponse::HTTP_UNAUTHORIZED)
+            ->setMessage($message, trans(self::HTTP_FORBIDDEN))
+            ->responseWithError();
+    }
+
+    /**
      * @param array $headers
      *
      * @return JsonResponse
