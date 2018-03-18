@@ -32,8 +32,9 @@ class TeamControllerTest extends TestCase
 
         $this->assertDatabaseHas('teams', ['name' => $name]);
         $this->assertDatabaseHas('team_user', [
-            'user_id' => $user->id,
-            'team_id' => $team->id
+            'user_id'  => $user->id,
+            'team_id'  => $team->id,
+            'is_owner' => 1,
         ]);
     }
 }
