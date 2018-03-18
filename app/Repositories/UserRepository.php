@@ -20,6 +20,13 @@ class UserRepository extends BaseRepository
     {
         return $this->getModel()
             ->where('email', '=', $email)
-            ->first();
+            ->firstOrFail();
     }
+
+    public function count()
+    {
+        return $this->getModel()->newQuery()->count();
+    }
+
+
 }
