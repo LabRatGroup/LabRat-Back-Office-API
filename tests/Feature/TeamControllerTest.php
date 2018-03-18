@@ -94,7 +94,7 @@ class TeamControllerTest extends TestCase
         $response = $this->postJson(route('team.update'), $data, $header);
 
         // Then
-        $response->assertStatus(HttpResponse::HTTP_UNAUTHORIZED);
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
 
         $this->assertDatabaseHas('teams', ['name' => $teamName1]);
         $this->assertDatabaseMissing('teams', ['name' => $teamName2]);

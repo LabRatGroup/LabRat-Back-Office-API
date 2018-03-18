@@ -146,7 +146,7 @@ abstract class ApiController extends Controller
      */
     public function responseForbidden($message = null)
     {
-        return $this->setStatusCode(HttpResponse::HTTP_UNAUTHORIZED)
+        return $this->setStatusCode(HttpResponse::HTTP_FORBIDDEN)
             ->setMessage($message, trans(self::HTTP_FORBIDDEN))
             ->responseWithError();
     }
