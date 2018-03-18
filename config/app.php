@@ -165,6 +165,7 @@ return [
          * App local service providers...
          */
         \App\Providers\UserServiceProvider::class,
+        \App\Providers\TeamServiceProvider::class,
 
     ],
 
