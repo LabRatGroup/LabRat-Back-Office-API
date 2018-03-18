@@ -17,15 +17,13 @@ class TeamControllerTest extends TestCase
     {
         // Given
         $user = factory(User::class)->create();
-        $this->be($user);
-        $token = auth()->tokenById($user->id);
-        $header = ['Authorization' => 'Bearer ' . $token];
+
 
         $name = 'TEAM_NAME';
         $data = ['name' => $name];
 
         // When
-        $response = $this->postJson(route('team.create'), $data, $header);
+        $response = $this->postJson(route('team.create'), $data, $this->getAuthHeader($user));
         $team = DB::table('teams')->where('name', $name)->first();
 
         // Then

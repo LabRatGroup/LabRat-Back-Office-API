@@ -101,12 +101,8 @@ class UserControllerTest extends TestCase
             ]
         );
 
-        $this->be($user);
-        $token = auth()->tokenById($user->id);
-        $header = ['Authorization' => 'Bearer ' . $token];
-
         // When
-        $response = $this->postJson(route('user.logout'), [], $header);
+        $response = $this->postJson(route('user.logout'), [], $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -150,12 +146,8 @@ class UserControllerTest extends TestCase
             ]
         );
 
-        $this->be($user);
-        $token = auth()->tokenById($user->id);
-        $header = ['Authorization' => 'Bearer ' . $token];
-
         // When
-        $response = $this->postJson(route('user.un-register'), ['email' => $email], $header);
+        $response = $this->postJson(route('user.un-register'), ['email' => $email], $this->getAuthHeader($user));
 
 
         // Then
