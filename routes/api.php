@@ -27,4 +27,5 @@ Route::group(['middleware' => ['jwt.auth']], function() {
     Route::post('team/create', 'TeamController@create')->name('team.create');
     Route::post('team/{id}/update', 'TeamController@update')->name('team.update');
     Route::delete('team/{id}/delete', 'TeamController@delete')->name('team.delete');
+    Route::post('team/addMember', 'TeamMemberController@addMember')->name('team.addMember');
 });
