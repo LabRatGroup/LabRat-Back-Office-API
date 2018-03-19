@@ -56,7 +56,7 @@ class TeamControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('team.update'), $data, $header);
+        $response = $this->postJson(route('team.update',  ['id' => $team->id]), $data, $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -90,14 +90,65 @@ class TeamControllerTest extends TestCase
         ];
 
         // When
+        $this->be($otherUser);
         $header = $this->getAuthHeader($otherUser);
-        $response = $this->postJson(route('team.update'), $data, $header);
+        $response = $this->postJson(route('team.update',  ['id' => $team->id]), $data, $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
 
         $this->assertDatabaseHas('teams', ['name' => $teamName1]);
         $this->assertDatabaseMissing('teams', ['name' => $teamName2]);
+        $this->assertDatabaseHas('team_user', [
+            'user_id'  => $user->id,
+            'team_id'  => $team->id,
+            'is_owner' => 1,
+        ]);
+    }
+
+    /** @test */
+    public function should_remove_team()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+        $header = $this->getAuthHeader($user);
+
+        $team = factory(Team::class)->create();
+
+        // When
+        $response = $this->delete(route('team.delete', ['id' => $team->id]), [], $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+
+        $this->assertDatabaseMissing('teams', ['id' => $team->id]);
+        $this->assertDatabaseMissing('team_user', [
+            'user_id'  => $user->id,
+            'team_id'  => $team->id,
+            'is_owner' => 1,
+        ]);
+    }
+
+    /** @test */
+    public function should_not_delete_team()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $otherUser = factory(User::class)->create();
+        $this->be($user);
+
+        $team = factory(Team::class)->create();
+
+        // When
+        $this->be($otherUser);
+        $header = $this->getAuthHeader($otherUser);
+        $response = $this->delete(route('team.delete',  ['id' => $team->id]), [], $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+
+        $this->assertDatabaseHas('teams', ['id' => $team->id]);
         $this->assertDatabaseHas('team_user', [
             'user_id'  => $user->id,
             'team_id'  => $team->id,
