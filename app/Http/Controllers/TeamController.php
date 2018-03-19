@@ -9,7 +9,6 @@ use App\Repositories\TeamRepository;
 use \Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
 
 class TeamController extends ApiController
 {
@@ -25,7 +24,6 @@ class TeamController extends ApiController
     {
         $this->teamRepository = $teamRepository;
     }
-
 
     /**
      * Creates a new team.
@@ -49,11 +47,19 @@ class TeamController extends ApiController
         }
     }
 
+    /**
+     * Updates team info.
+     *
+     * @param             $id
+     * @param TeamRequest $request
+     *
+     * @return JsonResponse
+     */
     public function update($id, TeamRequest $request)
     {
 
         try {
-            $params = $request->only( 'name');
+            $params = $request->only('name');
             $team = $this->teamRepository->findOneOrFailById($id);
             $this->authorize('update', $team);
             $team = $this->teamRepository->update($team, $params);
@@ -66,6 +72,13 @@ class TeamController extends ApiController
         }
     }
 
+    /**
+     * Removes team and relations.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
     public function delete($id)
     {
 
