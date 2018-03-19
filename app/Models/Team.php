@@ -21,8 +21,8 @@ class Team extends BaseEntity
 
     const TEAM_OWNER_ROLE_ALIAS = 'project-admin';
     const TEAM_MANAGER_ROLE_ALIAS = 'project-manager';
-    const TEAM_TRANSLATOR_ROLE_ALIAS = 'project-user';
-    const TEAM_DEFAULT_ROLE_ALIAS = 'project-manager';
+    const TEAM_USER_ROLE_ALIAS = 'project-user';
+    const TEAM_DEFAULT_ROLE_ALIAS = 'project-user';
 
     protected $dates = [
         'created_at',
