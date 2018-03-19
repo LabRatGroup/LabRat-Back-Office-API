@@ -49,16 +49,33 @@ class TeamController extends ApiController
         }
     }
 
-    public function update(TeamRequest $request)
+    public function update($id, TeamRequest $request)
     {
 
         try {
-            $params = $request->only('id', 'name');
-            $team = $this->teamRepository->findOneOrFailById($params['id']);
+            $params = $request->only( 'name');
+            $team = $this->teamRepository->findOneOrFailById($id);
             $this->authorize('update', $team);
             $team = $this->teamRepository->update($team, $params);
 
             return $this->responseUpdated($team);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    public function delete($id)
+    {
+
+        try {
+            $team = $this->teamRepository->findOneOrFailById($id);
+            $this->authorize('delete', $team);
+            $team->users()->detach();
+            $this->teamRepository->delete($team);
+
+            return $this->responseDeleted();
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
         } catch (Exception $e) {
