@@ -9,7 +9,7 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
-class TeamUserControllerTest extends TestCase
+class TeamMemberControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -36,7 +36,7 @@ class TeamUserControllerTest extends TestCase
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
 
-        $this->assertDatabaseHas('team_users',
+        $this->assertDatabaseHas('team_user',
             [
                 'user_id'  => $member->id,
                 'team_id'  => $team->id,
@@ -69,7 +69,7 @@ class TeamUserControllerTest extends TestCase
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
 
-        $this->assertDatabaseHas('team_users',
+        $this->assertDatabaseHas('team_user',
             [
                 'user_id'  => $member->id,
                 'team_id'  => $team->id,
@@ -90,7 +90,10 @@ class TeamUserControllerTest extends TestCase
         $this->be($owner);
 
         $team = factory(Team::class)->create();
-        $team->users()->attach($member);
+        $team->users()->attach($member, [
+            'is_owner' => 0,
+            'role_id'  => $role->id
+        ]);
 
         $data = [
             'user_id'  => $user->id,
@@ -104,7 +107,7 @@ class TeamUserControllerTest extends TestCase
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
-        $this->assertDatabaseHas('team_users',
+        $this->assertDatabaseHas('team_user',
             [
                 'user_id'  => $member->id,
                 'team_id'  => $team->id,
@@ -124,7 +127,10 @@ class TeamUserControllerTest extends TestCase
         $this->be($owner);
 
         $team = factory(Team::class)->create();
-        $team->users()->attach($member);
+        $team->users()->attach($member, [
+            'is_owner' => 0,
+            'role_id'  => $role->id
+        ]);
 
         $data = [
             'user_id'  => $member->id,
@@ -136,9 +142,9 @@ class TeamUserControllerTest extends TestCase
         $response = $this->postJson(route('team.addMember'), $data, $this->getAuthHeader($owner));
 
         // Then
-        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
 
-        $this->assertDatabaseHas('team_users',
+        $this->assertDatabaseHas('team_user',
             [
                 'user_id'  => $member->id,
                 'team_id'  => $team->id,
