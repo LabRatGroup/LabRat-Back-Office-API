@@ -10,6 +10,7 @@ use App\Repositories\TeamRepository;
 use App\Repositories\UserRepository;
 use \Exception;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 
 class TeamMemberController extends ApiController
 {
@@ -37,6 +38,13 @@ class TeamMemberController extends ApiController
         $this->roleRepository = $roleRepository;
     }
 
+    /**
+     * Adds a user as a team member.
+     *
+     * @param TeamMemberRequest $request
+     *
+     * @return JsonResponse
+     */
     public function addMember(TeamMemberRequest $request)
     {
         try {
@@ -55,6 +63,42 @@ class TeamMemberController extends ApiController
                 'is_owner' => $params['is_owner'],
                 'role_id'  => $role->id,
             ]);
+
+            return $this->responseUpdated($team);
+
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+
+    }
+
+    /**
+     * Updates a member-team relation.
+     *
+     * @param TeamMemberRequest $request
+     *
+     * @return JsonResponse
+     */
+    public function updateMember(TeamMemberRequest $request)
+    {
+        try {
+            $params = $request->only([
+                'user_id',
+                'team_id',
+                'is_owner'
+            ]);
+            $team = $this->teamRepository->findOneOrFailById($params['team_id']);
+            $this->authorize('update', $team);
+
+            $user = $this->userRepository->findOneOrFailById($params['user_id']);
+
+            if ($team->isOwner($user)) {
+                return $this->responseInternalError('Use is already owner of the team.');
+            }
+
+            $team->users()->updateExistingPivot($user, ['is_owner' => $params['is_owner']]);
 
             return $this->responseUpdated($team);
 

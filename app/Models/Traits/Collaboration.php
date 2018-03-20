@@ -3,7 +3,6 @@
 namespace App\Models\Traits;
 
 use App\User;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Auth;
 
 trait Collaboration
