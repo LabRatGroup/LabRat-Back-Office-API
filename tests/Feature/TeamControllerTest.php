@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Role;
 use App\Models\Team;
 use App\User;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,7 @@ class TeamControllerTest extends TestCase
     {
         // Given
         $user = factory(User::class)->create();
+        $role = Role::where('alias', Team::TEAM_OWNER_ROLE_ALIAS)->first();
 
         $name = 'TEAM_NAME';
         $data = ['name' => $name];
@@ -35,6 +37,7 @@ class TeamControllerTest extends TestCase
             'user_id'  => $user->id,
             'team_id'  => $team->id,
             'is_owner' => 1,
+            'role_id'  => $role->id,
         ]);
     }
 
@@ -56,7 +59,7 @@ class TeamControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('team.update',  ['id' => $team->id]), $data, $header);
+        $response = $this->postJson(route('team.update', ['id' => $team->id]), $data, $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -92,7 +95,7 @@ class TeamControllerTest extends TestCase
         // When
         $this->be($otherUser);
         $header = $this->getAuthHeader($otherUser);
-        $response = $this->postJson(route('team.update',  ['id' => $team->id]), $data, $header);
+        $response = $this->postJson(route('team.update', ['id' => $team->id]), $data, $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -143,7 +146,7 @@ class TeamControllerTest extends TestCase
         // When
         $this->be($otherUser);
         $header = $this->getAuthHeader($otherUser);
-        $response = $this->delete(route('team.delete',  ['id' => $team->id]), [], $header);
+        $response = $this->delete(route('team.delete', ['id' => $team->id]), [], $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
