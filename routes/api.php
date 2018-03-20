@@ -31,4 +31,5 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('team/addMember', 'TeamMemberController@addMember')->name('team.addMember');
+    Route::post('team/updateMember', 'TeamMemberController@updateMember')->name('team.updateMember');
 });
