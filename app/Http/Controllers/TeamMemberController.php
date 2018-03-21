@@ -96,7 +96,7 @@ class TeamMemberController extends ApiController
             $user = $this->userRepository->findOneOrFailById($params['user_id']);
 
             if ($team->isOwner($user) == $params['is_owner']) {
-                return $this->responseInternalError('Use ownership already set.');
+                return $this->responseInternalError('User ownership already set.');
             }
 
             if (auth()->user()->id == $params['user_id']) {
