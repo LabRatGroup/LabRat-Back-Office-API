@@ -22,6 +22,20 @@ trait Collaboration
     }
 
     /**
+     * @return array
+     */
+    public function owners()
+    {
+        $owners = [];
+        foreach ($this->users as $member) {
+            if ($member->pivot->is_owner) $owners[] = $member;
+        }
+
+        return $owners;
+    }
+
+
+    /**
      * @param User $user
      *
      * @return bool
