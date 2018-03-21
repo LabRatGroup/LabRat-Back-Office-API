@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Requests\TeamMemberRemoveRequest;
 use App\Http\Requests\TeamMemberRequest;
 use App\Models\Team;
 use App\Repositories\RoleRepository;
@@ -111,6 +112,31 @@ class TeamMemberController extends ApiController
         } catch (Exception $e) {
             return $this->responseInternalError($e->getMessage());
         }
+    }
 
+    public function deleteMember(TeamMemberRemoveRequest $request)
+    {
+        try {
+            $params = $request->only([
+                'user_id',
+                'team_id',
+            ]);
+            $team = $this->teamRepository->findOneOrFailById($params['team_id']);
+            $this->authorize('deleteMember', [
+                $team,
+                $params['user_id']
+            ]);
+
+            $user = $this->userRepository->findOneOrFailById($params['user_id']);
+
+            $team->users()->detach($user);
+
+            return $this->responseUpdated($team);
+
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
     }
 }

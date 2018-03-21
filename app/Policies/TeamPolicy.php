@@ -42,6 +42,26 @@ class TeamPolicy
     }
 
     /**
+     * @param User $user
+     * @param Team $team
+     * @param      $userId
+     *
+     * @return bool
+     */
+    public function deleteMember(User $user, Team $team, $userId)
+    {
+        if ($team->isOwner($user)) {
+            if ($user->id == $userId) {
+                return sizeOf($team->owners()) > 1;
+            }
+        } else {
+            return $user->id == $userId;
+        }
+
+        return true;
+    }
+
+    /**
      * @param  User $user
      * @param  Team $team
      *
