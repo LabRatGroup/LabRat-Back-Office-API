@@ -39,6 +39,8 @@ class ProjectMemberController extends ApiController
     }
 
     /**
+     * Adds a new member to project.
+     *
      * @param ProjectMemberRequest $request
      *
      * @return JsonResponse
@@ -72,6 +74,8 @@ class ProjectMemberController extends ApiController
     }
 
     /**
+     * Updates member properties from project.
+     *
      * @param ProjectMemberRequest $request
      *
      * @return JsonResponse
@@ -109,6 +113,8 @@ class ProjectMemberController extends ApiController
     }
 
     /**
+     * Removes member from project.
+     *
      * @param ProjectMemberRemoveRequest $request
      *
      * @return JsonResponse
