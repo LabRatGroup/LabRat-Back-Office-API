@@ -114,6 +114,11 @@ class TeamMemberController extends ApiController
         }
     }
 
+    /**
+     * @param TeamMemberRemoveRequest $request
+     *
+     * @return JsonResponse
+     */
     public function deleteMember(TeamMemberRemoveRequest $request)
     {
         try {

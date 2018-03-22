@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Api\ApiController;
+use App\Http\Requests\ProjectMemberRemoveRequest;
 use App\Http\Requests\ProjectMemberRequest;
 use App\Models\Project;
 use App\Repositories\ProjectRepository;
@@ -97,6 +98,37 @@ class ProjectMemberController extends ApiController
             }
 
             $project->users()->updateExistingPivot($user, ['is_owner' => $params['is_owner']]);
+
+            return $this->responseUpdated($project);
+
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    /**
+     * @param ProjectMemberRemoveRequest $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteMember(ProjectMemberRemoveRequest $request)
+    {
+        try {
+            $params = $request->only([
+                'user_id',
+                'project_id',
+            ]);
+            $project = $this->projectRepository->findOneOrFailById($params['project_id']);
+            $this->authorize('deleteMember', [
+                $project,
+                $params['user_id']
+            ]);
+
+            $user = $this->userRepository->findOneOrFailById($params['user_id']);
+
+            $project->users()->detach($user);
 
             return $this->responseUpdated($project);
 
