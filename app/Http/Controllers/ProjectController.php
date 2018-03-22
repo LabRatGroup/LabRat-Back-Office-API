@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\ApiController;
 
-class ProjectController extends Controller
+class ProjectController extends ApiController
 {
     //
 }
