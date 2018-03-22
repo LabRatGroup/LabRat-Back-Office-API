@@ -108,4 +108,54 @@ class ProjectControllerTest extends TestCase
             'is_owner'   => 1,
         ]);
     }
+
+    /** @test */
+    public function should_remove_project()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+        $header = $this->getAuthHeader($user);
+
+        $project = factory(Project::class)->create();
+
+        // When
+        $response = $this->delete(route('project.delete', ['id' => $project->id]), [], $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+
+        $this->assertSoftDeleted('projects', ['id' => $project->id]);
+        $this->assertDatabaseMissing('project_user', [
+            'user_id'    => $user->id,
+            'project_id' => $project->id,
+            'is_owner'   => 1,
+        ]);
+    }
+
+    /** @test */
+    public function should_not_delete_project()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $otherUser = factory(User::class)->create();
+        $this->be($user);
+
+        $project = factory(Project::class)->create();
+
+        // When
+        $this->be($otherUser);
+        $header = $this->getAuthHeader($otherUser);
+        $response = $this->delete(route('project.delete', ['id' => $project->id]), [], $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+
+        $this->assertDatabaseHas('projects', ['id' => $project->id]);
+        $this->assertDatabaseHas('project_user', [
+            'user_id'    => $user->id,
+            'project_id' => $project->id,
+            'is_owner'   => 1,
+        ]);
+    }
 }

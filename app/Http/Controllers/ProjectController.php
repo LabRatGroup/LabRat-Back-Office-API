@@ -8,6 +8,7 @@ use App\Models\Project;
 use App\Repositories\ProjectRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\JsonResponse;
 
 class ProjectController extends ApiController
 {
@@ -16,6 +17,7 @@ class ProjectController extends ApiController
 
     /**
      * ProjectController constructor.
+     *
      * @param ProjectRepository $projectRepository
      */
     public function __construct(ProjectRepository $projectRepository)
@@ -23,6 +25,11 @@ class ProjectController extends ApiController
         $this->projectRepository = $projectRepository;
     }
 
+    /**
+     * @param ProjectRequest $request
+     *
+     * @return JsonResponse
+     */
     public function create(ProjectRequest $request)
     {
         try {
@@ -38,6 +45,12 @@ class ProjectController extends ApiController
         }
     }
 
+    /**
+     * @param                $id
+     * @param ProjectRequest $request
+     *
+     * @return JsonResponse
+     */
     public function update($id, ProjectRequest $request)
     {
 
@@ -48,6 +61,27 @@ class ProjectController extends ApiController
             $project = $this->projectRepository->update($project, $params);
 
             return $this->responseUpdated($project);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    /**
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function delete($id)
+    {
+        try {
+            $project = $this->projectRepository->findOneOrFailById($id);
+            $this->authorize('delete', $project);
+            $project->users()->detach();
+            $this->projectRepository->delete($project);
+
+            return $this->responseDeleted();
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
         } catch (Exception $e) {
