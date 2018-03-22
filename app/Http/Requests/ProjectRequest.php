@@ -33,7 +33,7 @@ class ProjectRequest extends FormRequest
         return [
             'title.required' => 'Project title is required.',
             'title.min'      => 'Project title must be at least 5 character length.',
-            'title.,ax'      => 'Project title must not exceed the 255 character length.',
+            'title.max'      => 'Project title must not exceed the 255 character length.',
         ];
     }
 }

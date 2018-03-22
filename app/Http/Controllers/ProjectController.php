@@ -38,4 +38,20 @@ class ProjectController extends ApiController
         }
     }
 
+    public function update($id, ProjectRequest $request)
+    {
+
+        try {
+            $params = $request->only('title');
+            $project = $this->projectRepository->findOneOrFailById($id);
+            $this->authorize('update', $project);
+            $project = $this->projectRepository->update($project, $params);
+
+            return $this->responseUpdated($project);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
 }
