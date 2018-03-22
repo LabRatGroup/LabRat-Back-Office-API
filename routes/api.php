@@ -22,7 +22,6 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('un-register', 'UserController@unRegister')->name('user.un-register');
 });
 
-
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('team/create', 'TeamController@create')->name('team.create');
     Route::post('team/{id}/update', 'TeamController@update')->name('team.update');
@@ -33,4 +32,8 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('team/addMember', 'TeamMemberController@addMember')->name('team.addMember');
     Route::post('team/updateMember', 'TeamMemberController@updateMember')->name('team.updateMember');
     Route::post('team/deleteMember', 'TeamMemberController@deleteMember')->name('team.deleteMember');
+});
+
+Route::group(['middleware' => ['jwt.auth']], function () {
+    Route::post('project/create', 'ProjectController@create')->name('project.create');
 });
