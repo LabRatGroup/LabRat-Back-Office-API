@@ -25,6 +25,29 @@ class TeamController extends ApiController
         $this->teamRepository = $teamRepository;
     }
 
+
+    /**
+     * Shows single team item.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function show($id)
+    {
+        try {
+            $team = $this->teamRepository->findOneOrFailById($id);
+            $this->authorize('view', $team);
+
+            return $this->responseOk($team);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+
     /**
      * Creates a new team.
      *
