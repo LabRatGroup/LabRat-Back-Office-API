@@ -25,6 +25,25 @@ class TeamController extends ApiController
         $this->teamRepository = $teamRepository;
     }
 
+    /**
+     * List all available teams associated to a user.
+     *
+     * @return JsonResponse
+     */
+    public function index()
+    {
+        try {
+            $this->authorize('list', Team::class);
+            $userId = auth()->user()->id;
+            $teams = $this->teamRepository->findAllByUserMember($userId);
+
+            return $this->responseOk($teams);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
 
     /**
      * Shows single team item.
@@ -46,7 +65,6 @@ class TeamController extends ApiController
             return $this->responseInternalError($e->getMessage());
         }
     }
-
 
     /**
      * Creates a new team.

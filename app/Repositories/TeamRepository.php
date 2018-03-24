@@ -15,4 +15,13 @@ class TeamRepository extends BaseRepository
     {
         $this->model = $model;
     }
+
+    public function findAllByUserMember($userId)
+    {
+        return $this->getModel()->newQuery()
+            ->whereHas('users', function ($query) use ($userId) {
+                $query->where('users.id', $userId);
+            })
+            ->get();
+    }
 }
