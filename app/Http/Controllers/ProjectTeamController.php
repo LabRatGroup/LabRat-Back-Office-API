@@ -60,4 +60,35 @@ class ProjectTeamController extends ApiController
             return $this->responseInternalError($e->getMessage());
         }
     }
+
+    /**
+     * Removes team from project.
+     *
+     * @param ProjectTeamRequest $request
+     *
+     * @return JsonResponse
+     */
+    public function deleteTeam(ProjectTeamRequest $request)
+    {
+        try {
+            $params = $request->only([
+                'team_id',
+                'project_id',
+            ]);
+            $project = $this->projectRepository->findOneOrFailById($params['project_id']);
+            $this->authorize('delete', $project);
+
+            $team = $this->teamRepository->findOneOrFailById($params['team_id']);
+            $this->authorize('delete', $team);
+
+            $project->teams()->detach($team);
+
+            return $this->responseDeleted($project);
+
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
 }
