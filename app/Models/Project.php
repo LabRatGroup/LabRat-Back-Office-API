@@ -41,4 +41,14 @@ class Project extends Model
             ->withPivot('is_owner', 'user_id', 'project_id', 'validation_token', 'is_valid', 'role_id')
             ->withTimestamps();
     }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class)
+            ->withPivot('team_id', 'project_id')
+            ->withTimestamps();
+    }
 }
