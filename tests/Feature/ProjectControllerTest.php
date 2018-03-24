@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Project;
 use App\Models\Role;
+use App\Models\Team;
 use App\User;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -13,6 +14,72 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class ProjectControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    /** @test */
+    public function user_should_access_project_details()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        $project = factory(Project::class)->create();
+
+        // When
+        $header = $this->getAuthHeader($user);
+        $response = $this->get(route('project.show', ['id' => $project->id]), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['id' => $project->id]);
+        $this->assertDatabaseHas('projects', ['id' => $project->id]);
+    }
+
+    /** @test */
+    public function team_member_should_access_project_details()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $role = Role::where('alias', Team::TEAM_DEFAULT_ROLE_ALIAS)->first();
+        $this->be($user);
+
+        $project = factory(Project::class)->create();
+        $team = factory(Team::class)->create();
+        $team->users()->attach($member, [
+            'is_owner' => 0,
+            'role_id'  => $role->id,
+        ]);
+        $project->teams()->attach($team);
+
+        // When
+        $header = $this->getAuthHeader($member);
+        $response = $this->get(route('project.show', ['id' => $project->id]), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['id' => $project->id]);
+        $this->assertDatabaseHas('projects', ['id' => $project->id]);
+    }
+
+    /** @test */
+    public function non_associate_should_not_access_team_details()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $otherUser = factory(User::class)->create();
+        $this->be($user);
+
+        $project = factory(Project::class)->create();
+
+        // When
+        $this->be($otherUser);
+        $header = $this->getAuthHeader($otherUser);
+        $response = $this->get(route('project.show', ['id' => $project->id]), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+        $this->assertDatabaseHas('projects', ['id' => $project->id]);
+    }
 
     /** @test */
     public function should_create_project()

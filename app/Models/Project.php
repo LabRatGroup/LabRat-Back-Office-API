@@ -4,10 +4,17 @@ namespace App\Models;
 
 use App\Models\Traits\Collaboration;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property int    $id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property mixed  teams
+ */
 class Project extends Model
 {
     use SoftDeletes;
@@ -50,5 +57,21 @@ class Project extends Model
         return $this->belongsToMany(Team::class)
             ->withPivot('team_id', 'project_id')
             ->withTimestamps();
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return bool
+     */
+    public function isMember(User $user)
+    {
+        $userMembers = [];
+        $userMembers = array_merge($userMembers, array_column($this->users->toArray(), 'id'));
+        foreach ($this->teams as $team) {
+            $userMembers = array_merge($userMembers, array_column($team->users->toArray(), 'id'));
+        }
+
+        return array_search($user->id, $userMembers) > -1;
     }
 }
