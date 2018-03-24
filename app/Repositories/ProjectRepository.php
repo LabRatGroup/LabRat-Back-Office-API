@@ -15,4 +15,16 @@ class ProjectRepository extends BaseRepository
     {
         $this->model = $model;
     }
+
+    public function findAllByUserOrTeamMember($userId, $userTeams)
+    {
+        return $this->getModel()->newQuery()
+            ->whereHas('users', function ($query) use ($userId) {
+                $query->where('users.id', $userId);
+            })
+            ->orWhereHas('teams', function ($query) use ($userTeams) {
+                $query->whereIn('teams.id', $userTeams);
+            })
+            ->get();
+    }
 }

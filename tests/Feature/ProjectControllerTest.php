@@ -62,7 +62,7 @@ class ProjectControllerTest extends TestCase
     }
 
     /** @test */
-    public function non_associate_should_not_access_team_details()
+    public function non_associate_should_not_access_project_details()
     {
         // Given
         $user = factory(User::class)->create();
@@ -79,6 +79,80 @@ class ProjectControllerTest extends TestCase
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
         $this->assertDatabaseHas('projects', ['id' => $project->id]);
+    }
+
+    /** @test */
+    public function user_should_access_project_list()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        $project1 = factory(Project::class)->create();
+        $project2 = factory(Project::class)->create();
+
+        // When
+        $header = $this->getAuthHeader($user);
+        $response = $this->get(route('project.index'), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['id' => $project1->id]);
+        $response->assertJsonFragment(['id' => $project2->id]);
+    }
+
+    /** @test */
+    public function team_member_should_access_project_list()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $role = Role::where('alias', Team::TEAM_DEFAULT_ROLE_ALIAS)->first();
+        $this->be($user);
+
+        $team = factory(Team::class)->create();
+        $team->users()->attach($member,
+            [
+                'is_owner' => 0,
+                'role_id'  => $role->id,
+            ]);
+
+        $project1 = factory(Project::class)->create();
+        $project1->teams()->attach($team);
+
+        $project2 = factory(Project::class)->create();
+
+        // When
+        $header = $this->getAuthHeader($member);
+        $response = $this->get(route('project.index'), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['id' => $project1->id]);
+        $response->assertJsonMissing(['id' => $project2->id]);
+    }
+
+    /** @test */
+    public function non_associate_should_not_access_project_list()
+    {
+        // Given
+        $user1 = factory(User::class)->create();
+        $this->be($user1);
+        $project1 = factory(Project::class)->create();
+
+        $user2 = factory(User::class)->create();
+        $this->be($user2);
+        $project2 = factory(Project::class)->create();
+
+
+        // When
+        $header = $this->getAuthHeader($user1);
+        $response = $this->get(route('project.index'), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['id' => $project1->id]);
+        $response->assertJsonMissing(['id' => $project2->id]);;
     }
 
     /** @test */

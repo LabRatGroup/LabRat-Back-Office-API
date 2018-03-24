@@ -37,6 +37,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 });
 
 Route::group(['middleware' => ['jwt.auth']], function () {
+    Route::get('team', 'ProjectController@index')->name('project.index');
     Route::get('project/show/{id}', 'ProjectController@show')->name('project.show');
     Route::post('project/create', 'ProjectController@create')->name('project.create');
     Route::post('project/{id}/update', 'ProjectController@update')->name('project.update');

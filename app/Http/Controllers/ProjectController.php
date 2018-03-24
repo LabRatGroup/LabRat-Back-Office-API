@@ -26,6 +26,27 @@ class ProjectController extends ApiController
     }
 
     /**
+     * List all user related projects.
+     *
+     * @return JsonResponse
+     */
+    public function index()
+    {
+        try {
+            $this->authorize('list', Project::class);
+            $user = auth()->user();
+            $userTeams = array_column(auth()->user()->teams->toArray(), 'id');
+            $projects = $this->projectRepository->findAllByUserOrTeamMember($user->id, $userTeams);
+
+            return $this->responseOk($projects);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    /**
      * Shows single project item.
      *
      * @param $id

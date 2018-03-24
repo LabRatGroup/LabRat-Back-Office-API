@@ -43,6 +43,14 @@ class Team extends BaseEntity
         'token',
     ];
 
+    protected $visible = [
+        'id',
+        'name',
+        'token',
+        'created_at',
+        'updated_at',
+    ];
+
     /**
      * @return BelongsToMany
      */
