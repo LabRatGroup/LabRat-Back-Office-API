@@ -38,6 +38,14 @@ class TeamMemberControllerTest extends TestCase
 
         $this->assertDatabaseHas('team_user',
             [
+                'user_id'  => $owner->id,
+                'team_id'  => $team->id,
+                'is_owner' => 1,
+            ]
+        );
+
+        $this->assertDatabaseHas('team_user',
+            [
                 'user_id'  => $member->id,
                 'team_id'  => $team->id,
                 'is_owner' => 0,

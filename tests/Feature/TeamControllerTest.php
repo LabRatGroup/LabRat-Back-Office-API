@@ -15,6 +15,46 @@ class TeamControllerTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
+    public function should_access_team_details()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        $team = factory(Team::class)->create();
+
+        // When
+        $header = $this->getAuthHeader($user);
+        $response = $this->get(route('team.show', ['id' => $team->id]), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['id' => $team->id]);
+        $this->assertDatabaseHas('teams', ['id' => $team->id]);
+    }
+
+    /** @test */
+    public function non_member_should_not_access_team_details()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $otherUser = factory(User::class)->create();
+        $this->be($user);
+
+        $team = factory(Team::class)->create();
+
+        // When
+        $this->be($otherUser);
+        $header = $this->getAuthHeader($otherUser);
+        $response = $this->get(route('team.show', ['id' => $team->id]), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+        $this->assertDatabaseHas('teams', ['id' => $team->id]);
+    }
+
+
+    /** @test */
     public function should_register_team()
     {
         // Given
