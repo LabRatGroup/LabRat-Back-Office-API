@@ -53,6 +53,47 @@ class TeamControllerTest extends TestCase
         $this->assertDatabaseHas('teams', ['id' => $team->id]);
     }
 
+    /** @test */
+    public function should_access_team_list()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        $team1 = factory(Team::class)->create();
+        $team2 = factory(Team::class)->create();
+
+        // When
+        $header = $this->getAuthHeader($user);
+        $response = $this->get(route('team.index'), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['id' => $team1->id]);
+        $response->assertJsonFragment(['id' => $team2->id]);
+    }
+
+    /** @test */
+    public function non_member_should_not_access_team_list()
+    {
+        // Given
+        $user1 = factory(User::class)->create();
+        $this->be($user1);
+        $team1 = factory(Team::class)->create();
+
+        $user2 = factory(User::class)->create();
+        $this->be($user2);
+        $team2 = factory(Team::class)->create();
+
+        // When
+        $header = $this->getAuthHeader($user1);
+        $response = $this->get(route('team.index'), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['id' => $team1->id]);
+        $response->assertJsonMissing(['id' => $team2->id]);
+    }
 
     /** @test */
     public function should_register_team()

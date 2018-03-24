@@ -23,6 +23,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 });
 
 Route::group(['middleware' => ['jwt.auth']], function () {
+    Route::get('team', 'TeamController@index')->name('team.index');
     Route::get('team/show/{id}', 'TeamController@show')->name('team.show');
     Route::post('team/create', 'TeamController@create')->name('team.create');
     Route::post('team/{id}/update', 'TeamController@update')->name('team.update');

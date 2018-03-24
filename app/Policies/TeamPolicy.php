@@ -12,6 +12,14 @@ class TeamPolicy
     use HandlesAuthorization;
 
     /**
+     * @return bool
+     */
+    public function list()
+    {
+        return auth()->check();
+    }
+
+    /**
      * @param User $user
      * @param Team $team
      *
