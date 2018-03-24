@@ -48,3 +48,8 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('project/updateMember', 'ProjectMemberController@updateMember')->name('project.updateMember');
     Route::post('project/deleteMember', 'ProjectMemberController@deleteMember')->name('project.deleteMember');
 });
+
+Route::group(['middleware' => ['jwt.auth']], function () {
+    Route::post('project/addTeam', 'ProjectTeamController@addTeam')->name('project.addTeam');
+    Route::post('project/deleteTeam', 'ProjectTeamController@deleteTeam')->name('project.deleteTeam');
+});

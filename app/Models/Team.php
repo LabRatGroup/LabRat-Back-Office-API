@@ -53,4 +53,12 @@ class Team extends BaseEntity
             ->withTimestamps();
     }
 
+    /**
+     * @return BelongsToMany
+     */
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class)
+            ->withTimestamps();
+    }
 }
