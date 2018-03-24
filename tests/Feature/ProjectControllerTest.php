@@ -15,6 +15,45 @@ class ProjectControllerTest extends TestCase
     use RefreshDatabase;
 
     /** @test */
+    public function should_access_project_details()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        $project = factory(Project::class)->create();
+
+        // When
+        $header = $this->getAuthHeader($user);
+        $response = $this->get(route('project.show', ['id' => $project->id]), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['id' => $project->id]);
+        $this->assertDatabaseHas('projects', ['id' => $project->id]);
+    }
+
+    /** @test */
+    public function non_associate_should_not_access_team_details()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $otherUser = factory(User::class)->create();
+        $this->be($user);
+
+        $project = factory(Project::class)->create();
+
+        // When
+        $this->be($otherUser);
+        $header = $this->getAuthHeader($otherUser);
+        $response = $this->get(route('project.show', ['id' => $project->id]), $header);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+        $this->assertDatabaseHas('projects', ['id' => $project->id]);
+    }
+
+    /** @test */
     public function should_create_project()
     {
         // Given

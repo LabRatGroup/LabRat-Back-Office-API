@@ -26,6 +26,27 @@ class ProjectController extends ApiController
     }
 
     /**
+     * Shows single project item.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function show($id)
+    {
+        try {
+            $project = $this->projectRepository->findOneOrFailById($id);
+            $this->authorize('view', $project);
+
+            return $this->responseOk($project);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    /**
      * @param ProjectRequest $request
      *
      * @return JsonResponse
