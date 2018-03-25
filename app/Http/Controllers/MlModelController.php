@@ -94,4 +94,27 @@ class MlModelController extends ApiController
             return $this->responseInternalError($e->getMessage());
         }
     }
+
+    /**
+     * Deletes model.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function delete($id)
+    {
+        try {
+            /** @var MlModel $model */
+            $model = $this->mlModelRepository->findOneOrFailById($id);
+            $this->authorize('delete', $model->project);
+            $this->mlModelRepository->delete($model);
+
+            return $this->responseDeleted();
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
 }

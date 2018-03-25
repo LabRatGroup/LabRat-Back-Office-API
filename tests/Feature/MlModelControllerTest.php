@@ -83,7 +83,7 @@ class MlModelControllerTest extends TestCase
         $model = factory(MlModel::class)->create(['project_id' => $project1->id]);
 
         $data = [
-            'project_id'  => $project2->id,
+            'project_id' => $project2->id,
         ];
 
         // When
@@ -113,7 +113,7 @@ class MlModelControllerTest extends TestCase
         $model = factory(MlModel::class)->create(['project_id' => $project1->id]);
 
         $data = [
-            'project_id'  => $project2->id,
+            'project_id' => $project2->id,
         ];
 
         // When
@@ -125,6 +125,54 @@ class MlModelControllerTest extends TestCase
             [
                 'id'         => $model->id,
                 'project_id' => $project1->id,
+            ]
+        );
+    }
+
+    /** @test */
+    public function should_delete_model()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        $project = factory(Project::class)->create();
+        $model = factory(MlModel::class)->create(['project_id' => $project->id]);
+
+        // When
+        $response = $this->deleteJson(route('model.delete', ['id' => $model->id]), [], $this->getAuthHeader($user));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $this->assertSoftDeleted('ml_models',
+            [
+                'id'         => $model->id,
+                'project_id' => $project->id,
+            ]
+        );
+    }
+
+    /** @test */
+    public function non_project_owner_should_not_delete_model()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+
+        $this->be($user);
+
+        $project = factory(Project::class)->create();
+        $model = factory(MlModel::class)->create(['project_id' => $project->id]);
+
+        // When
+        $response = $this->deleteJson(route('model.delete', ['id' => $model->id]), [], $this->getAuthHeader($member));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+        $this->assertDatabaseHas('ml_models',
+            [
+                'id'         => $model->id,
+                'project_id' => $project->id,
             ]
         );
     }
