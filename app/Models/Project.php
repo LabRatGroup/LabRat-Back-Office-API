@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon     $updated_at
  * @property Carbon     $deleted_at
  */
-class Project extends Model
+class Project extends BaseEntity
 {
     use SoftDeletes;
     use Collaboration;
