@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateMlModelTable extends Migration
+class CreateMlModelsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateMlModelTable extends Migration
      */
     public function up()
     {
-        Schema::create('ml_model', function (Blueprint $table) {
+        Schema::create('ml_models', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title')->nullable(false);
             $table->string('description')->nullable();
@@ -23,7 +23,7 @@ class CreateMlModelTable extends Migration
             $table->softDeletes();
         });
 
-        Schema::table('ml_model', function (Blueprint $table) {
+        Schema::table('ml_models', function (Blueprint $table) {
             $table->unique('token');
             $table->index('project_id');
         });
