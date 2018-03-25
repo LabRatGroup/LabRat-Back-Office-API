@@ -135,7 +135,6 @@ class TeamControllerTest extends TestCase
         $teamName2 = 'TEAM_NAME_2';
 
         $data = [
-            'id'   => $team->id,
             'name' => $teamName2,
         ];
 
@@ -169,7 +168,6 @@ class TeamControllerTest extends TestCase
         $teamName2 = 'TEAM_NAME_2';
 
         $data = [
-            'id'   => $team->id,
             'name' => $teamName2,
         ];
 

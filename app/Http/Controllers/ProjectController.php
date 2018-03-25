@@ -9,6 +9,7 @@ use App\Repositories\ProjectRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ProjectController extends ApiController
 {
@@ -68,6 +69,8 @@ class ProjectController extends ApiController
     }
 
     /**
+     * Creates a new project.
+     *
      * @param ProjectRequest $request
      *
      * @return JsonResponse
@@ -75,7 +78,10 @@ class ProjectController extends ApiController
     public function create(ProjectRequest $request)
     {
         try {
-            $params = $request->only('title');
+            $params = $request->only([
+                'title',
+                'description'
+            ]);
             $this->authorize('create', Project::class);
             $project = $this->projectRepository->create($params);
 
@@ -88,16 +94,21 @@ class ProjectController extends ApiController
     }
 
     /**
+     * Updates project data.
+     *
      * @param                $id
-     * @param ProjectRequest $request
+     * @param Request        $request
      *
      * @return JsonResponse
      */
-    public function update($id, ProjectRequest $request)
+    public function update($id, Request $request)
     {
 
         try {
-            $params = $request->only('title');
+            $params = $request->only([
+                'title',
+                'description'
+            ]);
             $project = $this->projectRepository->findOneOrFailById($id);
             $this->authorize('update', $project);
             $project = $this->projectRepository->update($project, $params);
@@ -111,6 +122,8 @@ class ProjectController extends ApiController
     }
 
     /**
+     * Soft-deletes project and dependencies.
+     *
      * @param $id
      *
      * @return JsonResponse

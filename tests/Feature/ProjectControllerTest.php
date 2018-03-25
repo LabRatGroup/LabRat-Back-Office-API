@@ -195,7 +195,6 @@ class ProjectControllerTest extends TestCase
         $title2 = 'PROJECT_TITLE_2';
 
         $data = [
-            'id'    => $project->id,
             'title' => $title2,
         ];
 
@@ -229,7 +228,6 @@ class ProjectControllerTest extends TestCase
         $title2 = 'PROJECT_TITLE_2';
 
         $data = [
-            'id'    => $project->id,
             'title' => $title1,
         ];
 
