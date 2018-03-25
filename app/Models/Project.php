@@ -5,15 +5,21 @@ namespace App\Models;
 use App\Models\Traits\Collaboration;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int    $id
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property mixed  teams
+ * @property int        $id
+ * @property string     token
+ * @property mixed      teams
+ * @property Collection users
+ * @property Collection $models
+ * @property Carbon     $created_at
+ * @property Carbon     $updated_at
+ * @property Carbon     $deleted_at
  */
 class Project extends Model
 {
@@ -57,6 +63,14 @@ class Project extends Model
         return $this->belongsToMany(Team::class)
             ->withPivot('team_id', 'project_id')
             ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function models()
+    {
+        return $this->hasMany(MlModel::class);
     }
 
     /**

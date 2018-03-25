@@ -54,3 +54,11 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('project/addTeam', 'ProjectTeamController@addTeam')->name('project.addTeam');
     Route::post('project/deleteTeam', 'ProjectTeamController@deleteTeam')->name('project.deleteTeam');
 });
+
+Route::group(['middleware' => ['jwt.auth']], function () {
+//    Route::get('model', 'ProjectController@index')->name('model.index');
+//    Route::get('model/show/{id}', 'MlModelController@show')->name('model.show');
+    Route::post('model/create', 'MlModelController@create')->name('model.create');
+//    Route::post('model/{id}/update', 'MlModelController@update')->name('model.update');
+//    Route::delete('model/{id}/delete', 'MlModelController@delete')->name('model.delete');
+});

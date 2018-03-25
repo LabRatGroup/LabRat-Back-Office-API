@@ -19,8 +19,9 @@ class ProjectPolicy
     }
 
     /**
-     * @param User $user
+     * @param User    $user
      * @param Project $project
+     *
      * @return bool
      */
     public function view(User $user, Project $project)
@@ -37,8 +38,9 @@ class ProjectPolicy
     }
 
     /**
-     * @param  User $user
+     * @param  User   $user
      * @param Project $project
+     *
      * @return mixed
      */
     public function update(User $user, Project $project)
@@ -47,9 +49,9 @@ class ProjectPolicy
     }
 
     /**
-     * @param User $user
+     * @param User    $user
      * @param Project $project
-     * @param      $userId
+     * @param         $userId
      *
      * @return bool
      */
@@ -67,8 +69,9 @@ class ProjectPolicy
     }
 
     /**
-     * @param  User $user
+     * @param  User   $user
      * @param Project $project
+     *
      * @return mixed
      */
     public function delete(User $user, Project $project)
@@ -77,8 +80,9 @@ class ProjectPolicy
     }
 
     /**
-     * @param User $user
+     * @param User    $user
      * @param Project $project
+     *
      * @return bool
      */
     public function addUser(User $user, Project $project)
