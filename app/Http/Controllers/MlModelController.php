@@ -11,6 +11,7 @@ use App\Repositories\ProjectRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class MlModelController extends ApiController
 {
@@ -54,15 +55,39 @@ class MlModelController extends ApiController
 
             /** @var Project $project */
             $project = $this->projectRepository->findOneOrFailById($params['project_id']);
-
             $this->authorize('update', $project);
-
             /** @var MlModel $model */
             $model = $this->mlModelRepository->create($params);
-
             $model->setProject($project);
 
             return $this->responseCreated($model);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    public function update($id, Request $request)
+    {
+        try {
+            $params = $request->only([
+                'title',
+                'description',
+                'project_id'
+            ]);
+            /** @var MlModel $model */
+            $model = $this->mlModelRepository->findOneOrFailById($id);
+            $this->authorize('update', $model->project);
+            if ($params['project_id']) {
+                /** @var Project $project */
+                $project = $this->projectRepository->findOneOrFailById($params['project_id']);
+                $model->setProject($project);
+            }
+
+            $model = $this->mlModelRepository->update($model, $params);
+
+            return $this->responseUpdated($model);
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
         } catch (Exception $e) {
