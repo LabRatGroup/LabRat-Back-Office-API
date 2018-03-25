@@ -18,9 +18,11 @@ class CreateMlAlgorithmParams extends Migration
             $table->string('name')->nullable(false);
             $table->string('description')->nullable(false);
             $table->string('key')->nullable(false);
-            $table->string('range')->nullable(false);
-            $table->string('step')->nullable(false);
+            $table->float('low_range')->nullable(false);
+            $table->float('high_range')->nullable(false);
+            $table->float('step')->nullable(false);
             $table->unsignedInteger('ml_algorithm_id')->nullable(true);
+            $table->timestamps();
         });
 
         Schema::table('ml_algorithm_params', function (Blueprint $table) {

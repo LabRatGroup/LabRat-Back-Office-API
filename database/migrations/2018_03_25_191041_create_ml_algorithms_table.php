@@ -16,8 +16,9 @@ class CreateMlAlgorithmsTable extends Migration
         Schema::create('ml_algorithms', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->nullable(false);
-            $table->string('description')->nullable(false);
+            $table->text('description')->nullable(true);
             $table->string('alias')->nullable(false);
+            $table->timestamps();
         });
 
         Schema::table('ml_algorithms', function (Blueprint $table) {
