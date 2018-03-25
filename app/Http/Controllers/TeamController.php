@@ -98,7 +98,6 @@ class TeamController extends ApiController
      */
     public function update($id, TeamRequest $request)
     {
-
         try {
             $params = $request->only('name');
             $team = $this->teamRepository->findOneOrFailById($id);
@@ -122,7 +121,6 @@ class TeamController extends ApiController
      */
     public function delete($id)
     {
-
         try {
             $team = $this->teamRepository->findOneOrFailById($id);
             $this->authorize('delete', $team);
