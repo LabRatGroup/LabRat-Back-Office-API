@@ -43,4 +43,12 @@ class MlModel extends Model
     {
         return $this->belongsTo(Project::class);
     }
+
+    /**
+     * @param Project $project
+     */
+    public function setProject(Project $project)
+    {
+        $this->project()->associate($project)->save();
+    }
 }
