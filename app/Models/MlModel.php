@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
  */
-class MlModel extends Model
+class MlModel extends BaseEntity
 {
     use SoftDeletes;
 

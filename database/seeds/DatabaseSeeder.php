@@ -12,5 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(RoleTableSeeder::class);
+        $this->call(MlAlgorithmSeeder::class);
+        $this->call(MlAlgorithmParamSeeder::class);
     }
 }
