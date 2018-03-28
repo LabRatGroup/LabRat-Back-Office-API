@@ -62,3 +62,8 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('model/{id}/update', 'MlModelController@update')->name('model.update');
     Route::delete('model/{id}/delete', 'MlModelController@delete')->name('model.delete');
 });
+
+Route::group(['middleware' => ['jwt.auth']], function () {
+    Route::get('algorithm', 'MlAlgorithmController@index')->name('algorithm.index');
+    Route::get('algorithm/show/{id}', 'MlAlgorithmController@show')->name('algorithm.show');
+});
