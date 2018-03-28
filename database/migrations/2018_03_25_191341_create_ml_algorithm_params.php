@@ -16,11 +16,13 @@ class CreateMlAlgorithmParams extends Migration
         Schema::create('ml_algorithm_params', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->nullable(false);
-            $table->string('description')->nullable(false);
+            $table->string('description')->nullable(true);
             $table->string('key')->nullable(false);
-            $table->float('low_range')->nullable(false);
-            $table->float('high_range')->nullable(false);
-            $table->float('step')->nullable(false);
+            $table->float('low_range')->nullable(true);
+            $table->float('high_range')->nullable(true);
+            $table->float('step')->nullable(true);
+            $table->float('classType')->nullable(false);
+            $table->float('options')->nullable(true);
             $table->unsignedInteger('ml_algorithm_id')->nullable(true);
             $table->timestamps();
         });
