@@ -4,19 +4,19 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int    $id
- * @property string token
- * @property mixed  $project
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
- * @property mixed  $states
+ * @property mixed  $algorithm
+ * @property mixed  $score
+ * @property mixed  $model
  */
-class MlModel extends BaseEntity
+class MlModelState extends BaseEntity
 {
     use SoftDeletes;
 
@@ -29,8 +29,8 @@ class MlModel extends BaseEntity
     ];
 
     protected $fillable = [
-        'title',
-        'description',
+        'is_current',
+        'params',
     ];
 
     protected $hidden = [
@@ -40,24 +40,24 @@ class MlModel extends BaseEntity
     /**
      * @return BelongsTo
      */
-    public function project()
+    public function model()
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(MlModel::class);
     }
 
     /**
-     * @return HasMany
+     * @return BelongsTo
      */
-    public function states()
+    public function algorithm()
     {
-        return $this->hasMany(MlModelState::class);
+        return $this->belongsTo(MlAlgorithm::class);
     }
 
     /**
-     * @param Project $project
+     * @return HasOne
      */
-    public function setProject(Project $project)
+    public function score()
     {
-        $this->project()->associate($project)->save();
+        return $this->hasOne(MlModelStateScore::class);
     }
 }
