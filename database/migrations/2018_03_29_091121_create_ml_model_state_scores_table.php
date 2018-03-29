@@ -16,6 +16,7 @@ class CreateMlModelStateScoresTable extends Migration
         Schema::create('ml_model_state_scores', function (Blueprint $table) {
             $table->increments('id');
             $table->string('token');
+            $table->unsignedInteger('ml_model_state_id')->nullable(true);
             $table->string('params');
             $table->string('kappa');
             $table->string('accuracy');
@@ -35,6 +36,7 @@ class CreateMlModelStateScoresTable extends Migration
         Schema::table('ml_model_state_scores', function (Blueprint $table) {
             $table->index('kappa');
             $table->index('accuracy');
+            $table->unique('ml_model_state_id');
         });
     }
 
