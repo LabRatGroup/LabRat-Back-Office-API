@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -18,7 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class MlModel extends BaseEntity
 {
-    use SoftDeletes;
+    use SoftDeletes, CascadeSoftDeletes;
 
     const ITEM_TOKEN_LENGTH = 25;
 
@@ -36,6 +37,8 @@ class MlModel extends BaseEntity
     protected $hidden = [
         'token',
     ];
+
+    protected $cascadeDeletes = ['states'];
 
     /**
      * @return BelongsTo
