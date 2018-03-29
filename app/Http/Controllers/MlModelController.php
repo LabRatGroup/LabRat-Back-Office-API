@@ -68,6 +68,14 @@ class MlModelController extends ApiController
         }
     }
 
+    /**
+     * Updates current model.
+     *
+     * @param         $id
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
     public function update($id, Request $request)
     {
         try {
