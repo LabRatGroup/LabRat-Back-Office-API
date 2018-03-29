@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
+ * @property mixed  $states
  */
 class MlModel extends BaseEntity
 {
@@ -42,6 +43,14 @@ class MlModel extends BaseEntity
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function states()
+    {
+        return $this->hasMany(MlModelState::class);
     }
 
     /**

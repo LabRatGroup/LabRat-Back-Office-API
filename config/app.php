@@ -168,6 +168,7 @@ return [
         \App\Providers\TeamServiceProvider::class,
         \App\Providers\ProjectServiceProvider::class,
         \App\Providers\MlModelServiceProvider::class,
+        \App\Providers\MlModelStateServiceProvider::class,
 
     ],
 
