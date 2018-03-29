@@ -32,7 +32,7 @@ class CreateMlModelStateScoresTable extends Migration
             $table->softDeletes();
         });
 
-        Schema::table('ml_model_state', function (Blueprint $table) {
+        Schema::table('ml_model_state_scores', function (Blueprint $table) {
             $table->index('kappa');
             $table->index('accuracy');
         });

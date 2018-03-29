@@ -13,19 +13,19 @@ class CreateMlModelStateTable extends Migration
      */
     public function up()
     {
-        Schema::create('ml_model_state', function (Blueprint $table) {
+        Schema::create('ml_model_states', function (Blueprint $table) {
             $table->increments('id');
             $table->string('token');
-            $table->string('params');
+            $table->string('params')->nullable(false);
             $table->boolean('is_current')->default(false);
-            $table->unsignedInteger('ml_model_id');
-            $table->unsignedInteger('ml_algorithm_id');
+            $table->unsignedInteger('ml_model_id')->nullable(true);
+            $table->unsignedInteger('ml_algorithm_id')->nullable(true);
             $table->unsignedInteger('ml_state_score')->nullable(true);
             $table->timestamps();
             $table->softDeletes();
         });
 
-        Schema::table('ml_model_state', function (Blueprint $table) {
+        Schema::table('ml_model_states', function (Blueprint $table) {
             $table->index('is_current');
             $table->index('ml_model_id');
             $table->index('ml_algorithm_id');
@@ -41,6 +41,6 @@ class CreateMlModelStateTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('ml_model_state');
+        Schema::dropIfExists('ml_model_states');
     }
 }
