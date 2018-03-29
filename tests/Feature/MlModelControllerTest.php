@@ -173,6 +173,7 @@ class MlModelControllerTest extends TestCase
             [
                 'id'         => $model->id,
                 'project_id' => $project->id,
+                'deleted_at' => null,
             ]
         );
     }

@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
+use App\Models\MlModelState;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
@@ -175,6 +176,112 @@ class MlModelStateControllerTest extends TestCase
         $this->assertDatabaseMissing('ml_model_states', [
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
+        ]);
+    }
+
+    /** @test */
+    public function user_should_delete_model_state()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create();
+
+        $model->setProject($project);
+        $state->setModel($model);
+
+        // When
+        $response = $this->deleteJson(route('state.delete', ['id' => $state->id]), [], $this->getAuthHeader($user));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $this->assertDatabaseHas('project_user', [
+            'project_id' => $project->id,
+            'user_id'    => $user->id,
+            'is_owner'   => 1,
+        ]);
+        $this->assertSoftDeleted('ml_model_states', [
+            'id' => $state->id,
+        ]);
+    }
+
+    /** @test */
+    public function non_project_owner_should_not_delete_model_state()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create();
+
+        $model->setProject($project);
+        $state->setModel($model);
+
+        // When
+        $response = $this->deleteJson(route('state.delete', ['id' => $state->id]), [], $this->getAuthHeader($member));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+        $this->assertDatabaseHas('project_user', [
+            'project_id' => $project->id,
+            'user_id'    => $user->id,
+            'is_owner'   => 1,
+        ]);
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state->id,
+            'deleted_at' => null,
+        ]);
+    }
+
+    /** @test */
+    public function user_should_delete_model_state_and_mode_when_deleting_project()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create();
+
+        $model->setProject($project);
+        $state->setModel($model);
+
+        // When
+        $response = $this->deleteJson(route('project.delete', ['id' => $project->id]), [], $this->getAuthHeader($user));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+
+        $this->assertSoftDeleted('projects', [
+            'id' => $project->id,
+        ]);
+        $this->assertSoftDeleted('ml_models', [
+            'id' => $model->id,
+        ]);
+        $this->assertSoftDeleted('ml_model_states', [
+            'id' => $state->id,
         ]);
     }
 }

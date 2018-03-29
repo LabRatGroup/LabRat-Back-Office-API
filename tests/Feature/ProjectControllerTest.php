@@ -290,7 +290,10 @@ class ProjectControllerTest extends TestCase
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
 
-        $this->assertDatabaseHas('projects', ['id' => $project->id]);
+        $this->assertDatabaseHas('projects', [
+            'id'         => $project->id,
+            'deleted_at' => null,
+        ]);
         $this->assertDatabaseHas('project_user', [
             'user_id'    => $user->id,
             'project_id' => $project->id,
