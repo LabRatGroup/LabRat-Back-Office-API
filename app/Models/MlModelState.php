@@ -9,12 +9,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int    $id
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
  * @property mixed  $algorithm
  * @property mixed  $score
  * @property mixed  $model
+ * @property string token
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ * @property Carbon $deleted_at
  */
 class MlModelState extends BaseEntity
 {
@@ -42,7 +43,7 @@ class MlModelState extends BaseEntity
      */
     public function model()
     {
-        return $this->belongsTo(MlModel::class);
+        return $this->belongsTo(MlModel::class, 'ml_model_id');
     }
 
     /**
@@ -50,7 +51,7 @@ class MlModelState extends BaseEntity
      */
     public function algorithm()
     {
-        return $this->belongsTo(MlAlgorithm::class);
+        return $this->belongsTo(MlAlgorithm::class, 'ml_algorithm_id');
     }
 
     /**
@@ -59,5 +60,21 @@ class MlModelState extends BaseEntity
     public function score()
     {
         return $this->hasOne(MlModelStateScore::class);
+    }
+
+    /**
+     * @param MlModel $model
+     */
+    public function setModel(MlModel $model)
+    {
+        $this->model()->associate($model)->save();
+    }
+
+    /**
+     * @param MlAlgorithm $algorithm
+     */
+    public function setAlgorithm(MlAlgorithm $algorithm)
+    {
+        $this->algorithm()->associate($algorithm)->save();
     }
 }
