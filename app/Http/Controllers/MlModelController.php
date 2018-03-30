@@ -38,6 +38,28 @@ class MlModelController extends ApiController
     }
 
     /**
+     * Display model details.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function show($id)
+    {
+        try {
+            /** @var MlModel $model */
+            $model = $this->mlModelRepository->findOneOrFailById($id);
+            $this->authorize('view', $model->project);
+
+            return $this->responseOk($model);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    /**
      * Creates a new ml model.
      *
      * @param MlModelRequest $request
