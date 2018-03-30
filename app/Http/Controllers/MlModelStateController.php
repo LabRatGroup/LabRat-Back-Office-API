@@ -185,4 +185,28 @@ class MlModelStateController extends ApiController
             return $this->responseInternalError($e->getMessage());
         }
     }
+
+    /**
+     * Set model state to current default for further predictions.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function current($id)
+    {
+        try {
+            /** @var MlModelState $state */
+            $state = $this->mlModelStateRepository->findOneOrFailById($id);
+
+            $this->authorize('update', $state->model->project);
+            $state->setAsCurrent();
+
+            return $this->responseOk($state);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
 }

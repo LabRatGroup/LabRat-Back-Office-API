@@ -9,15 +9,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int    $id
- * @property mixed  $algorithm
- * @property mixed  $score
- * @property mixed  $model
- * @property string token
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
- * @property mixed  params
+ * @property int     $id
+ * @property mixed   $algorithm
+ * @property mixed   $score
+ * @property mixed   $model
+ * @property string  token
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
+ * @property Carbon  $deleted_at
+ * @property mixed   params
+ * @property boolean is_current
  */
 class MlModelState extends BaseEntity
 {
@@ -81,4 +82,24 @@ class MlModelState extends BaseEntity
     {
         $this->algorithm()->associate($algorithm)->save();
     }
+
+    public function setAsCurrent()
+    {
+        /** @var MlModelState $state */
+        foreach ($this->model->states as $state) {
+            if ($this->id == $state->id) {
+                $state->setIsCurrent(true);
+            } else {
+                $state->setIsCurrent(false);
+            }
+        }
+    }
+
+    private function setIsCurrent($value)
+    {
+        $this->is_current = $value;
+        $this->save();
+    }
+
+
 }
