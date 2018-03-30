@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\UserRequest;
 use App\Repositories\UserRepository;
 use \Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
@@ -36,11 +37,9 @@ class UserController extends ApiController
      */
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password');
-
         try {
+            $credentials = $request->only('email', 'password');
             if (!$token = auth()->attempt($credentials)) {
-
                 return $this->responseAccessDenied('invalid_credentials');
             }
 
@@ -102,13 +101,12 @@ class UserController extends ApiController
      */
     public function recover(Request $request)
     {
-        $params = $request->only(['email']);
-        $user = $this->userRepository->findOneOrFailByEmail($params['email']);
-        if (!$user) {
-            return $this->responseAccessDenied('Your email address was not found.');
-        }
-
         try {
+            $params = $request->only(['email']);
+            $user = $this->userRepository->findOneOrFailByEmail($params['email']);
+            if (!$user) {
+                return $this->responseAccessDenied('Your email address was not found.');
+            }
             Password::sendResetLink($params, function (Message $message) {
                 $message->subject('Your Password Reset Link');
             });
@@ -128,21 +126,23 @@ class UserController extends ApiController
      * @return JsonResponse
      */
     public function unRegister(Request $request)
+
     {
-        $params = $request->only(['email']);
-        $user = $this->userRepository->findOneOrFailByEmail($params['email']);
-
-        if (!$user) {
-            return $this->responseAccessDenied('Your email address was not found.');
-        }
-
         try {
+            $params = $request->only(['email']);
+            $user = $this->userRepository->findOneOrFailByEmail($params['email']);
+            $this->authorize('delete', $user);
+
+            if (!$user) {
+                return $this->responseAccessDenied('Your email address was not found.');
+            }
             $this->userRepository->delete($user);
             auth()->logout();
 
             return $this->responseOk(null, 'Your account has been removed.');
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
         } catch (Exception $e) {
-
             return $this->responseAccessDenied($e->getMessage());
         }
     }

@@ -2,10 +2,12 @@
 
 namespace App;
 
+use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -18,6 +20,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property string token
+ * @property mixed  projects
+ * @property mixed  teams
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -82,6 +86,15 @@ class User extends Authenticatable implements JWTSubject
     public function teams()
     {
         return $this->belongsToMany(Team::class)
+            ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany
+     */
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class)
             ->withTimestamps();
     }
 

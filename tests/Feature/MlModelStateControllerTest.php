@@ -248,40 +248,4 @@ class MlModelStateControllerTest extends TestCase
             'deleted_at' => null,
         ]);
     }
-
-    /** @test */
-    public function user_should_delete_model_state_and_mode_when_deleting_project()
-    {
-        // Given
-        $user = factory(User::class)->create();
-        $this->be($user);
-
-        /** @var Project $project */
-        $project = factory(Project::class)->create();
-
-        /** @var MlModel $model */
-        $model = factory(MlModel::class)->create();
-
-        /** @var MlModelState $state */
-        $state = factory(MlModelState::class)->create();
-
-        $model->setProject($project);
-        $state->setModel($model);
-
-        // When
-        $response = $this->deleteJson(route('project.delete', ['id' => $project->id]), [], $this->getAuthHeader($user));
-
-        // Then
-        $response->assertStatus(HttpResponse::HTTP_OK);
-
-        $this->assertSoftDeleted('projects', [
-            'id' => $project->id,
-        ]);
-        $this->assertSoftDeleted('ml_models', [
-            'id' => $model->id,
-        ]);
-        $this->assertSoftDeleted('ml_model_states', [
-            'id' => $state->id,
-        ]);
-    }
 }

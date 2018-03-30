@@ -28,6 +28,11 @@ class UserServiceProvider extends ServiceProvider
         User::updating(function (User $user) {
             $user->password = bcrypt($user->getDirty()['password']);
         });
+
+        User::deleting(function (User $user) {
+            $user->teams()->detach();
+            $user->projects()->detach();
+        });
     }
 
     /**

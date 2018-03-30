@@ -19,15 +19,19 @@ class ProjectServiceProvider extends ServiceProvider
             $project->token = str_random(Project::ITEM_TOKEN_LENGTH);
         });
 
-        Project::created(function (Project $team) {
+        Project::created(function (Project $project) {
             $role = Role::where('alias', Project::PROJECT_OWNER_ROLE_ALIAS)->first();
 
-            $team->users()->attach(auth()->user(), [
+            $project->users()->attach(auth()->user(), [
                 'is_owner'         => true,
                 'is_valid'         => true,
                 'validation_token' => str_random(Project::ITEM_TOKEN_LENGTH),
                 'role_id'          => $role->id,
             ]);
+        });
+
+        Project::deleting(function (Project $project) {
+            $project->teams()->detach();
         });
     }
 
