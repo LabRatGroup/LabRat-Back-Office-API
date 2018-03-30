@@ -62,6 +62,28 @@ class MlModelStateController extends ApiController
     }
 
     /**
+     * Displays model state by id.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function show($id)
+    {
+        try {
+            /** @var MlModelState $state */
+            $state = $this->mlModelStateRepository->findOneOrFailById($id);
+            $this->authorize('view', $state->model->project);
+
+            return $this->responseOk($state);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    /**
      * Creates a new model state.
      *
      * @param MlModelStateRequest $request
