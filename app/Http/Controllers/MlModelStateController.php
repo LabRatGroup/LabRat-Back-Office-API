@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\MlModelStateRequest;
+use App\Jobs\RunMachineLearningModelTrainingScript;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelState;
@@ -111,7 +112,48 @@ class MlModelStateController extends ApiController
             $state->setModel($model);
             $state->setAlgorithm($algorithm);
 
+            RunMachineLearningModelTrainingScript::dispatch($state);
+
             return $this->responseCreated($state);
+
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    /**
+     * Updates a model state and generates a new one.
+     *
+     * @param MlModelStateRequest $request
+     *
+     * @return JsonResponse
+     */
+    public function update(MlModelStateRequest $request)
+    {
+        try {
+            $params = $request->only([
+                'params',
+                'ml_model_id',
+                'ml_algorithm_id'
+            ]);
+
+            /** @var MlModel $model */
+            $model = $this->mlModelRepository->findOneOrFailById($params['ml_model_id']);
+            $this->authorize('view', $model->project);
+
+            /** @var MlAlgorithm $algorithm */
+            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params['ml_algorithm_id']);
+
+            /** @var MlModelState $state */
+            $state = $this->mlModelStateRepository->create($params);
+            $state->setModel($model);
+            $state->setAlgorithm($algorithm);
+
+            RunMachineLearningModelTrainingScript::dispatch($state);
+
+            return $this->responseOk($state);
 
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
