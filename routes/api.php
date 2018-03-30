@@ -69,7 +69,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 });
 
 Route::group(['middleware' => ['jwt.auth']], function () {
-//    Route::get('state/model/{id}', 'MlModelStateController@index')->name('state.index');
+    Route::get('state/model/{id}', 'MlModelStateController@index')->name('state.index');
 //    Route::get('state/show/{id}', 'MlModelStateController@show')->name('state.show');
     Route::post('state/create', 'MlModelStateController@create')->name('state.create');
 //    Route::post('state/{id}/update', 'MlModelStateController@update')->name('state.update');
