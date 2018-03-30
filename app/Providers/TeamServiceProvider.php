@@ -29,6 +29,10 @@ class TeamServiceProvider extends ServiceProvider
                 'role_id'          => $role->id,
             ]);
         });
+
+        Team::deleting(function (Team $team) {
+            $team->projects()->detach();
+        });
     }
 
     /**
