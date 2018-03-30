@@ -22,7 +22,7 @@ class CreateMlAlgorithmParams extends Migration
             $table->float('high_range')->nullable(true);
             $table->float('step')->nullable(true);
             $table->string('classType')->nullable(false);
-            $table->float('options')->nullable(true);
+            $table->string('options')->nullable(true);
             $table->unsignedInteger('ml_algorithm_id')->nullable(true);
             $table->timestamps();
         });
