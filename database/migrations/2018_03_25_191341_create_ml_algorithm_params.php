@@ -16,7 +16,7 @@ class CreateMlAlgorithmParams extends Migration
         Schema::create('ml_algorithm_params', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->nullable(false);
-            $table->string('description')->nullable(true);
+            $table->longText('description')->nullable(true);
             $table->string('key')->nullable(false);
             $table->float('low_range')->nullable(true);
             $table->float('high_range')->nullable(true);
