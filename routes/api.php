@@ -56,7 +56,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 });
 
 Route::group(['middleware' => ['jwt.auth']], function () {
-//    Route::get('model', 'MlModelController@index')->name('model.index');
+    Route::get('models/project/{id}', 'MlModelController@index')->name('model.index');
     Route::get('model/show/{id}', 'MlModelController@show')->name('model.show');
     Route::post('model/create', 'MlModelController@create')->name('model.create');
     Route::post('model/{id}/update', 'MlModelController@update')->name('model.update');

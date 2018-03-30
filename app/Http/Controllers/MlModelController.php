@@ -38,6 +38,28 @@ class MlModelController extends ApiController
     }
 
     /**
+     * Display al models.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function index($id)
+    {
+        try {
+            /** @var Project $project */
+            $project = $this->projectRepository->findOneOrFailById($id);
+            $this->authorize('view', $project);
+
+            return $this->responseOk($project->models);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    /**
      * Display model details.
      *
      * @param $id
