@@ -339,4 +339,95 @@ class MlModelStateControllerTest extends TestCase
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
     }
+
+    /** @test */
+    public function project_user_should_access_model_state()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $role = Role::where('alias', Project::PROJECT_DEFAULT_ROLE_ALIAS)->first();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+        $project->users()->attach($member, ['role_id' => $role->id]);
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create();
+
+        $model->setProject($project);
+        $state->setModel($model);
+
+        // When
+        $response = $this->get(route('state.show', ['id' => $model->id]), $this->getAuthHeader($member));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['params' => $state->params]);
+    }
+
+    /** @test */
+    public function team_member_should_access_model_state()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $role = Role::where('alias', Team::TEAM_DEFAULT_ROLE_ALIAS)->first();
+        $this->be($user);
+
+        /** @var Team $team */
+        $team = factory(Team::class)->create();
+        $team->users()->attach($member, ['role_id' => $role->id]);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+        $team->projects()->attach($project);
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create();
+
+        $model->setProject($project);
+        $state->setModel($model);
+
+        // When
+        $response = $this->get(route('state.show', ['id' => $model->id]), $this->getAuthHeader($member));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['params' => $state->params]);
+    }
+
+    /** @test */
+    public function user_should_not_access_all_model_state()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create();
+
+        $model->setProject($project);
+        $state->setModel($model);
+
+        // When
+        $response = $this->get(route('state.show', ['id' => $model->id]), $this->getAuthHeader($member));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+    }
 }
