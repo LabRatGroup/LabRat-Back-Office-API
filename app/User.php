@@ -20,6 +20,8 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property string token
+ * @property mixed  projects
+ * @property mixed  teams
  */
 class User extends Authenticatable implements JWTSubject
 {
