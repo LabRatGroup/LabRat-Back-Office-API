@@ -11,7 +11,7 @@ class CreateMlModelStateForeign extends Migration
         Schema::table('ml_model_states', function (Blueprint $table) {
             $table->foreign('ml_model_id')->references('id')->on('ml_models')->onDelete('cascade');
             $table->foreign('ml_algorithm_id')->references('id')->on('ml_algorithms')->onDelete('cascade');
-            $table->foreign('ml_state_score')->references('id')->on('ml_model_state_scores')->onDelete('cascade');
+            $table->foreign('ml_model_state_score_id')->references('id')->on('ml_model_state_scores')->onDelete('cascade');
         });
     }
 
@@ -20,7 +20,7 @@ class CreateMlModelStateForeign extends Migration
         Schema::table('ml_model_states', function (Blueprint $table) {
             $table->dropForeign(['ml_model_id']);
             $table->dropForeign(['ml_algorithm_id']);
-            $table->dropForeign(['ml_state_score']);
+            $table->dropForeign(['ml_model_state_score_id']);
         });
     }
 }

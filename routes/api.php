@@ -76,3 +76,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::delete('state/{id}/delete', 'MlModelStateController@delete')->name('state.delete');
     Route::post('state/{id}/current', 'MlModelStateController@current')->name('state.current');
 });
+
+Route::group(['middleware' => ['jwt.auth']], function () {
+    Route::get('score/state/{id}/show', 'MlModelStateScoreController@show')->name('score.show');
+});
