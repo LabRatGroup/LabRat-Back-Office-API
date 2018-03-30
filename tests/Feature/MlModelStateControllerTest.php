@@ -606,4 +606,85 @@ class MlModelStateControllerTest extends TestCase
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
         $this->assertCount(1, $model->states);
     }
+
+    /** @test */
+    public function project_user_should_set_model_state_as_active()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlModelState $state1 */
+        $state1 = factory(MlModelState::class)->create(['is_current' => true]);
+
+        /** @var MlModelState $state2 */
+        $state2 = factory(MlModelState::class)->create(['is_current' => false]);
+
+        $model->setProject($project);
+        $state1->setModel($model);
+        $state2->setModel($model);
+
+        // When
+        $response = $this->post(route('state.current', ['id' => $state2->id]), [], $this->getAuthHeader($user));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state1->id,
+            'is_current' => 0,
+        ]);
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state2->id,
+            'is_current' => 1,
+        ]);
+    }
+
+    /** @test */
+    public function non_project_user_should_set_model_state_as_active()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Team $team */
+        $team = factory(Team::class)->create();
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+        $team->projects()->attach($project);
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlModelState $state1 */
+        $state1 = factory(MlModelState::class)->create(['is_current' => true]);
+
+        /** @var MlModelState $state2 */
+        $state2 = factory(MlModelState::class)->create(['is_current' => false]);
+
+        $model->setProject($project);
+        $state1->setModel($model);
+        $state2->setModel($model);
+
+        // When
+        $response = $this->post(route('state.current', ['id' => $state2->id]), [], $this->getAuthHeader($member));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state1->id,
+            'is_current' => 1,
+        ]);
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state2->id,
+            'is_current' => 0,
+        ]);
+    }
 }
