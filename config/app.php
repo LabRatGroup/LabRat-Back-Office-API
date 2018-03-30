@@ -169,6 +169,7 @@ return [
         \App\Providers\ProjectServiceProvider::class,
         \App\Providers\MlModelServiceProvider::class,
         \App\Providers\MlModelStateServiceProvider::class,
+        \App\Providers\MlModelStateScoreServiceProvider::class,
 
     ],
 

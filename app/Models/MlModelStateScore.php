@@ -13,6 +13,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
+ * @property mixed  kappa
+ * @property string token
+ * @property int    ml_model_state_id
  */
 class MlModelStateScore extends Model
 {
@@ -50,6 +53,11 @@ class MlModelStateScore extends Model
      */
     public function state()
     {
-        return $this->belongsTo(MlModelState::class);
+        return $this->belongsTo(MlModelState::class, 'ml_model_state_id');
+    }
+
+    public function setState($state)
+    {
+        $this->state()->associate($state)->save();
     }
 }

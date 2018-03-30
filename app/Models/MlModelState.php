@@ -100,6 +100,4 @@ class MlModelState extends BaseEntity
         $this->is_current = $value;
         $this->save();
     }
-
-
 }
