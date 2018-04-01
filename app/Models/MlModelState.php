@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon  $deleted_at
  * @property mixed   params
  * @property boolean is_current
+ * @property mixed   file_extension
  */
 class MlModelState extends BaseEntity
 {
@@ -35,6 +36,7 @@ class MlModelState extends BaseEntity
     protected $fillable = [
         'is_current',
         'params',
+        'file_extension',
     ];
 
     protected $hidden = [
