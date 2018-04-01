@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\DataFileErrorException;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\MlModelStateRequest;
 use App\Jobs\RunMachineLearningModelTrainingScript;
@@ -12,6 +13,7 @@ use App\Repositories\MlAlgorithmRepository;
 use App\Repositories\MlModelRepository;
 use App\Repositories\MlModelStateRepository;
 use Exception;
+use Faker\Provider\File;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 
@@ -104,6 +106,17 @@ class MlModelStateController extends ApiController
             $model = $this->mlModelRepository->findOneOrFailById($params['ml_model_id']);
             $this->authorize('view', $model->project);
 
+            if (!$request->hasFile('file')) {
+                throw new DataFileErrorException('No training data file was provided.');
+            }
+
+            if (!$request->file('file')->isValid()) {
+                throw new DataFileErrorException('Training data file was corrupted.');
+            }
+
+            $file = $request->file('file');
+            $params['file_extension'] = $file->extension();
+
             /** @var MlAlgorithm $algorithm */
             $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params['ml_algorithm_id']);
 
@@ -112,12 +125,16 @@ class MlModelStateController extends ApiController
             $state->setModel($model);
             $state->setAlgorithm($algorithm);
 
+            $file->storeAs('files/training', $state->token . '.' . $params['file_extension']);
+
             RunMachineLearningModelTrainingScript::dispatch($state);
 
             return $this->responseCreated($state);
 
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
+        } catch (DataFileErrorException $dataFileErrorException) {
+            return $this->responseInternalError($dataFileErrorException->getMessage());
         } catch (Exception $e) {
             return $this->responseInternalError($e->getMessage());
         }
@@ -150,6 +167,23 @@ class MlModelStateController extends ApiController
             $state = $this->mlModelStateRepository->create($params);
             $state->setModel($model);
             $state->setAlgorithm($algorithm);
+
+            if ($request->hasFile('file')) {
+                if (!$request->file('file')->isValid()) {
+                    throw new DataFileErrorException('Training data file was corrupted.');
+                }
+
+                $file = $request->file('file');
+                $params['file_extension'] = $file->extension();
+
+                $file->storeAs('files/training', $state->token . '.' . $params['file_extension']);
+            } else {
+                /** @var MlModelState $currentState */
+                $currentState = $model->getCurrentState();
+
+                File::copy(base_path('files/training/' . $currentState->token . '.' . $currentState->file_extension), base_path('files/training/' . $state->token . '.' . $currentState->file_extension));
+                $state = $this->mlModelStateRepository->update($state, $params);
+            }
 
             RunMachineLearningModelTrainingScript::dispatch($state);
 

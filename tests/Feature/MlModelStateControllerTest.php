@@ -9,6 +9,7 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
 use App\User;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -54,6 +55,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
+            'file'            => UploadedFile::fake()->create('data.csv', 100000)
         ];
 
         // When
@@ -115,6 +117,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
+            'file'            => UploadedFile::fake()->create('data.csv', 100000)
         ];
 
         // When
@@ -166,6 +169,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
+            'file'            => UploadedFile::fake()->create('data.csv', 100000)
         ];
 
         // When
@@ -176,6 +180,57 @@ class MlModelStateControllerTest extends TestCase
         $this->assertDatabaseMissing('ml_model_states', [
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
+        ]);
+    }
+
+    /** @test */
+    public function data_file_missing_on_create_model_state()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        $params = [
+            'method'        => 'knn',
+            'preprocessing' => 'range',
+            'metric'        => 'Accuracy',
+            'control'       => [
+                'trainControlMethodRounds' => 10,
+                'trainControlMethod'       => 'cv',
+            ],
+            'tune'          => [
+                'k' => [
+                    'mix'  => 2,
+                    'max'  => 8,
+                    'step' => 1,
+                ],
+            ],
+        ];
+
+        $data = [
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+            'params'          => json_encode($params),
+        ];
+
+        // When
+        $response = $this->postJson(route('state.create'), $data, $this->getAuthHeader($user));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
+        $this->assertDatabaseMissing('ml_model_states', [
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+            'params'          => json_encode($params),
         ]);
     }
 
@@ -476,6 +531,65 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
+            'file'            => UploadedFile::fake()->create('data.csv', 100000)
+        ];
+
+        // When
+        $response = $this->post(route('state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['params' => json_encode($params)]);
+
+        $this->assertCount(2, $model->states);
+
+    }
+
+    /** @test */
+    public function project_user_should_update_state_without_file()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $role = Role::where('alias', Project::PROJECT_DEFAULT_ROLE_ALIAS)->first();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+        $project->users()->attach($member, ['role_id' => $role->id]);
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create();
+
+        $model->setProject($project);
+        $state->setModel($model);
+
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        $params = [
+            'method'        => 'knn',
+            'preprocessing' => 'range',
+            'metric'        => 'Accuracy',
+            'control'       => [
+                'trainControlMethodRounds' => 10,
+                'trainControlMethod'       => 'cv',
+            ],
+            'tune'          => [
+                'k' => [
+                    'mix'  => 2,
+                    'max'  => 8,
+                    'step' => 1,
+                ],
+            ],
+        ];
+
+        $data = [
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+            'params'          => json_encode($params),
         ];
 
         // When
@@ -538,6 +652,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
+            'file'            => UploadedFile::fake()->create('data.csv', 100000)
         ];
 
         // When
@@ -597,6 +712,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
+            'file'            => UploadedFile::fake()->create('data.csv', 100000)
         ];
 
         // When
