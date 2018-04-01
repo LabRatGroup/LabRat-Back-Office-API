@@ -63,4 +63,18 @@ class MlModel extends BaseEntity
     {
         $this->project()->associate($project)->save();
     }
+
+    /**
+     * @return bool|MlModelState
+     */
+    public function getCurrentState()
+    {
+        foreach ($this->states as $state) {
+            if ($state->is_current) {
+                return $state;
+            }
+        }
+
+        return false;
+    }
 }
