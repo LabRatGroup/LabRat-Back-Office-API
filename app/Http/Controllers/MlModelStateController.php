@@ -12,10 +12,12 @@ use App\Models\MlModelState;
 use App\Repositories\MlAlgorithmRepository;
 use App\Repositories\MlModelRepository;
 use App\Repositories\MlModelStateRepository;
+use App\Services\MlModelStateTrainingDataService;
 use Exception;
-use Faker\Provider\File;
+
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 
 class MlModelStateController extends ApiController
 {
@@ -28,18 +30,23 @@ class MlModelStateController extends ApiController
     /** @var MlAlgorithmRepository */
     private $mlAlgorithmRepository;
 
+    /** @var MlModelStateTrainingDataService */
+    private $mlModelStateTrainingDataService;
+
     /**
      * MlModelStateController constructor.
      *
-     * @param MlModelStateRepository $mlModelStateRepository
-     * @param MlModelRepository      $mlModelRepository
-     * @param MlAlgorithmRepository  $mlAlgorithmRepository
+     * @param MlModelStateRepository          $mlModelStateRepository
+     * @param MlModelRepository               $mlModelRepository
+     * @param MlAlgorithmRepository           $mlAlgorithmRepository
+     * @param MlModelStateTrainingDataService $mlModelStateTrainingDataService
      */
-    public function __construct(MlModelStateRepository $mlModelStateRepository, MlModelRepository $mlModelRepository, MlAlgorithmRepository $mlAlgorithmRepository)
+    public function __construct(MlModelStateRepository $mlModelStateRepository, MlModelRepository $mlModelRepository, MlAlgorithmRepository $mlAlgorithmRepository, MlModelStateTrainingDataService $mlModelStateTrainingDataService)
     {
         $this->mlModelStateRepository = $mlModelStateRepository;
         $this->mlModelRepository = $mlModelRepository;
         $this->mlAlgorithmRepository = $mlAlgorithmRepository;
+        $this->mlModelStateTrainingDataService = $mlModelStateTrainingDataService;
     }
 
     /**
@@ -115,7 +122,6 @@ class MlModelStateController extends ApiController
             }
 
             $file = $request->file('file');
-            $params['file_extension'] = $file->extension();
 
             /** @var MlAlgorithm $algorithm */
             $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params['ml_algorithm_id']);
@@ -125,7 +131,7 @@ class MlModelStateController extends ApiController
             $state->setModel($model);
             $state->setAlgorithm($algorithm);
 
-            $file->storeAs('files/training', $state->token . '.' . $params['file_extension']);
+            $this->mlModelStateTrainingDataService->create($file, $state);
 
             RunMachineLearningModelTrainingScript::dispatch($state);
 
@@ -133,10 +139,8 @@ class MlModelStateController extends ApiController
 
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
-        } catch (DataFileErrorException $dataFileErrorException) {
-            return $this->responseInternalError($dataFileErrorException->getMessage());
-        } catch (Exception $e) {
-            return $this->responseInternalError($e->getMessage());
+        } catch (DataFileErrorException | Exception $exception) {
+            return $this->responseInternalError($exception->getMessage());
         }
     }
 
@@ -181,7 +185,10 @@ class MlModelStateController extends ApiController
                 /** @var MlModelState $currentState */
                 $currentState = $model->getCurrentState();
 
-                File::copy(base_path('files/training/' . $currentState->token . '.' . $currentState->file_extension), base_path('files/training/' . $state->token . '.' . $currentState->file_extension));
+                $fileFrom = storage_path('files/training/' . $currentState->token . '.' . $currentState->file_extension);
+                $fileTo = storage_path('files/training/' . $state->token . '.' . $currentState->file_extension);
+                Storage::copy($fileFrom, $fileTo);
+
                 $state = $this->mlModelStateRepository->update($state, $params);
             }
 
