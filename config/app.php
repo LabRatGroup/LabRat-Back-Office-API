@@ -165,6 +165,8 @@ return [
          * Debug
          */
         Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class,
+        Jenssegers\Mongodb\MongodbServiceProvider::class,
+
 
         /**
          * App local service providers...
@@ -224,6 +226,7 @@ return [
         'URL'          => Illuminate\Support\Facades\URL::class,
         'Validator'    => Illuminate\Support\Facades\Validator::class,
         'View'         => Illuminate\Support\Facades\View::class,
-        'Bugsnag' => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
+        'Bugsnag'      => Bugsnag\BugsnagLaravel\Facades\Bugsnag::class,
+        'Moloquent'    => Jenssegers\Mongodb\Eloquent\Model::class,
     ],
 ];
