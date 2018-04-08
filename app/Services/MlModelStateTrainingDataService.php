@@ -24,20 +24,39 @@ class MlModelStateTrainingDataService
     }
 
     /**
+     * Creates a new training data entry.
+     *
      * @param UploadedFile $file
      *
-     * @param MlModelState $mlModelState
+     * @param MlModelState $state
      *
      * @return Model
      */
-    public function create(UploadedFile $file, MlModelState $mlModelState)
+    public function create(UploadedFile $file, MlModelState $state)
     {
-        $params['file_name'] = $file->getFilename();
-        $params['file_extension'] = $file->extension();
+        $params['algorithm'] = json_encode($state->algorithm);
+        $params['params'] = $state->params;
+        $params['mime_type'] = $file->getMimeType();
         $params['data'] = $file->openFile('r')->fread($file->getSize());
-        $params['ml_model_state_id'] = $mlModelState->id;
 
-        /** @var MlModelStateTrainingData $trainingData */
+        return $this->mlModelStateTrainingDataRepository->create($params);
+    }
+
+    /**
+     * Creates a new training data entry from another onw.
+     *
+     * @param MlModelStateTrainingData $trainingData
+     * @param MlModelState             $state
+     *
+     * @return Model
+     */
+    public function copy(MlModelStateTrainingData $trainingData, MlModelState $state)
+    {
+        $params['algorithm'] = json_encode($state->algorithm);
+        $params['params'] = $state->params;
+        $params['mime_type'] = $trainingData->mime_type;
+        $params['data'] = $trainingData->data;
+
         return $this->mlModelStateTrainingDataRepository->create($params);
     }
 }

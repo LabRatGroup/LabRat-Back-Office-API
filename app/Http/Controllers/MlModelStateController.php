@@ -133,7 +133,7 @@ class MlModelStateController extends ApiController
 
             /** @var MlModelStateTrainingData $modelStateTrainingData */
             $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $state);
-            $state->trainingData()->associate($modelStateTrainingData);
+            $state->trainingData()->save($modelStateTrainingData);
 
             RunMachineLearningModelTrainingScript::dispatch($state);
 
@@ -180,10 +180,10 @@ class MlModelStateController extends ApiController
             } else {
                 /** @var MlModelState $currentState */
                 $currentState = $baseState->model->getCurrentState();
-                $modelStateTrainingData = $currentState->trainingData;
+                $modelStateTrainingData = $this->mlModelStateTrainingDataService->copy($currentState->trainingData, $state);
             }
 
-            $state->trainingData()->associate($modelStateTrainingData);
+            $state->trainingData()->save($modelStateTrainingData);
 
             RunMachineLearningModelTrainingScript::dispatch($state);
 

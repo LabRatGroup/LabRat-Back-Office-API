@@ -21,7 +21,6 @@ use Jenssegers\Mongodb\Eloquent\HybridRelations;
  * @property mixed   params
  * @property boolean is_current
  * @property mixed   file_extension
- * @property mixed   ml_model_state_training_data_id
  * @property mixed   trainingData
  */
 class MlModelState extends BaseEntity
@@ -40,7 +39,6 @@ class MlModelState extends BaseEntity
     protected $fillable = [
         'is_current',
         'params',
-        'file_extension',
     ];
 
     protected $hidden = [
@@ -74,11 +72,11 @@ class MlModelState extends BaseEntity
     }
 
     /**
-     * @return BelongsTo
+     * @return HasOne
      */
     public function trainingData()
     {
-        return $this->belongsTo(MlModelStateTrainingData::class);
+        return $this->hasOne(MlModelStateTrainingData::class);
     }
 
     /**
@@ -113,13 +111,5 @@ class MlModelState extends BaseEntity
     {
         $this->is_current = $value;
         $this->save();
-    }
-
-    /**
-     * @param MlModelStateTrainingData $modelStateTrainingData
-     */
-    public function setTrainingData(MlModelStateTrainingData $modelStateTrainingData)
-    {
-        $this->ml_model_state_training_data_id = $modelStateTrainingData->getQueueableId();
     }
 }

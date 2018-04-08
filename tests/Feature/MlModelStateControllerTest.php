@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelState;
+use App\Models\MlModelStateTrainingData;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
@@ -71,13 +72,19 @@ class MlModelStateControllerTest extends TestCase
         // When
         $response = $this->postJson(route('state.create'), $data, $this->getAuthHeader($user));
 
+        /** @var MlModelState $stateDB */
+        $stateDB = MlModelState::find($response->json('data')['id']);
+
+
         // Then
         $response->assertStatus(HttpResponse::HTTP_CREATED);
+        $this->assertInstanceOf(MlModelStateTrainingData::class, $stateDB->trainingData);
         $this->assertDatabaseHas('ml_model_states', [
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
         ]);
+
     }
 
     /** @test */
@@ -515,8 +522,12 @@ class MlModelStateControllerTest extends TestCase
         /** @var MlModelState $state */
         $state = factory(MlModelState::class)->create();
 
+        /** @var MlModelStateTrainingData $trainingData */
+        $trainingData = factory(MlModelStateTrainingData::class)->create();
+
         $model->setProject($project);
         $state->setModel($model);
+        $state->trainingData()->save($trainingData);
 
         $algorithm = MlAlgorithm::where('alias', 'knn')->first();
 
@@ -546,13 +557,14 @@ class MlModelStateControllerTest extends TestCase
 
         // When
         $response = $this->post(route('state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+        $trainingDataItems = MlModelStateTrainingData::all();
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
         $response->assertJsonFragment(['params' => json_encode($params)]);
 
         $this->assertCount(2, $model->states);
-
+        $this->assertCount(2, $trainingDataItems);
     }
 
     /** @test */
@@ -574,8 +586,12 @@ class MlModelStateControllerTest extends TestCase
         /** @var MlModelState $state */
         $state = factory(MlModelState::class)->create();
 
+        /** @var MlModelStateTrainingData $trainingData */
+        $trainingData = factory(MlModelStateTrainingData::class)->create();
+
         $model->setProject($project);
         $state->setModel($model);
+        $state->trainingData()->save($trainingData);
 
         $algorithm = MlAlgorithm::where('alias', 'knn')->first();
 
@@ -604,13 +620,14 @@ class MlModelStateControllerTest extends TestCase
 
         // When
         $response = $this->post(route('state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+        $trainingDataItems = MlModelStateTrainingData::all();
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
         $response->assertJsonFragment(['params' => json_encode($params)]);
 
         $this->assertCount(2, $model->states);
-
+        $this->assertCount(2, $trainingDataItems);
     }
 
     /** @test */

@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factory;
 /** @var Factory $factory */
 $factory->define(\App\Models\MlModelStateTrainingData::class, function (Faker $faker) {
     return [
-        'file_name'      => $faker->word(),
-        'file_extension' => $faker->word(),
-        'ml_model_state_id' => null,
-        'data'           => $faker->words(10),
+        'mime_type' => $faker->mimeType,
+        'data'      => $faker->words(10),
+        'algorithm' => null,
+        'params'    => null,
     ];
 });

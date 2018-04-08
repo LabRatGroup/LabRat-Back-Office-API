@@ -21,7 +21,7 @@ class MlModelStateTrainingDataServiceTest extends TestCase
     public function should_store_text_file()
     {
         // Given
-        $file = UploadedFile::fake()->create('data.csv', 100000);
+        $file = UploadedFile::fake()->create('data.csv', 10000);
         $state = factory(MlModelState::class)->make();
         $stubModel = factory(MlModelStateTrainingData::class)->make([
             'file_name'         => $file->getFilename(),
