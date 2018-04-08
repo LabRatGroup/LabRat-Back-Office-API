@@ -7,6 +7,7 @@ use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Jenssegers\Mongodb\Eloquent\HybridRelations;
 
 /**
  * @property int     $id
@@ -20,10 +21,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property mixed   params
  * @property boolean is_current
  * @property mixed   file_extension
+ * @property mixed   ml_model_state_training_data_id
+ * @property mixed   trainingData
  */
 class MlModelState extends BaseEntity
 {
     use SoftDeletes, CascadeSoftDeletes;
+    use HybridRelations;
 
     const ITEM_TOKEN_LENGTH = 25;
 
@@ -70,6 +74,14 @@ class MlModelState extends BaseEntity
     }
 
     /**
+     * @return BelongsTo
+     */
+    public function trainingData()
+    {
+        return $this->belongsTo(MlModelStateTrainingData::class);
+    }
+
+    /**
      * @param MlModel $model
      */
     public function setModel(MlModel $model)
@@ -101,5 +113,13 @@ class MlModelState extends BaseEntity
     {
         $this->is_current = $value;
         $this->save();
+    }
+
+    /**
+     * @param MlModelStateTrainingData $modelStateTrainingData
+     */
+    public function setTrainingData(MlModelStateTrainingData $modelStateTrainingData)
+    {
+        $this->ml_model_state_training_data_id = $modelStateTrainingData->getQueueableId();
     }
 }

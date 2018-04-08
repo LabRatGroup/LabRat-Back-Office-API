@@ -18,6 +18,16 @@ class MlModelStateControllerTest extends TestCase
 {
     use RefreshDatabase;
 
+    private const FILE_SIZE = 10000;
+
+    private $file;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->file = UploadedFile::fake()->create('data.csv', self::FILE_SIZE);
+    }
+
     /** @test */
     public function project_user_should_create_model_state()
     {
@@ -55,7 +65,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
-            'file'            => UploadedFile::fake()->create('data.csv', 100000)
+            'file'            => $this->file
         ];
 
         // When
@@ -117,7 +127,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
-            'file'            => UploadedFile::fake()->create('data.csv', 100000)
+            'file'            => $this->file
         ];
 
         // When
@@ -169,7 +179,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
-            'file'            => UploadedFile::fake()->create('data.csv', 100000)
+            'file'            => $this->file
         ];
 
         // When
@@ -226,7 +236,7 @@ class MlModelStateControllerTest extends TestCase
         $response = $this->postJson(route('state.create'), $data, $this->getAuthHeader($user));
 
         // Then
-        $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
+        $response->assertStatus(HttpResponse::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertDatabaseMissing('ml_model_states', [
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
@@ -531,7 +541,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
-            'file'            => UploadedFile::fake()->create('data.csv', 100000)
+            'file'            => $this->file,
         ];
 
         // When
@@ -652,7 +662,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
-            'file'            => UploadedFile::fake()->create('data.csv', 100000)
+            'file'            => $this->file,
         ];
 
         // When
@@ -712,7 +722,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
-            'file'            => UploadedFile::fake()->create('data.csv', 100000)
+            'file'            => $this->file,
         ];
 
         // When

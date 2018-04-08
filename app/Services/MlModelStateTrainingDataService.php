@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\MlModelState;
+use App\Models\MlModelStateTrainingData;
 use App\Repositories\MlModelStateTrainingDataRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
@@ -33,8 +34,10 @@ class MlModelStateTrainingDataService
     {
         $params['file_name'] = $file->getFilename();
         $params['file_extension'] = $file->extension();
+        $params['data'] = $file->openFile('r')->fread($file->getSize());
         $params['ml_model_state_id'] = $mlModelState->id;
 
+        /** @var MlModelStateTrainingData $trainingData */
         return $this->mlModelStateTrainingDataRepository->create($params);
     }
 }

@@ -27,7 +27,7 @@ class MlModelStateRequest extends FormRequest
             'params'          => 'required',
             'ml_model_id'     => 'required',
             'ml_algorithm_id' => 'required',
-            //'file'            => 'required',
+            'file'            => 'required',
         ];
     }
 
@@ -37,7 +37,7 @@ class MlModelStateRequest extends FormRequest
             'params.required'          => 'Provide the model training parameters.',
             'ml_model_id.required'     => 'Provide a parent model.',
             'ml_algorithm_id.required' => 'Provide a prediction algorithm.',
-            //'file.required'            => 'Provide a training data file.'
+            'file.required'            => 'Provide a training data file.'
         ];
     }
 }

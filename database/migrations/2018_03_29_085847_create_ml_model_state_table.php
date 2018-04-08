@@ -22,6 +22,7 @@ class CreateMlModelStateTable extends Migration
             $table->unsignedInteger('ml_model_id')->nullable(true);
             $table->unsignedInteger('ml_algorithm_id')->nullable(true);
             $table->unsignedInteger('ml_model_state_score_id')->nullable(true);
+            $table->unsignedInteger('ml_model_state_training_data_id')->nullable(true);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +31,7 @@ class CreateMlModelStateTable extends Migration
             $table->index('is_current');
             $table->index('ml_model_id');
             $table->index('ml_algorithm_id');
+            $table->index('ml_model_state_training_data_id');
             $table->unique('token');
             $table->unique('ml_model_state_score_id');
         });

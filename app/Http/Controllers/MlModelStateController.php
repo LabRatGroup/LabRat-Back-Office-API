@@ -9,6 +9,7 @@ use App\Jobs\RunMachineLearningModelTrainingScript;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelState;
+use App\Models\MlModelStateTrainingData;
 use App\Repositories\MlAlgorithmRepository;
 use App\Repositories\MlModelRepository;
 use App\Repositories\MlModelStateRepository;
@@ -17,10 +18,17 @@ use Exception;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class MlModelStateController extends ApiController
 {
+    private const MODEL_STATE_PARAMS_PARAMETER = 'params';
+    private const MODEL_ID_PARAMETER = 'ml_model_id';
+    private const ALGORITHM_ID_PARAMETER = 'ml_algorithm_id';
+    private const TRAINING_DATA_FILE_PARAMETER = 'file';
+    private const TRAINING_DATA_FILE_EXTENSION_PARAMETER = 'file_extension';
+
     /** @var MlModelStateRepository */
     private $mlModelStateRepository;
 
@@ -103,35 +111,29 @@ class MlModelStateController extends ApiController
     public function create(MlModelStateRequest $request)
     {
         try {
-            $params = $request->only([
-                'params',
-                'ml_model_id',
-                'ml_algorithm_id'
-            ]);
+            $params = $this->getParams($request);
 
             /** @var MlModel $model */
-            $model = $this->mlModelRepository->findOneOrFailById($params['ml_model_id']);
+            $model = $this->mlModelRepository->findOneOrFailById($params[self::MODEL_ID_PARAMETER]);
             $this->authorize('view', $model->project);
 
-            if (!$request->hasFile('file')) {
-                throw new DataFileErrorException('No training data file was provided.');
-            }
-
-            if (!$request->file('file')->isValid()) {
+            if (!$request->file(self::TRAINING_DATA_FILE_PARAMETER)->isValid()) {
                 throw new DataFileErrorException('Training data file was corrupted.');
             }
 
-            $file = $request->file('file');
+            $file = $request->file(self::TRAINING_DATA_FILE_PARAMETER);
 
             /** @var MlAlgorithm $algorithm */
-            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params['ml_algorithm_id']);
+            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params[self::ALGORITHM_ID_PARAMETER]);
 
             /** @var MlModelState $state */
             $state = $this->mlModelStateRepository->create($params);
             $state->setModel($model);
             $state->setAlgorithm($algorithm);
 
-            $this->mlModelStateTrainingDataService->create($file, $state);
+            /** @var MlModelStateTrainingData $modelStateTrainingData */
+            $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $state);
+            $state->trainingData()->associate($modelStateTrainingData);
 
             RunMachineLearningModelTrainingScript::dispatch($state);
 
@@ -147,50 +149,41 @@ class MlModelStateController extends ApiController
     /**
      * Updates a model state and generates a new one.
      *
-     * @param MlModelStateRequest $request
+     * @param                     $id
+     * @param Request             $request
      *
      * @return JsonResponse
      */
-    public function update(MlModelStateRequest $request)
+    public function update($id, Request $request)
     {
         try {
-            $params = $request->only([
-                'params',
-                'ml_model_id',
-                'ml_algorithm_id'
-            ]);
+            $params = $this->getParams($request);
 
-            /** @var MlModel $model */
-            $model = $this->mlModelRepository->findOneOrFailById($params['ml_model_id']);
-            $this->authorize('view', $model->project);
+            /** @var MlModelState $baseState */
+            $baseState = $this->mlModelStateRepository->findOneOrFailById($id);
+            $this->authorize('view', $baseState->model->project);
 
             /** @var MlAlgorithm $algorithm */
-            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params['ml_algorithm_id']);
+            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params[self::ALGORITHM_ID_PARAMETER]);
 
             /** @var MlModelState $state */
             $state = $this->mlModelStateRepository->create($params);
-            $state->setModel($model);
+            $state->setModel($baseState->model);
             $state->setAlgorithm($algorithm);
 
-            if ($request->hasFile('file')) {
-                if (!$request->file('file')->isValid()) {
+            if ($request->hasFile(self::TRAINING_DATA_FILE_PARAMETER)) {
+                if (!$request->file(self::TRAINING_DATA_FILE_PARAMETER)->isValid()) {
                     throw new DataFileErrorException('Training data file was corrupted.');
                 }
-
-                $file = $request->file('file');
-                $params['file_extension'] = $file->extension();
-
-                $file->storeAs('files/training', $state->token . '.' . $params['file_extension']);
+                $file = $request->file(self::TRAINING_DATA_FILE_PARAMETER);
+                $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $state);
             } else {
                 /** @var MlModelState $currentState */
-                $currentState = $model->getCurrentState();
-
-                $fileFrom = storage_path('files/training/' . $currentState->token . '.' . $currentState->file_extension);
-                $fileTo = storage_path('files/training/' . $state->token . '.' . $currentState->file_extension);
-                Storage::copy($fileFrom, $fileTo);
-
-                $state = $this->mlModelStateRepository->update($state, $params);
+                $currentState = $baseState->model->getCurrentState();
+                $modelStateTrainingData = $currentState->trainingData;
             }
+
+            $state->trainingData()->associate($modelStateTrainingData);
 
             RunMachineLearningModelTrainingScript::dispatch($state);
 
@@ -249,5 +242,21 @@ class MlModelStateController extends ApiController
         } catch (Exception $e) {
             return $this->responseInternalError($e->getMessage());
         }
+    }
+
+    /**
+     * Gets allowed params from request variable.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function getParams(Request $request)
+    {
+        return $request->only([
+            self::MODEL_STATE_PARAMS_PARAMETER,
+            self::MODEL_ID_PARAMETER,
+            self::ALGORITHM_ID_PARAMETER
+        ]);
     }
 }
