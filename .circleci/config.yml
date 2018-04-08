@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/php:7.0-apache-node-browsers
+      - image: circleci/php:7.1-apache-node-browsers
       - image: circleci/mongo:3.6
     working_directory: ~/laravel
     steps:
