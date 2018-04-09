@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: jfernandez74/labrat-docker-container
+      - image: jfernandez74/labrat-docker-container:latest
       - image: circleci/mongo:3.6
       - image: circleci/mysql
       - image: zabbix/zabbix-proxy-sqlite3
