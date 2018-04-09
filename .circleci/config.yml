@@ -3,15 +3,13 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/php:7.1-node-browsers
+      - image: jfernandez74/labrat-docker-container
       - image: circleci/mongo:3.6
+      - image: circleci/mysql
+      - image: zabbix/zabbix-proxy-sqlite3
     working_directory: ~/laravel
     steps:
       - checkout
-      - run: sudo apt update
-      - run: sudo apt-get install php-mongodb
-      - run: sudo apt install -y libsqlite3-dev zlib1g-dev
-      - run: sudo docker-php-ext-install zip
       - run: sudo composer self-update
       - restore_cache:
           keys:
