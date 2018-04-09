@@ -8,9 +8,8 @@ jobs:
     working_directory: ~/laravel
     steps:
       - checkout
-      - run: sudo apt install -y libsqlite3-dev zlib1g-dev php7-mongodb
-      - run: sudo docker-php-ext-install zip
-      - run: sudo docker-php-ext-install mongo
+      - run: sudo apt install -y libsqlite3-dev zlib1g-dev
+      - run: sudo docker-php-ext-install mongodb
       - run: sudo composer self-update
       - restore_cache:
           keys:
