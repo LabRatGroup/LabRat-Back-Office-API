@@ -9,7 +9,8 @@ jobs:
     steps:
       - checkout
       - run: sudo apt install -y libsqlite3-dev zlib1g-dev
-      - run: pecl install mongodb
+      - run: sudo docker-php-ext-install zip
+      - run: sudo apt-get install php7.1-mongodb
       - run: sudo composer self-update
       - restore_cache:
           keys:
