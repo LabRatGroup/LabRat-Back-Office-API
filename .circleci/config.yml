@@ -3,13 +3,14 @@ version: 2
 jobs:
   build:
     docker:
-      - image: jfernandez74/labrat-docker-container:latest
+      - image: circleci/php:7.1-node-browsers
       - image: circleci/mongo:3.6
-      - image: circleci/mysql
-      - image: zabbix/zabbix-proxy-sqlite3
     working_directory: ~/laravel
     steps:
       - checkout
+      - run: sudo apt install -y libsqlite3-dev zlib1g-dev
+      - run: sudo docker-php-ext-install zip
+      - run: sudo composer self-update
       - restore_cache:
           keys:
             - composer-v1-{{ checksum "composer.lock" }}
@@ -28,4 +29,4 @@ jobs:
           key: node-v1-{{ checksum "package.json" }}
           paths:
             - node_modules
-      - run: vendor/bin/phpunit
+- run: vendor/bin/phpunit
