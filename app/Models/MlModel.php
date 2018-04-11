@@ -57,6 +57,14 @@ class MlModel extends BaseEntity
     }
 
     /**
+     * @return HasMany
+     */
+    public function predictions()
+    {
+        return $this->hasMany(MlModelPrediction::class);
+    }
+
+    /**
      * @param Project $project
      */
     public function setProject(Project $project)

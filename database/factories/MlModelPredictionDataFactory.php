@@ -1,11 +1,11 @@
 <?php
 
-use App\Models\MlModelStateTrainingData;
+use App\Models\MlModelPredictionData;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
 
 /** @var Factory $factory */
-$factory->define(MlModelStateTrainingData::class, function (Faker $faker) {
+$factory->define(MlModelPredictionData::class, function (Faker $faker) {
     return [
         'mime_type' => $faker->mimeType,
         'data'      => $faker->words(10),
