@@ -177,7 +177,7 @@ return [
         \App\Providers\MlModelServiceProvider::class,
         \App\Providers\MlModelStateServiceProvider::class,
         \App\Providers\MlModelStateScoreServiceProvider::class,
-
+        \App\Providers\MlModelPredictionServiceProvider::class,
     ],
 
     /*

@@ -19,7 +19,6 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class MlModelStateController extends ApiController
 {
@@ -27,7 +26,6 @@ class MlModelStateController extends ApiController
     private const MODEL_ID_PARAMETER = 'ml_model_id';
     private const ALGORITHM_ID_PARAMETER = 'ml_algorithm_id';
     private const TRAINING_DATA_FILE_PARAMETER = 'file';
-    private const TRAINING_DATA_FILE_EXTENSION_PARAMETER = 'file_extension';
 
     /** @var MlModelStateRepository */
     private $mlModelStateRepository;

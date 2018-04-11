@@ -22,11 +22,13 @@ class MlModelStateTrainingDataServiceTest extends TestCase
     {
         // Given
         $file = UploadedFile::fake()->create('data.csv', 10000);
+
+        /** @var MlModelState $state */
         $state = factory(MlModelState::class)->make();
+
+        /** @var MlModelStateTrainingData $stubModel */
         $stubModel = factory(MlModelStateTrainingData::class)->make([
-            'file_name'         => $file->getFilename(),
-            'file_extension'    => $file->extension(),
-            'ml_model_state_id' => $state->id,
+            'mime_type'         => $file->getMimeType(),
         ]);
 
         /** @var  MockObject|MlModelStateTrainingDataRepository $mlModelStateTrainingDataRepository */
@@ -36,12 +38,10 @@ class MlModelStateTrainingDataServiceTest extends TestCase
         $trainingDataService = new MlModelStateTrainingDataService($mlModelStateTrainingDataRepository);
 
         // When
-        $model = $trainingDataService->create($file, $state);
+        $data = $trainingDataService->create($file, $state);
 
         // Then
-        $this->assertInstanceOf(MlModelStateTrainingData::class, $model);
-        $this->assertEquals($model->getAttribute('file_name'), $file->getFilename());
-        $this->assertEquals($model->getAttribute('file_extension'), $file->extension());
-        $this->assertEquals($model->getAttribute('ml_model_state_id'), $state->id);
+        $this->assertInstanceOf(MlModelStateTrainingData::class, $data);
+        $this->assertEquals($data->getAttribute('mime_type'), $file->getMimeType());
     }
 }

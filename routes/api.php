@@ -80,3 +80,11 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get('score/state/{id}/show', 'MlModelStateScoreController@show')->name('score.show');
 });
+
+Route::group(['middleware' => ['jwt.auth']], function () {
+//    Route::get('prediction/model/{id}', 'MlModelPredictionController@index')->name('prediction.index');
+//    Route::get('prediction/show/{id}', 'MlModelPredictionController@show')->name('prediction.show');
+    Route::post('prediction/create', 'MlModelPredictionController@create')->name('prediction.create');
+//    Route::post('prediction/{id}/update', 'MlModelPredictionController@update')->name('prediction.update');
+//    Route::delete('prediction/{id}/delete', 'MlModelPredictionController@delete')->name('prediction.delete');
+});
