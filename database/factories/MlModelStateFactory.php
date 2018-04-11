@@ -16,6 +16,6 @@ $factory->define(MlModelState::class, function (Faker $faker) {
         'ml_model_id'     => null,
         'ml_algorithm_id' => null,
         'params'          => $params,
-        'is_current'      => false,
+        'is_current'      => true,
     ];
 });

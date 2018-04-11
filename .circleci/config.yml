@@ -4,9 +4,12 @@ jobs:
   build:
     docker:
       - image: circleci/php:7.1-node-browsers
+      - image: circleci/mongo:3.6
     working_directory: ~/laravel
     steps:
       - checkout
+      - run: echo -e "extension=mongodb.so" | sudo tee /usr/local/etc/php/php.ini > /dev/null
+      - run: sudo pecl install -f mongodb-1.4.2
       - run: sudo apt install -y libsqlite3-dev zlib1g-dev
       - run: sudo docker-php-ext-install zip
       - run: sudo composer self-update
@@ -29,3 +32,4 @@ jobs:
           paths:
             - node_modules
       - run: vendor/bin/phpunit
+

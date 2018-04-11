@@ -2,21 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\DataFileErrorException;
 use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\MlModelStateRequest;
 use App\Jobs\RunMachineLearningModelTrainingScript;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelState;
+use App\Models\MlModelStateTrainingData;
 use App\Repositories\MlAlgorithmRepository;
 use App\Repositories\MlModelRepository;
 use App\Repositories\MlModelStateRepository;
+use App\Services\MlModelStateTrainingDataService;
 use Exception;
+
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MlModelStateController extends ApiController
 {
+    private const MODEL_STATE_PARAMS_PARAMETER = 'params';
+    private const MODEL_ID_PARAMETER = 'ml_model_id';
+    private const ALGORITHM_ID_PARAMETER = 'ml_algorithm_id';
+    private const TRAINING_DATA_FILE_PARAMETER = 'file';
+    private const TRAINING_DATA_FILE_EXTENSION_PARAMETER = 'file_extension';
+
     /** @var MlModelStateRepository */
     private $mlModelStateRepository;
 
@@ -26,18 +38,23 @@ class MlModelStateController extends ApiController
     /** @var MlAlgorithmRepository */
     private $mlAlgorithmRepository;
 
+    /** @var MlModelStateTrainingDataService */
+    private $mlModelStateTrainingDataService;
+
     /**
      * MlModelStateController constructor.
      *
-     * @param MlModelStateRepository $mlModelStateRepository
-     * @param MlModelRepository      $mlModelRepository
-     * @param MlAlgorithmRepository  $mlAlgorithmRepository
+     * @param MlModelStateRepository          $mlModelStateRepository
+     * @param MlModelRepository               $mlModelRepository
+     * @param MlAlgorithmRepository           $mlAlgorithmRepository
+     * @param MlModelStateTrainingDataService $mlModelStateTrainingDataService
      */
-    public function __construct(MlModelStateRepository $mlModelStateRepository, MlModelRepository $mlModelRepository, MlAlgorithmRepository $mlAlgorithmRepository)
+    public function __construct(MlModelStateRepository $mlModelStateRepository, MlModelRepository $mlModelRepository, MlAlgorithmRepository $mlAlgorithmRepository, MlModelStateTrainingDataService $mlModelStateTrainingDataService)
     {
         $this->mlModelStateRepository = $mlModelStateRepository;
         $this->mlModelRepository = $mlModelRepository;
         $this->mlAlgorithmRepository = $mlAlgorithmRepository;
+        $this->mlModelStateTrainingDataService = $mlModelStateTrainingDataService;
     }
 
     /**
@@ -94,23 +111,29 @@ class MlModelStateController extends ApiController
     public function create(MlModelStateRequest $request)
     {
         try {
-            $params = $request->only([
-                'params',
-                'ml_model_id',
-                'ml_algorithm_id'
-            ]);
+            $params = $this->getParams($request);
 
             /** @var MlModel $model */
-            $model = $this->mlModelRepository->findOneOrFailById($params['ml_model_id']);
+            $model = $this->mlModelRepository->findOneOrFailById($params[self::MODEL_ID_PARAMETER]);
             $this->authorize('view', $model->project);
 
+            if (!$request->file(self::TRAINING_DATA_FILE_PARAMETER)->isValid()) {
+                throw new DataFileErrorException('Training data file was corrupted.');
+            }
+
+            $file = $request->file(self::TRAINING_DATA_FILE_PARAMETER);
+
             /** @var MlAlgorithm $algorithm */
-            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params['ml_algorithm_id']);
+            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params[self::ALGORITHM_ID_PARAMETER]);
 
             /** @var MlModelState $state */
             $state = $this->mlModelStateRepository->create($params);
             $state->setModel($model);
             $state->setAlgorithm($algorithm);
+
+            /** @var MlModelStateTrainingData $modelStateTrainingData */
+            $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $state);
+            $state->trainingData()->save($modelStateTrainingData);
 
             RunMachineLearningModelTrainingScript::dispatch($state);
 
@@ -118,38 +141,49 @@ class MlModelStateController extends ApiController
 
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
-        } catch (Exception $e) {
-            return $this->responseInternalError($e->getMessage());
+        } catch (DataFileErrorException | Exception $exception) {
+            return $this->responseInternalError($exception->getMessage());
         }
     }
 
     /**
      * Updates a model state and generates a new one.
      *
-     * @param MlModelStateRequest $request
+     * @param                     $id
+     * @param Request             $request
      *
      * @return JsonResponse
      */
-    public function update(MlModelStateRequest $request)
+    public function update($id, Request $request)
     {
         try {
-            $params = $request->only([
-                'params',
-                'ml_model_id',
-                'ml_algorithm_id'
-            ]);
+            $params = $this->getParams($request);
 
-            /** @var MlModel $model */
-            $model = $this->mlModelRepository->findOneOrFailById($params['ml_model_id']);
-            $this->authorize('view', $model->project);
+            /** @var MlModelState $baseState */
+            $baseState = $this->mlModelStateRepository->findOneOrFailById($id);
+            $this->authorize('view', $baseState->model->project);
 
             /** @var MlAlgorithm $algorithm */
-            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params['ml_algorithm_id']);
+            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params[self::ALGORITHM_ID_PARAMETER]);
 
             /** @var MlModelState $state */
             $state = $this->mlModelStateRepository->create($params);
-            $state->setModel($model);
+            $state->setModel($baseState->model);
             $state->setAlgorithm($algorithm);
+
+            if ($request->hasFile(self::TRAINING_DATA_FILE_PARAMETER)) {
+                if (!$request->file(self::TRAINING_DATA_FILE_PARAMETER)->isValid()) {
+                    throw new DataFileErrorException('Training data file was corrupted.');
+                }
+                $file = $request->file(self::TRAINING_DATA_FILE_PARAMETER);
+                $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $state);
+            } else {
+                /** @var MlModelState $currentState */
+                $currentState = $baseState->model->getCurrentState();
+                $modelStateTrainingData = $this->mlModelStateTrainingDataService->copy($currentState->trainingData, $state);
+            }
+
+            $state->trainingData()->save($modelStateTrainingData);
 
             RunMachineLearningModelTrainingScript::dispatch($state);
 
@@ -208,5 +242,21 @@ class MlModelStateController extends ApiController
         } catch (Exception $e) {
             return $this->responseInternalError($e->getMessage());
         }
+    }
+
+    /**
+     * Gets allowed params from request variable.
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    private function getParams(Request $request)
+    {
+        return $request->only([
+            self::MODEL_STATE_PARAMS_PARAMETER,
+            self::MODEL_ID_PARAMETER,
+            self::ALGORITHM_ID_PARAMETER
+        ]);
     }
 }

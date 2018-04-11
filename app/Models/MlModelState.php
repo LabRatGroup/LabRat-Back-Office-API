@@ -7,6 +7,7 @@ use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Jenssegers\Mongodb\Eloquent\HybridRelations;
 
 /**
  * @property int     $id
@@ -19,10 +20,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon  $deleted_at
  * @property mixed   params
  * @property boolean is_current
+ * @property mixed   file_extension
+ * @property mixed   trainingData
  */
 class MlModelState extends BaseEntity
 {
     use SoftDeletes, CascadeSoftDeletes;
+    use HybridRelations;
 
     const ITEM_TOKEN_LENGTH = 25;
 
@@ -65,6 +69,14 @@ class MlModelState extends BaseEntity
     public function score()
     {
         return $this->hasOne(MlModelStateScore::class);
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function trainingData()
+    {
+        return $this->hasOne(MlModelStateTrainingData::class);
     }
 
     /**

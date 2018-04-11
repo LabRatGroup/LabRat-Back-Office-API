@@ -4,8 +4,241 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "9e48ab43b13d8301b3f98b36330dc36a",
+    "content-hash": "676efa88cfcac357b91c4a406aa3bd11",
     "packages": [
+        {
+            "name": "bugsnag/bugsnag",
+            "version": "v3.12.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bugsnag/bugsnag-php.git",
+                "reference": "b1cd36a49a5a780824d9b3f369ad89275013b19f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bugsnag/bugsnag-php/zipball/b1cd36a49a5a780824d9b3f369ad89275013b19f",
+                "reference": "b1cd36a49a5a780824d9b3f369ad89275013b19f",
+                "shasum": ""
+            },
+            "require": {
+                "composer/ca-bundle": "^1.0",
+                "guzzlehttp/guzzle": "^5.0|^6.0",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "graham-campbell/testbench-core": "^1.1",
+                "mockery/mockery": "^0.9.4|^1.0",
+                "mtdowling/burgomaster": "dev-master#72151eddf5f0cf101502b94bf5031f9c53501a04",
+                "php-mock/php-mock-phpunit": "^1.1",
+                "phpunit/phpunit": "^4.8|^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.13-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Bugsnag\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "James Smith",
+                    "email": "notifiers@bugsnag.com",
+                    "homepage": "https://bugsnag.com"
+                }
+            ],
+            "description": "Official Bugsnag notifier for PHP applications.",
+            "homepage": "https://github.com/bugsnag/bugsnag-php",
+            "keywords": [
+                "bugsnag",
+                "errors",
+                "exceptions",
+                "logging",
+                "tracking"
+            ],
+            "time": "2018-02-28T12:14:17+00:00"
+        },
+        {
+            "name": "bugsnag/bugsnag-laravel",
+            "version": "v2.14.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bugsnag/bugsnag-laravel.git",
+                "reference": "d8ceffe7101c3931de46f8c60df8a97d2a3bfc3a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bugsnag/bugsnag-laravel/zipball/d8ceffe7101c3931de46f8c60df8a97d2a3bfc3a",
+                "reference": "d8ceffe7101c3931de46f8c60df8a97d2a3bfc3a",
+                "shasum": ""
+            },
+            "require": {
+                "bugsnag/bugsnag": "^3.12",
+                "bugsnag/bugsnag-psr-logger": "^1.4",
+                "illuminate/contracts": "^5.0",
+                "illuminate/support": "^5.0",
+                "monolog/monolog": "^1.12",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "graham-campbell/testbench": "^3.1|^4.0|^5.0",
+                "mockery/mockery": "^0.9.4|^1.0",
+                "phpunit/phpunit": "^4.8|^5.0|^6.0|^7.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.15-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Bugsnag\\BugsnagLaravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "James Smith",
+                    "email": "notifiers@bugsnag.com"
+                }
+            ],
+            "description": "Official Bugsnag notifier for Laravel applications.",
+            "homepage": "https://github.com/bugsnag/bugsnag-laravel",
+            "keywords": [
+                "bugsnag",
+                "errors",
+                "exceptions",
+                "laravel",
+                "logging",
+                "tracking"
+            ],
+            "time": "2018-03-07T15:40:07+00:00"
+        },
+        {
+            "name": "bugsnag/bugsnag-psr-logger",
+            "version": "v1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bugsnag/bugsnag-psr-logger.git",
+                "reference": "a9bed75b830cd1a702c888fdbb1e8b2b46af1ac0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bugsnag/bugsnag-psr-logger/zipball/a9bed75b830cd1a702c888fdbb1e8b2b46af1ac0",
+                "reference": "a9bed75b830cd1a702c888fdbb1e8b2b46af1ac0",
+                "shasum": ""
+            },
+            "require": {
+                "bugsnag/bugsnag": "^3.10",
+                "php": ">=5.5",
+                "psr/log": "^1.0"
+            },
+            "require-dev": {
+                "graham-campbell/testbench-core": "^1.1",
+                "mockery/mockery": "^0.9.4",
+                "phpunit/phpunit": "^4.8|^5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Bugsnag\\PsrLogger\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "James Smith",
+                    "email": "notifiers@bugsnag.com",
+                    "homepage": "https://bugsnag.com"
+                }
+            ],
+            "description": "Official Bugsnag PHP PSR Logger.",
+            "homepage": "https://github.com/bugsnag/bugsnag-psr",
+            "keywords": [
+                "bugsnag",
+                "errors",
+                "exceptions",
+                "logging",
+                "psr",
+                "tracking"
+            ],
+            "time": "2018-02-16T16:51:45+00:00"
+        },
+        {
+            "name": "composer/ca-bundle",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/composer/ca-bundle.git",
+                "reference": "d2c0a83b7533d6912e8d516756ebd34f893e9169"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/composer/ca-bundle/zipball/d2c0a83b7533d6912e8d516756ebd34f893e9169",
+                "reference": "d2c0a83b7533d6912e8d516756ebd34f893e9169",
+                "shasum": ""
+            },
+            "require": {
+                "ext-openssl": "*",
+                "ext-pcre": "*",
+                "php": "^5.3.2 || ^7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.5",
+                "psr/log": "^1.0",
+                "symfony/process": "^2.5 || ^3.0 || ^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Composer\\CaBundle\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jordi Boggiano",
+                    "email": "j.boggiano@seld.be",
+                    "homepage": "http://seld.be"
+                }
+            ],
+            "description": "Lets you find a path to the system CA bundle, and includes a fallback to the Mozilla CA bundle.",
+            "keywords": [
+                "cabundle",
+                "cacert",
+                "certificate",
+                "ssl",
+                "tls"
+            ],
+            "time": "2018-03-29T19:57:20+00:00"
+        },
         {
             "name": "dnoegel/php-xdg-base-dir",
             "version": "0.1",
@@ -723,16 +956,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.3.0",
+            "version": "6.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699"
+                "reference": "68d0ea14d5a3f42a20e87632a5f84931e2709c90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f4db5a78a5ea468d4831de7f0bf9d9415e348699",
-                "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/68d0ea14d5a3f42a20e87632a5f84931e2709c90",
+                "reference": "68d0ea14d5a3f42a20e87632a5f84931e2709c90",
                 "shasum": ""
             },
             "require": {
@@ -742,7 +975,7 @@
             },
             "require-dev": {
                 "ext-curl": "*",
-                "phpunit/phpunit": "^4.0 || ^5.0",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.4",
                 "psr/log": "^1.0"
             },
             "suggest": {
@@ -751,7 +984,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.2-dev"
+                    "dev-master": "6.3-dev"
                 }
             },
             "autoload": {
@@ -784,7 +1017,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2017-06-22T18:50:49+00:00"
+            "time": "2018-03-26T16:33:04+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -1032,17 +1265,86 @@
             "time": "2015-04-20T18:58:01+00:00"
         },
         {
-            "name": "laravel/framework",
-            "version": "v5.6.12",
+            "name": "jenssegers/mongodb",
+            "version": "v3.4.1",
             "source": {
                 "type": "git",
-                "url": "https://github.com/laravel/framework.git",
-                "reference": "82d8165d1ea86bdd81ddfa1db9343fa19e7d1450"
+                "url": "https://github.com/jenssegers/laravel-mongodb.git",
+                "reference": "7445ea6cc0a139f40ac9cfe1b15952c961e58793"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/82d8165d1ea86bdd81ddfa1db9343fa19e7d1450",
-                "reference": "82d8165d1ea86bdd81ddfa1db9343fa19e7d1450",
+                "url": "https://api.github.com/repos/jenssegers/laravel-mongodb/zipball/7445ea6cc0a139f40ac9cfe1b15952c961e58793",
+                "reference": "7445ea6cc0a139f40ac9cfe1b15952c961e58793",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/container": "^5.6",
+                "illuminate/database": "^5.6",
+                "illuminate/events": "^5.6",
+                "illuminate/support": "^5.6",
+                "mongodb/mongodb": "^1.0.0"
+            },
+            "require-dev": {
+                "doctrine/dbal": "^2.5",
+                "mockery/mockery": "^1.0",
+                "orchestra/testbench": "^3.1",
+                "phpunit/phpunit": "^6.0|^7.0",
+                "satooshi/php-coveralls": "^2.0"
+            },
+            "suggest": {
+                "jenssegers/mongodb-sentry": "Add Sentry support to Laravel-MongoDB",
+                "jenssegers/mongodb-session": "Add MongoDB session support to Laravel-MongoDB"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Jenssegers\\Mongodb\\MongodbServiceProvider",
+                        "Jenssegers\\Mongodb\\MongodbQueueServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Jenssegers\\Mongodb": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jens Segers",
+                    "homepage": "https://jenssegers.com"
+                }
+            ],
+            "description": "A MongoDB based Eloquent model and Query builder for Laravel (Moloquent)",
+            "homepage": "https://github.com/jenssegers/laravel-mongodb",
+            "keywords": [
+                "database",
+                "eloquent",
+                "laravel",
+                "model",
+                "moloquent",
+                "mongo",
+                "mongodb"
+            ],
+            "time": "2018-03-01T10:28:19+00:00"
+        },
+        {
+            "name": "laravel/framework",
+            "version": "v5.6.15",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/framework.git",
+                "reference": "baa42cf6bdd942523fafece21ec16a1843c6db0f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/baa42cf6bdd942523fafece21ec16a1843c6db0f",
+                "reference": "baa42cf6bdd942523fafece21ec16a1843c6db0f",
                 "shasum": ""
             },
             "require": {
@@ -1167,7 +1469,7 @@
                 "framework",
                 "laravel"
             ],
-            "time": "2018-03-14T17:29:38+00:00"
+            "time": "2018-03-30T13:29:58+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -1373,6 +1675,71 @@
                 "storage"
             ],
             "time": "2018-03-01T10:27:04+00:00"
+        },
+        {
+            "name": "mongodb/mongodb",
+            "version": "1.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mongodb/mongo-php-library.git",
+                "reference": "7417ecf1ca5aef263d3e2fdc4ace214f7fd1b750"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mongodb/mongo-php-library/zipball/7417ecf1ca5aef263d3e2fdc4ace214f7fd1b750",
+                "reference": "7417ecf1ca5aef263d3e2fdc4ace214f7fd1b750",
+                "shasum": ""
+            },
+            "require": {
+                "ext-hash": "*",
+                "ext-json": "*",
+                "ext-mongodb": "^1.4.0",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.36 || ^6.4"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "MongoDB\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Jeremy Mikola",
+                    "email": "jmikola@gmail.com"
+                },
+                {
+                    "name": "Derick Rethans",
+                    "email": "github@derickrethans.nl"
+                },
+                {
+                    "name": "Katherine Walker",
+                    "email": "katherine.walker@mongodb.com"
+                }
+            ],
+            "description": "MongoDB driver library",
+            "homepage": "https://jira.mongodb.org/browse/PHPLIB",
+            "keywords": [
+                "database",
+                "driver",
+                "mongodb",
+                "persistence"
+            ],
+            "time": "2018-03-19T18:40:25+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -2012,6 +2379,133 @@
                 "uuid"
             ],
             "time": "2018-01-20T00:28:24+00:00"
+        },
+        {
+            "name": "sentry/sentry",
+            "version": "1.8.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/getsentry/sentry-php.git",
+                "reference": "643ec20d181ca55317d4ccda6ad658b9a8b4f06a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/getsentry/sentry-php/zipball/643ec20d181ca55317d4ccda6ad658b9a8b4f06a",
+                "reference": "643ec20d181ca55317d4ccda6ad658b9a8b4f06a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": "^5.3|^7.0"
+            },
+            "conflict": {
+                "raven/raven": "*"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^1.8.0",
+                "monolog/monolog": "*",
+                "phpunit/phpunit": "^4.8.35 || ^5.7"
+            },
+            "suggest": {
+                "ext-hash": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "monolog/monolog": "Automatically capture Monolog events as breadcrumbs"
+            },
+            "bin": [
+                "bin/sentry"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.9.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Raven_": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "David Cramer",
+                    "email": "dcramer@gmail.com"
+                }
+            ],
+            "description": "A PHP client for Sentry (http://getsentry.com)",
+            "homepage": "http://getsentry.com",
+            "keywords": [
+                "log",
+                "logging"
+            ],
+            "time": "2018-03-20T12:52:10+00:00"
+        },
+        {
+            "name": "sentry/sentry-laravel",
+            "version": "0.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/getsentry/sentry-laravel.git",
+                "reference": "4ca94ed3ba6d79ad049957be574a738a3478f94c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/getsentry/sentry-laravel/zipball/4ca94ed3ba6d79ad049957be574a738a3478f94c",
+                "reference": "4ca94ed3ba6d79ad049957be574a738a3478f94c",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "4.*|5.*",
+                "php": ">=5.3.0",
+                "sentry/sentry": ">=1.7.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^1.8.0",
+                "orchestra/testbench": "3.*",
+                "phpunit/phpunit": "^4.6.6"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.8.x-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "Sentry\\SentryLaravel\\SentryLaravelServiceProvider"
+                    ],
+                    "aliases": {
+                        "Sentry": "Sentry\\SentryLaravel\\SentryFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Sentry\\SentryLaravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "David Cramer",
+                    "email": "dcramer@gmail.com"
+                }
+            ],
+            "description": "Laravel integration for Sentry (https://sentry.io)",
+            "homepage": "https://sentry.io",
+            "keywords": [
+                "errors",
+                "laravel",
+                "logging",
+                "sentry"
+            ],
+            "time": "2017-08-11T17:29:14+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -4109,16 +4603,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "7.0.2",
+            "version": "7.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e2f8aa21bc54b6ba218bdd4f9e0dac1e9bc3b4e9"
+                "reference": "536f4d853c12d8189963435088e8ff7c0daeab2e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e2f8aa21bc54b6ba218bdd4f9e0dac1e9bc3b4e9",
-                "reference": "e2f8aa21bc54b6ba218bdd4f9e0dac1e9bc3b4e9",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/536f4d853c12d8189963435088e8ff7c0daeab2e",
+                "reference": "536f4d853c12d8189963435088e8ff7c0daeab2e",
                 "shasum": ""
             },
             "require": {
@@ -4132,7 +4626,7 @@
                 "phar-io/version": "^1.0",
                 "php": "^7.1",
                 "phpspec/prophecy": "^1.7",
-                "phpunit/php-code-coverage": "^6.0",
+                "phpunit/php-code-coverage": "^6.0.1",
                 "phpunit/php-file-iterator": "^1.4.3",
                 "phpunit/php-text-template": "^1.2.1",
                 "phpunit/php-timer": "^2.0",
@@ -4185,7 +4679,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-02-26T07:03:12+00:00"
+            "time": "2018-03-26T07:36:48+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

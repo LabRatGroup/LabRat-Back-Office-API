@@ -78,6 +78,19 @@ return [
             'prefix'   => '',
         ],
 
+        'mongodb' => [
+            'driver'   => 'mongodb',
+            'host'     => env('DB_MONGO_HOST', 'localhost'),
+            'port'     => env('DB_MONGO_PORT', 27017),
+            'database' => env('DB_MONGO_DATABASE', 'labrat'),
+            'username' => env('DB_MONGO_USERNAME'),
+            'password' => env('DB_MONGO_PASSWORD'),
+            'options'  => [
+                'database' => 'admin'
+                // sets the authentication database required by mongo 3
+            ]
+        ],
+
     ],
 
     /*
