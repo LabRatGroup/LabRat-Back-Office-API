@@ -13,6 +13,7 @@ use Jenssegers\Mongodb\Eloquent\HybridRelations;
  *
  * @property string  token
  * @property mixed   predictionData
+ * @property mixed   id
  */
 class MlModelPrediction extends BaseEntity
 {
@@ -36,7 +37,7 @@ class MlModelPrediction extends BaseEntity
         'token',
     ];
 
-    protected $cascadeDeletes = [];
+    protected $cascadeDeletes = ['predictionData'];
 
     /**
      * @return BelongsTo
