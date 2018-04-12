@@ -48,6 +48,27 @@ class MlModelPredictionController extends ApiController
         $this->mlModelRepository = $mlModelRepository;
     }
 
+    /**
+     * Retrieves all model predictions.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function index($id)
+    {
+        try {
+            /** @var MlModel $model */
+            $model = $this->mlModelRepository->findOneOrFailById($id);
+            $this->authorize('view', $model->project);
+
+            return $this->responseOk($model->predictions);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
 
     /**
      * @param MlModelPredictionRequest $request
