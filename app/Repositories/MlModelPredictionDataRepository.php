@@ -15,4 +15,9 @@ class MlModelPredictionDataRepository extends BaseRepository
     {
         $this->model = $model;
     }
+
+    public function findOneOrFailById($id)
+    {
+        return MlModelPredictionData::find($id);
+    }
 }

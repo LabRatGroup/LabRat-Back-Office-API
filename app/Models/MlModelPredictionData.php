@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Jenssegers\Mongodb\Eloquent\HybridRelations;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 
+/**
+ * @property mixed mime_type
+ */
 class MlModelPredictionData extends Eloquent
 {
     use HybridRelations;
@@ -29,8 +32,8 @@ class MlModelPredictionData extends Eloquent
         return $this->belongsTo(MlModelPrediction::class);
     }
 
-    public function setPrediction($state)
+    public function setPrediction($prediction)
     {
-        $this->prediction()->associate($state)->save();
+        $this->prediction()->associate($prediction)->save();
     }
 }

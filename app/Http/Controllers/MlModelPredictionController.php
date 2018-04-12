@@ -93,6 +93,57 @@ class MlModelPredictionController extends ApiController
     }
 
     /**
+     * Updated current prediction.
+     *
+     * @param         $id
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function update($id, Request $request)
+    {
+        try {
+            $params = $this->getParams($request);
+
+            /** @var MlModelPrediction $prediction */
+            $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+            $this->authorize('view', $prediction->model->project);
+
+            if ($prediction->model->getCurrentState() === false) {
+                throw new UnprocessablePredictionException('No active model state was found for prediction.');
+            }
+
+            if (isset($params[self::MODEL_ID_PARAMETER])) {
+                /** @var MlModel $model */
+                $model = $this->mlModelRepository->findOneOrFailById($params[self::MODEL_ID_PARAMETER]);
+                $prediction->setModel($model);
+            }
+
+            /** @var MlModelPrediction $prediction */
+            $prediction = $this->mlModelPredicionRepository->update($prediction, $params);
+
+            if ($request->hasFile('file')) {
+                if (!$request->file(self::PREDICTION_DATA_FILE_PARAMETER)->isValid()) {
+                    throw new DataFileErrorException('Prediction data file was corrupted.');
+                }
+
+                $file = $request->file(self::PREDICTION_DATA_FILE_PARAMETER);
+
+                /** @var MlModelPredictionData $modelPredictionData */
+                $this->mlModelPredictionDataService->update($file, $prediction);
+                $prediction->load('predictionData');
+                RunMachineLearningPredictionScript::dispatch($prediction);
+            }
+
+            return $this->responseOk($prediction);
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (DataFileErrorException | UnprocessablePredictionException | Exception $exception) {
+            return $this->responseInternalError($exception->getMessage());
+        }
+    }
+
+    /**
      * Gets allowed params from request variable.
      *
      * @param Request $request
