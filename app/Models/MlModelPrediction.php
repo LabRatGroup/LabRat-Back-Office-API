@@ -14,6 +14,7 @@ use Jenssegers\Mongodb\Eloquent\HybridRelations;
  * @property string  token
  * @property mixed   predictionData
  * @property mixed   id
+ * @property mixed   title
  */
 class MlModelPrediction extends BaseEntity
 {

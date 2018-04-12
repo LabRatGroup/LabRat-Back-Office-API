@@ -542,8 +542,132 @@ class MlModelPredictionControllerTest extends TestCase
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
         $this->assertCount(1, $predictionDataItems);
-          $this->assertDatabaseHas('ml_model_predictions', [
+        $this->assertDatabaseHas('ml_model_predictions', [
             'id' => $prediction->id,
         ]);
+    }
+
+    /** @test */
+    public function project_user_should_list_all_model_predictions()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create([
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+        ]);
+
+        /** @var MlModelPrediction $prediction */
+        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction->setModel($model);
+
+        /** @var MlModelPredictionData $predictionData */
+        $predictionData = factory(MlModelPredictionData::class)->create();
+        $prediction->predictionData()->save($predictionData);
+
+        // When
+        $response = $this->get(route('prediction.index', ['id' => $model->id]), $this->getAuthHeader($user));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['title' => $prediction->title]);
+    }
+
+    /** @test */
+    public function team_member_should_list_all_model_predictions()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $role = Role::where('alias', Team::TEAM_DEFAULT_ROLE_ALIAS)->first();
+        $this->be($user);
+
+        /** @var Team $team */
+        $team = factory(Team::class)->create();
+        $team->users()->attach($member, ['role_id' => $role->id]);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+        $team->projects()->attach($project);
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create([
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+        ]);
+
+        /** @var MlModelPrediction $prediction */
+        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction->setModel($model);
+
+        /** @var MlModelPredictionData $predictionData */
+        $predictionData = factory(MlModelPredictionData::class)->create();
+        $prediction->predictionData()->save($predictionData);
+
+        // When
+        $response = $this->get(route('prediction.index', ['id' => $model->id]), $this->getAuthHeader($member));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonFragment(['title' => $prediction->title]);
+    }
+
+    /** @test */
+    public function user_should_not_list_all_model_predictions()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create([
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+        ]);
+
+        /** @var MlModelPrediction $prediction */
+        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction->setModel($model);
+
+        /** @var MlModelPredictionData $predictionData */
+        $predictionData = factory(MlModelPredictionData::class)->create();
+        $prediction->predictionData()->save($predictionData);
+
+        // When
+        $response = $this->get(route('prediction.index', ['id' => $model->id]), $this->getAuthHeader($member));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
     }
 }
