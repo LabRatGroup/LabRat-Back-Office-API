@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
 use App\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -273,8 +274,12 @@ class MlModelStateControllerTest extends TestCase
         // When
         $response = $this->deleteJson(route('state.delete', ['id' => $state->id]), [], $this->getAuthHeader($user));
 
+        /** @var Collection $trainingDataItems */
+        $trainingDataItems = MlModelStateTrainingData::all();
+
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
+        $this->assertCount(0, $trainingDataItems);
         $this->assertDatabaseHas('project_user', [
             'project_id' => $project->id,
             'user_id'    => $user->id,
@@ -557,6 +562,8 @@ class MlModelStateControllerTest extends TestCase
 
         // When
         $response = $this->post(route('state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+
+        /** @var Collection $trainingDataItems */
         $trainingDataItems = MlModelStateTrainingData::all();
 
         // Then
@@ -620,6 +627,8 @@ class MlModelStateControllerTest extends TestCase
 
         // When
         $response = $this->post(route('state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+
+        /** @var Collection $trainingDataItems */
         $trainingDataItems = MlModelStateTrainingData::all();
 
         // Then

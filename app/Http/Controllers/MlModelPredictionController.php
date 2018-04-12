@@ -144,6 +144,30 @@ class MlModelPredictionController extends ApiController
     }
 
     /**
+     * Removes prediction.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function delete($id)
+    {
+        try {
+            /** @var MlModelPrediction $prediction */
+            $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+
+            $this->authorize('view', $prediction->model->project);
+            $this->mlModelPredicionRepository->delete($prediction);
+
+            return $this->responseDeleted();
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    /**
      * Gets allowed params from request variable.
      *
      * @param Request $request

@@ -11,6 +11,7 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
 use App\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -261,7 +262,7 @@ class MlModelPredictionControllerTest extends TestCase
         /** @var MlModelPrediction $predictionDB */
         $predictionDB = MlModelPrediction::find($response->json('data')['id']);
 
-        /** @var MlModelPredictionData $trainingDataItems */
+        /** @var Collection $trainingDataItems */
         $predictionDataItems = MlModelPredictionData::all();
 
         // Then
@@ -328,7 +329,7 @@ class MlModelPredictionControllerTest extends TestCase
         /** @var MlModelPrediction $predictionDB */
         $predictionDB = MlModelPrediction::find($response->json('data')['id']);
 
-        /** @var MlModelPredictionData $trainingDataItems */
+        /** @var Collection $trainingDataItems */
         $predictionDataItems = MlModelPredictionData::all();
 
         // Then
@@ -383,7 +384,7 @@ class MlModelPredictionControllerTest extends TestCase
         // When
         $response = $this->postJson(route('prediction.update', ['id' => $prediction->id]), $data, $this->getAuthHeader($user));
 
-        /** @var MlModelPredictionData $trainingDataItems */
+        /** @var Collection $trainingDataItems */
         $predictionDataItems = MlModelPredictionData::all();
 
         // Then
@@ -437,7 +438,7 @@ class MlModelPredictionControllerTest extends TestCase
         // When
         $response = $this->postJson(route('prediction.update', ['id' => $prediction->id]), $data, $this->getAuthHeader($member));
 
-        /** @var MlModelPredictionData $trainingDataItems */
+        /** @var Collection $trainingDataItems */
         $predictionDataItems = MlModelPredictionData::all();
 
         // Then
@@ -448,5 +449,101 @@ class MlModelPredictionControllerTest extends TestCase
             'title'       => $title,
         ]);
         $this->assertNotEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
+    }
+
+    /** @test */
+    public function user_should_delete_model_prediction()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create([
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+        ]);
+
+        /** @var MlModelPrediction $prediction */
+        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction->setModel($model);
+
+        /** @var MlModelPredictionData $predictionData */
+        $predictionData = factory(MlModelPredictionData::class)->create();
+        $prediction->predictionData()->save($predictionData);
+
+        // When
+        $response = $this->deleteJson(route('prediction.delete', ['id' => $state->id]), [], $this->getAuthHeader($user));
+
+        /** @var Collection $predictionDataItems */
+        $predictionDataItems = MlModelPredictionData::all();
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $this->assertCount(0, $predictionDataItems);
+        $this->assertDatabaseHas('project_user', [
+            'project_id' => $project->id,
+            'user_id'    => $user->id,
+            'is_owner'   => 1,
+        ]);
+        $this->assertSoftDeleted('ml_model_predictions', [
+            'id' => $prediction->id,
+        ]);
+    }
+
+    /** @test */
+    public function non_project_user_should_not_delete_model_prediction()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create([
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+        ]);
+
+        /** @var MlModelPrediction $prediction */
+        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction->setModel($model);
+
+        /** @var MlModelPredictionData $predictionData */
+        $predictionData = factory(MlModelPredictionData::class)->create();
+        $prediction->predictionData()->save($predictionData);
+
+        // When
+        $response = $this->deleteJson(route('prediction.delete', ['id' => $state->id]), [], $this->getAuthHeader($member));
+
+        /** @var Collection $predictionDataItems */
+        $predictionDataItems = MlModelPredictionData::all();
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+        $this->assertCount(1, $predictionDataItems);
+          $this->assertDatabaseHas('ml_model_predictions', [
+            'id' => $prediction->id,
+        ]);
     }
 }
