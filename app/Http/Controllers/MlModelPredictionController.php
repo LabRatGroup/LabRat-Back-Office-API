@@ -12,7 +12,7 @@ use App\Models\MlModelPrediction;
 use App\Models\MlModelPredictionData;
 use App\Repositories\MlModelPredictionRepository;
 use App\Repositories\MlModelRepository;
-use App\Services\MlModelStatePredictionDataService;
+use App\Services\MlModelPredictionDataService;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -28,7 +28,7 @@ class MlModelPredictionController extends ApiController
     /** @var MlModelPredictionRepository */
     private $mlModelPredicionRepository;
 
-    /** @var MlModelStatePredictionDataService */
+    /** @var MlModelPredictionDataService */
     private $mlModelPredictionDataService;
 
     /** @var MlModelRepository */
@@ -37,11 +37,11 @@ class MlModelPredictionController extends ApiController
     /**
      * MlModelPredictionController constructor.
      *
-     * @param MlModelPredictionRepository       $mlModelPredicionRepository
-     * @param MlModelStatePredictionDataService $mlModelPredictionDataService
-     * @param MlModelRepository                 $mlModelRepository
+     * @param MlModelPredictionRepository  $mlModelPredicionRepository
+     * @param MlModelPredictionDataService $mlModelPredictionDataService
+     * @param MlModelRepository            $mlModelRepository
      */
-    public function __construct(MlModelPredictionRepository $mlModelPredicionRepository, MlModelStatePredictionDataService $mlModelPredictionDataService, MlModelRepository $mlModelRepository)
+    public function __construct(MlModelPredictionRepository $mlModelPredicionRepository, MlModelPredictionDataService $mlModelPredictionDataService, MlModelRepository $mlModelRepository)
     {
         $this->mlModelPredicionRepository = $mlModelPredicionRepository;
         $this->mlModelPredictionDataService = $mlModelPredictionDataService;

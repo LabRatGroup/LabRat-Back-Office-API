@@ -12,7 +12,7 @@ use Jenssegers\Mongodb\Eloquent\HybridRelations;
 /**
  * @property int     $id
  * @property mixed   $algorithm
- * @property mixed   $score
+ * @property MlModelStateScore   $score
  * @property mixed   $model
  * @property string  token
  * @property Carbon  $created_at
@@ -107,7 +107,7 @@ class MlModelState extends BaseEntity
         }
     }
 
-    private function setIsCurrent($value)
+    public function setIsCurrent($value)
     {
         $this->is_current = $value;
         $this->save();

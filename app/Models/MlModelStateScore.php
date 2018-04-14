@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int    $id
- * @property mixed  $state
+ * @property MlModelState  $state
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon $deleted_at
@@ -22,6 +22,7 @@ class MlModelStateScore extends Model
     use SoftDeletes;
 
     const ITEM_TOKEN_LENGTH = 25;
+    const PERFORMANCE_PARAMETER = 'accuracy';
 
     protected $dates = [
         'created_at',
@@ -59,5 +60,10 @@ class MlModelStateScore extends Model
     public function setState($state)
     {
         $this->state()->associate($state)->save();
+    }
+
+    public function getPerformanceParamValue()
+    {
+        return $this->getAttribute(self::PERFORMANCE_PARAMETER);
     }
 }

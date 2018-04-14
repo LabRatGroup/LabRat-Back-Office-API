@@ -7,7 +7,7 @@ use App\Repositories\MlModelPredictionDataRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 
-class MlModelStatePredictionDataService
+class MlModelPredictionDataService
 {
     /** @var MlModelPredictionDataRepository */
     private $mlModelPredictionDataRepository;

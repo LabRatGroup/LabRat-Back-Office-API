@@ -13,12 +13,25 @@ abstract class BaseRepository
 
     /**
      * @param $id
+     *
      * @return Model|static
      */
     public function findOneOrFailById($id)
     {
         return $this->getModel()
             ->where('id', $id)
+            ->firstOrFail();
+    }
+
+    /**
+     * @param $token
+     *
+     * @return Model|static
+     */
+    public function findOneOrFailByToken($token)
+    {
+        return $this->getModel()
+            ->where('token', $token)
             ->firstOrFail();
     }
 
