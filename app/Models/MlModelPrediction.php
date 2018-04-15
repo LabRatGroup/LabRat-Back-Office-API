@@ -15,6 +15,7 @@ use Jenssegers\Mongodb\Eloquent\HybridRelations;
  * @property mixed   predictionData
  * @property mixed   id
  * @property mixed   title
+ * @property mixed   score
  */
 class MlModelPrediction extends BaseEntity
 {
@@ -62,5 +63,13 @@ class MlModelPrediction extends BaseEntity
     public function predictionData()
     {
         return $this->hasOne(MlModelPredictionData::class);
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function score()
+    {
+        return $this->hasOne(MlModelPredictionScore::class);
     }
 }

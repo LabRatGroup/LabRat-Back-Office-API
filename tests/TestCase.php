@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Models\MlModelPredictionData;
+use App\Models\MlModelPredictionScore;
 use App\Models\MlModelStateTrainingData;
 use App\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
@@ -22,6 +23,7 @@ abstract class TestCase extends BaseTestCase
 
         MlModelStateTrainingData::truncate();
         MlModelPredictionData::truncate();
+        MlModelPredictionScore::truncate();
     }
 
     protected function getAuthHeader(User $user)
