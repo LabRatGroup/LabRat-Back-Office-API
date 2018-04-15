@@ -794,4 +794,154 @@ class MlModelPredictionControllerTest extends TestCase
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
     }
+
+    /** @test */
+    public function project_user_should_run_prediction()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create([
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+        ]);
+
+        /** @var MlModelPrediction $prediction */
+        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction->setModel($model);
+
+        /** @var MlModelPredictionData $predictionData */
+        $predictionData = factory(MlModelPredictionData::class)->create();
+        $prediction->predictionData()->save($predictionData);
+
+        // When
+        $response = $this->get(route('prediction.run', ['id' => $prediction->id]), $this->getAuthHeader($user));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+    }
+
+    /** @test */
+    public function project_user_should_run_prediction_when_missing_data()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create([
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+        ]);
+
+        /** @var MlModelPrediction $prediction */
+        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction->setModel($model);
+
+        // When
+        $response = $this->get(route('prediction.run', ['id' => $prediction->id]), $this->getAuthHeader($user));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /** @test */
+    public function project_user_should_not_run_prediction_when_missing_current_state()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create([
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+            'is_current'      => false,
+        ]);
+
+        /** @var MlModelPrediction $prediction */
+        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction->setModel($model);
+
+        /** @var MlModelPredictionData $predictionData */
+        $predictionData = factory(MlModelPredictionData::class)->create();
+        $prediction->predictionData()->save($predictionData);
+
+        // When
+        $response = $this->get(route('prediction.run', ['id' => $prediction->id]), $this->getAuthHeader($user));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
+    }
+
+    /** @test */
+    public function non_project_user_should_not_run_prediction()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create([
+            'ml_model_id'     => $model->id,
+            'ml_algorithm_id' => $algorithm->id,
+        ]);
+
+        /** @var MlModelPrediction $prediction */
+        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction->setModel($model);
+
+        /** @var MlModelPredictionData $predictionData */
+        $predictionData = factory(MlModelPredictionData::class)->create();
+        $prediction->predictionData()->save($predictionData);
+
+        // When
+        $response = $this->get(route('prediction.run', ['id' => $prediction->id]), $this->getAuthHeader($member));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+    }
 }

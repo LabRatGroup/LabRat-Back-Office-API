@@ -211,6 +211,37 @@ class MlModelPredictionController extends ApiController
     }
 
     /**
+     * Manually re-runs an existing prediction.
+     *
+     * @param $id
+     *
+     * @return JsonResponse
+     */
+    public function run($id)
+    {
+        try {
+            /** @var MlModelPrediction $prediction */
+            $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+
+            $this->authorize('view', $prediction->model->project);
+
+            if ($prediction->model->getCurrentState() && $prediction->predictionData) {
+
+                RunMachineLearningPredictionScript::dispatch($prediction);
+
+                return $this->responseOk($prediction);
+            }
+
+            throw new UnprocessablePredictionException('Either the prediction has no data or there are no active model states.');
+
+        } catch (AuthorizationException $authorizationException) {
+            return $this->responseForbidden($authorizationException->getMessage());
+        } catch (UnprocessablePredictionException | Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
+
+    /**
      * Gets allowed params from request variable.
      *
      * @param Request $request
