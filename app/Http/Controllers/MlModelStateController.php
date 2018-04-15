@@ -13,6 +13,7 @@ use App\Models\MlModelStateTrainingData;
 use App\Repositories\MlAlgorithmRepository;
 use App\Repositories\MlModelRepository;
 use App\Repositories\MlModelStateRepository;
+use App\Services\MlModelService;
 use App\Services\MlModelStateTrainingDataService;
 use Exception;
 
@@ -39,6 +40,9 @@ class MlModelStateController extends ApiController
     /** @var MlModelStateTrainingDataService */
     private $mlModelStateTrainingDataService;
 
+    /** @var MlModelService */
+    private $mlModelService;
+
     /**
      * MlModelStateController constructor.
      *
@@ -46,13 +50,15 @@ class MlModelStateController extends ApiController
      * @param MlModelRepository               $mlModelRepository
      * @param MlAlgorithmRepository           $mlAlgorithmRepository
      * @param MlModelStateTrainingDataService $mlModelStateTrainingDataService
+     * @param MlModelService                  $mlModelService
      */
-    public function __construct(MlModelStateRepository $mlModelStateRepository, MlModelRepository $mlModelRepository, MlAlgorithmRepository $mlAlgorithmRepository, MlModelStateTrainingDataService $mlModelStateTrainingDataService)
+    public function __construct(MlModelStateRepository $mlModelStateRepository, MlModelRepository $mlModelRepository, MlAlgorithmRepository $mlAlgorithmRepository, MlModelStateTrainingDataService $mlModelStateTrainingDataService, MlModelService $mlModelService)
     {
         $this->mlModelStateRepository = $mlModelStateRepository;
         $this->mlModelRepository = $mlModelRepository;
         $this->mlAlgorithmRepository = $mlAlgorithmRepository;
         $this->mlModelStateTrainingDataService = $mlModelStateTrainingDataService;
+        $this->mlModelService = $mlModelService;
     }
 
     /**
@@ -233,6 +239,8 @@ class MlModelStateController extends ApiController
 
             $this->authorize('update', $state->model->project);
             $state->setAsCurrent();
+
+            $this->mlModelService->reviewModelPerformance($state->model->token);
 
             return $this->responseOk($state);
         } catch (AuthorizationException $authorizationException) {

@@ -4,7 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
+use App\Models\MlModelPrediction;
+use App\Models\MlModelPredictionData;
 use App\Models\MlModelState;
+use App\Models\MlModelStateScore;
 use App\Models\MlModelStateTrainingData;
 use App\Models\Project;
 use App\Models\Role;
@@ -778,9 +781,33 @@ class MlModelStateControllerTest extends TestCase
         /** @var MlModelState $state2 */
         $state2 = factory(MlModelState::class)->create(['is_current' => false]);
 
+        /** @var MlModelStateScore $score1 */
+        $score1 = factory(MlModelStateScore::class)->create();
+
+        /** @var MlModelStateScore $score2 */
+        $score2 = factory(MlModelStateScore::class)->create();
+
+        /** @var MlModelPrediction $prediction1 */
+        $prediction1 = factory(MlModelPrediction::class)->create();
+
+        /** @var MlModelPrediction $prediction2 */
+        $prediction2 = factory(MlModelPrediction::class)->create();
+
+        /** @var MlModelPredictionData $predictionData1 */
+        $predictionData1 = factory(MlModelPredictionData::class)->create();
+
+        /** @var MlModelPredictionData $predictionData2 */
+        $predictionData2 = factory(MlModelPredictionData::class)->create();
+
         $model->setProject($project);
         $state1->setModel($model);
         $state2->setModel($model);
+        $score1->setState($state1);
+        $score2->setState($state2);
+        $prediction1->setModel($model);
+        $prediction2->setModel($model);
+        $predictionData1->setPrediction($prediction1);
+        $predictionData2->setPrediction($prediction2);
 
         // When
         $response = $this->post(route('state.current', ['id' => $state2->id]), [], $this->getAuthHeader($user));
