@@ -9,6 +9,8 @@ use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 
 /**
  * @property mixed mime_type
+ * @property mixed params
+ * @property mixed id
  */
 class MlModelPredictionData extends Eloquent
 {

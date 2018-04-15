@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Jobs\RunMachineLearningPredictionScript;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
 use App\Models\MlModelState;
@@ -60,8 +61,9 @@ class MlModelService
     private function updateModelPredictions(MlModel $model)
     {
         /** @var MlModelPrediction $prediction */
-        foreach($model->predictions as $prediction){
-
+        foreach ($model->predictions as $prediction) {
+            $this->mlModelPredictionDataService->update($prediction);
+            RunMachineLearningPredictionScript::dispatch($prediction);
         }
     }
 }

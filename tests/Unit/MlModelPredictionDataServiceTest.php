@@ -47,7 +47,7 @@ class MlModelPredictionDataServiceTest extends TestCase
         $predictionDataService = new MlModelPredictionDataService($mlModelPredictionDataRepository);
 
         // When
-        $data = $predictionDataService->create($file, $prediction);
+        $data = $predictionDataService->create($prediction, $file);
 
         // Then
         $this->assertInstanceOf(MlModelPredictionData::class, $data);

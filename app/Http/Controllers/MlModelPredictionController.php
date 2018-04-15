@@ -121,7 +121,7 @@ class MlModelPredictionController extends ApiController
             $prediction->setModel($model);
 
             /** @var MlModelPredictionData $modelPredictionData */
-            $modelPredictionData = $this->mlModelPredictionDataService->create($file, $prediction);
+            $modelPredictionData = $this->mlModelPredictionDataService->create($prediction, $file);
             $prediction->predictionData()->save($modelPredictionData);
 
             RunMachineLearningPredictionScript::dispatch($prediction);
@@ -173,7 +173,7 @@ class MlModelPredictionController extends ApiController
                 $file = $request->file(self::PREDICTION_DATA_FILE_PARAMETER);
 
                 /** @var MlModelPredictionData $modelPredictionData */
-                $this->mlModelPredictionDataService->update($file, $prediction);
+                $this->mlModelPredictionDataService->update($prediction, $file);
                 $prediction->load('predictionData');
                 RunMachineLearningPredictionScript::dispatch($prediction);
             }
