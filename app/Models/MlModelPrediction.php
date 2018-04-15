@@ -63,4 +63,12 @@ class MlModelPrediction extends BaseEntity
     {
         return $this->hasOne(MlModelPredictionData::class);
     }
+
+    /**
+     * @return HasOne
+     */
+    public function trainingScore()
+    {
+        return $this->hasOne(MlModelPredictionScore::class);
+    }
 }
