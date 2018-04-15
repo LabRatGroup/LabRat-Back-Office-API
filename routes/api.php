@@ -87,4 +87,5 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('prediction/create', 'MlModelPredictionController@create')->name('prediction.create');
     Route::post('prediction/{id}/update', 'MlModelPredictionController@update')->name('prediction.update');
     Route::delete('prediction/{id}/delete', 'MlModelPredictionController@delete')->name('prediction.delete');
+    Route::get('prediction/{id}/run', 'MlModelPredictionController@run')->name('prediction.run');
 });
