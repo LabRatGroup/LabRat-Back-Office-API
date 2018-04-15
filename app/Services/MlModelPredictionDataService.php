@@ -7,7 +7,7 @@ use App\Repositories\MlModelPredictionDataRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 
-class MlModelStatePredictionDataService
+class MlModelPredictionDataService
 {
     /** @var MlModelPredictionDataRepository */
     private $mlModelPredictionDataRepository;
@@ -25,13 +25,13 @@ class MlModelStatePredictionDataService
     /**
      * Creates a new training data entry.
      *
-     * @param UploadedFile      $file
-     *
      * @param MlModelPrediction $prediction
+     *
+     * @param UploadedFile      $file
      *
      * @return Model
      */
-    public function create(UploadedFile $file, MlModelPrediction $prediction)
+    public function create(MlModelPrediction $prediction, UploadedFile $file)
     {
         $state = $prediction->model->getCurrentState();
 
@@ -44,19 +44,22 @@ class MlModelStatePredictionDataService
     }
 
     /**
-     * @param UploadedFile      $file
      * @param MlModelPrediction $prediction
+     *
+     * @param UploadedFile      $file
      *
      * @return Model
      */
-    public function update(UploadedFile $file, MlModelPrediction $prediction)
+    public function update(MlModelPrediction $prediction, UploadedFile $file = null)
     {
         $state = $prediction->model->getCurrentState();
 
         $params['algorithm'] = json_encode($state->algorithm);
         $params['params'] = $state->params;
-        $params['mime_type'] = $file->getMimeType();
-        $params['data'] = $file->openFile('r')->fread($file->getSize());
+        if (!is_null($file)) {
+            $params['mime_type'] = $file->getMimeType();
+            $params['data'] = $file->openFile('r')->fread($file->getSize());
+        }
 
         $predictionData = $this->mlModelPredictionDataRepository->findOneOrFailById($prediction->predictionData->id);
 

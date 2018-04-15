@@ -7,7 +7,7 @@ use App\Models\MlModelPrediction;
 use App\Models\MlModelPredictionData;
 use App\Models\MlModelState;
 use App\Repositories\MlModelPredictionDataRepository;
-use App\Services\MlModelStatePredictionDataService;
+use App\Services\MlModelPredictionDataService;
 use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
@@ -44,10 +44,10 @@ class MlModelPredictionDataServiceTest extends TestCase
         $mlModelPredictionDataRepository = $this->createMock(MlModelPredictionDataRepository::class);
         $mlModelPredictionDataRepository->method('create')->willReturn($stubModel);
 
-        $predictionDataService = new MlModelStatePredictionDataService($mlModelPredictionDataRepository);
+        $predictionDataService = new MlModelPredictionDataService($mlModelPredictionDataRepository);
 
         // When
-        $data = $predictionDataService->create($file, $prediction);
+        $data = $predictionDataService->create($prediction, $file);
 
         // Then
         $this->assertInstanceOf(MlModelPredictionData::class, $data);
