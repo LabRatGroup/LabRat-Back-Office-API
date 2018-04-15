@@ -14,7 +14,7 @@ $factory->define(MlModelPredictionScore::class, function (Faker $faker) {
     ]);
 
     return [
-        'ml_mode_prediction_id' => null,
+        'ml_model_prediction_id' => null,
         'data'                  => $data,
     ];
 });

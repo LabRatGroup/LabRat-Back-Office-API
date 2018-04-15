@@ -7,6 +7,9 @@ use Jenssegers\Mongodb\Eloquent\HybridRelations;
 use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
 use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 
+/**
+ * @property mixed data
+ */
 class MlModelPredictionScore extends Eloquent
 {
     use SoftDeletes;
@@ -39,7 +42,7 @@ class MlModelPredictionScore extends Eloquent
      */
     public function prediction()
     {
-        return $this->belongsTo(MlModelPrediction::class);
+        return $this->belongsTo(MlModelPrediction::class, 'ml_model_prediction_id');
     }
 
     public function setPrediction($prediction)
