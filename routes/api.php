@@ -92,4 +92,6 @@ Route::group(['middleware' => ['jwt.auth']], function () {
 
 Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get('score/prediction/{id}/show', 'MlModelPredictionScoreController@show')->name('score.prediction.show');
+    Route::delete('score/prediction/{id}/delete', 'MlModelPredictionScoreController@delete')->name('score.prediction.delete');
+
 });

@@ -33,7 +33,7 @@ class MlModelPredictionData extends Eloquent
      */
     public function prediction()
     {
-        return $this->belongsTo(MlModelPrediction::class);
+        return $this->belongsTo(MlModelPrediction::class, 'ml_model_prediction_id');
     }
 
     public function setPrediction($prediction)
