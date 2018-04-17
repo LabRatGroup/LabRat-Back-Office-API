@@ -34,7 +34,7 @@ class MlModelStateTrainingData extends Eloquent
      */
     public function state()
     {
-        return $this->belongsTo(MlModelState::class);
+        return $this->belongsTo(MlModelState::class, 'ml_model_state');
     }
 
     public function setState($state)
