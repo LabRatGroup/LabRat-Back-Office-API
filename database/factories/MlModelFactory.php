@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factory;
 $factory->define(MlModel::class, function (Faker $faker) {
     return [
         'title'       => $faker->sentence(rand(2, 3)),
-        'description' => $faker->sentence(20),
+        'description' => $faker->sentence(10),
         'project_id'  => null,
     ];
 });
