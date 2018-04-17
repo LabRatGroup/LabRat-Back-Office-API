@@ -20,6 +20,9 @@ class MlGlobalSeeder extends Seeder
      */
     public function run()
     {
+
+        $data = file(base_path('database/data/data.csv'));
+
         /** @var User $user */
         $user = factory(User::class)->create();
 
@@ -70,7 +73,7 @@ class MlGlobalSeeder extends Seeder
             [
                 'algorithm' => $algorithm->alias,
                 'params'    => $state->params,
-                'data'      => '',
+                'data'      => $data,
             ]
         );
         $stateTrainingData->setState($state);
@@ -84,7 +87,7 @@ class MlGlobalSeeder extends Seeder
             [
                 'algorithm' => $algorithm->alias,
                 'params'    => $state->params,
-                'data'      => '',
+                'data'      => $data,
             ]
         );
         $predictionData->setPrediction($prediction);
