@@ -1,10 +1,14 @@
 <?php
 
+use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
 use App\Models\MlModelPredictionData;
 use App\Models\MlModelState;
 use App\Models\MlModelStateScore;
+use App\Models\MlModelStateTrainingData;
+use App\Models\Project;
+use App\User;
 use Illuminate\Database\Seeder;
 
 class MlGlobalSeeder extends Seeder
@@ -16,71 +20,73 @@ class MlGlobalSeeder extends Seeder
      */
     public function run()
     {
+        /** @var User $user */
+        $user = factory(User::class)->create();
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
         /** @var MlModel $model */
         $model = factory(MlModel::class)->create();
+        $model->setProject($project);
 
-        /** @var MlModelState $state1 */
-        $state1 = factory(MlModelState::class)->create(
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+        $algorithmParams = json_encode(
             [
-                'is_current'  => true,
-                'ml_model_id' => $model->id,
+                'method'        => 'knn',
+                'preprocessing' => 'range',
+                'metric'        => 'Accuracy',
+                'control'       => [
+                    'trainControlMethodRounds' => 10,
+                    'trainControlMethod'       => 'cv',
+                ],
+                'tune'          => [
+                    'k' => [
+                        'mix'  => 2,
+                        'max'  => 8,
+                        'step' => 1,
+                    ],
+                ],
             ]
         );
 
-        /** @var MlModelStateScore $score1 */
-        $score1 = factory(MlModelStateScore::class)->create(
-            [
-                'accuracy'          => 0.8,
-                'ml_model_state_id' => $state1->id,
-            ]
-        );
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create(['params' => $algorithmParams,]);
+        $state->setAlgorithm($algorithm);
+        $state->setModel($model);
 
-        /** @var MlModelState $state2 */
-        $state2 = factory(MlModelState::class)->create(
+        /** @var MlModelStateScore $score */
+        $score = factory(MlModelStateScore::class)->create(
             [
-                'is_current'  => false,
-                'ml_model_id' => $model->id,
+                'params'   => $algorithmParams,
+                'accuracy' => 0.8,
             ]
         );
+        $score->setState($state);
 
-        /** @var MlModelStateScore $score1 */
-        $score2 = factory(MlModelStateScore::class)->create(
+        /** @var MlModelStateTrainingData $stateTrainingData */
+        $stateTrainingData = factory(MlModelStateTrainingData::class)->create(
             [
-                'accuracy'          => 0.9,
-                'ml_model_state_id' => $state2->id,
+                'algorithm' => $algorithm->alias,
+                'params'    => $state->params,
+                'data'      => '',
             ]
         );
+        $stateTrainingData->setState($state);
 
-        /** @var MlModelPrediction $prediction1 */
-        $prediction1 = factory(MlModelPrediction::class)->create(
-            [
-                'ml_model_id' => $model->id,
-            ]
-        );
-
-        /** @var MlModelPrediction $prediction2 */
-        $prediction2 = factory(MlModelPrediction::class)->create(
-            [
-                'ml_model_id' => $model->id,
-            ]
-        );
-
-        /** @var MlModelPredictionData $predictionData1 */
-        $predictionData1 = factory(MlModelPredictionData::class)->create(
-            [
-                'algorithm'           => json_encode($state1->algorithm),
-                'params'              => $state1->params,
-                'ml_model_prediction_id' => $prediction1->id,
-            ]
-        );
+        /** @var MlModelPrediction $prediction */
+        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction->setModel($model);
 
         /** @var MlModelPredictionData $predictionData1 */
-        $predictionData2 = factory(MlModelPredictionData::class)->create(
+        $predictionData = factory(MlModelPredictionData::class)->create(
             [
-                'algorithm'           => json_encode($state1->algorithm),
-                'params'              => $state1->params,
-                'ml_model_prediction_id' => $prediction2->id,
+                'algorithm' => $algorithm->alias,
+                'params'    => $state->params,
+                'data'      => '',
             ]
         );
+        $predictionData->setPrediction($prediction);
     }
 }
