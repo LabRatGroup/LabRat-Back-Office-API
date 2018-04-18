@@ -37,10 +37,9 @@ class MlModelPredictionDataService
     {
         $state = $prediction->model->getCurrentState();
 
-        $params['ml_algorithm_id'] = $state->algorithm->id;
         $params['params'] = $state->params;
         $params['mime_type'] = $mime;
-        $params['data'] = $file;
+        $params['file_path'] = $file;
 
         return $this->mlModelPredictionDataRepository->create($params);
     }
@@ -58,11 +57,10 @@ class MlModelPredictionDataService
     {
         $state = $prediction->model->getCurrentState();
 
-        $params['ml_algorithm_id'] = $state->algorithm->id;
         $params['params'] = $state->params;
         if (!is_null($file)) {
             $params['mime_type'] = $mime;
-            $params['data'] = $file;
+            $params['file_path'] = $file;
         }
 
         $predictionData = $this->mlModelPredictionDataRepository->findOneOrFailById($prediction->predictionData->id);

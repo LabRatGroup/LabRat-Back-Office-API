@@ -89,7 +89,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
         ]);
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->data);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
     }
 
     /** @test */
@@ -154,7 +154,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
         ]);
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->data);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
     }
 
     /** @test */
@@ -585,7 +585,7 @@ class MlModelStateControllerTest extends TestCase
         $this->assertCount(2, $trainingDataItems);
 
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->data);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
     }
 
     /** @test */
@@ -717,7 +717,7 @@ class MlModelStateControllerTest extends TestCase
 
         $this->assertCount(2, $model->states);
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->data);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
     }
 
     /** @test */

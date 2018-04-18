@@ -6,10 +6,14 @@ use Illuminate\Database\Eloquent\Factory;
 
 /** @var Factory $factory */
 $factory->define(MlModelPredictionData::class, function (Faker $faker) {
+    $params = json_encode([
+        $faker->word => $faker->word,
+        $faker->word => $faker->word,
+        $faker->word => $faker->word,
+    ]);
     return [
         'mime_type' => $faker->mimeType,
-        'data'      => $faker->word,
-        'algorithm' => null,
-        'params'    => null,
+        'file_path' => $faker->word,
+        'params'    => $params,
     ];
 });

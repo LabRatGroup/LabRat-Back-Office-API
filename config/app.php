@@ -178,6 +178,8 @@ return [
         \App\Providers\MlModelStateServiceProvider::class,
         \App\Providers\MlModelStateScoreServiceProvider::class,
         \App\Providers\MlModelPredictionServiceProvider::class,
+        \App\Providers\MlModelStateTrainingDataServiceProvider::class,
+        \App\Providers\MlModelPredictionDataServiceProvider::class,
     ],
 
     /*

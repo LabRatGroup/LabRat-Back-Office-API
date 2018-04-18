@@ -78,7 +78,7 @@ class MlModelPredictionControllerTest extends TestCase
             'ml_model_id' => $model->id,
             'title'       => $title,
         ]);
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->data);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
     }
 
     /** @test */
@@ -135,7 +135,7 @@ class MlModelPredictionControllerTest extends TestCase
             'title'       => $title,
         ]);
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->data);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
 
     }
 
@@ -281,7 +281,7 @@ class MlModelPredictionControllerTest extends TestCase
         ]);
         $this->assertEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->data);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
 
     }
 
@@ -351,7 +351,7 @@ class MlModelPredictionControllerTest extends TestCase
         ]);
         $this->assertEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->data);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
 
     }
 

@@ -35,10 +35,9 @@ class MlModelStateTrainingDataService
      */
     public function create($file, $mime, MlModelState $state)
     {
-        $params['ml_algorithm_id'] = $state->algorithm->id;
         $params['params'] = $state->params;
         $params['mime_type'] = $mime;
-        $params['data'] = $file;
+        $params['file_path'] = $file;
 
         return $this->mlModelStateTrainingDataRepository->create($params);
     }
@@ -53,10 +52,9 @@ class MlModelStateTrainingDataService
      */
     public function copy(MlModelStateTrainingData $trainingData, MlModelState $state)
     {
-        $params['ml_algorithm_id'] = $state->algorithm->id;
         $params['params'] = $state->params;
         $params['mime_type'] = $trainingData->mime_type;
-        $params['data'] = $trainingData->data;
+        $params['file_path'] = $trainingData->file_path;
 
         return $this->mlModelStateTrainingDataRepository->create($params);
     }

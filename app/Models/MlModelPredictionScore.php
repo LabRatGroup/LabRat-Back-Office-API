@@ -9,6 +9,7 @@ use Jenssegers\Mongodb\Eloquent\SoftDeletes;
 
 /**
  * @property mixed data
+ * @property mixed id
  */
 class MlModelPredictionScore extends Eloquent
 {
@@ -20,8 +21,7 @@ class MlModelPredictionScore extends Eloquent
 
     protected $fillable = [
         'data',
-        'ml_mode_prediction_id',
-        'ml_model_state_id',
+        'ml_model_prediction_id',
     ];
 
     /**

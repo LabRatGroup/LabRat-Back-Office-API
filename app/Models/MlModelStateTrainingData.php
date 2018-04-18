@@ -1,32 +1,38 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Jenssegers\Mongodb\Eloquent\HybridRelations;
-use Jenssegers\Mongodb\Eloquent\Model as Eloquent;
-use Jenssegers\Mongodb\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 /**
  * @property string trainData
  * @property string id
  * @property mixed  mime_type
  * @property mixed  data
+ * @property string token
+ * @property mixed  file_path
  */
-class MlModelStateTrainingData extends Eloquent
+class MlModelStateTrainingData extends BaseEntity
 {
     use SoftDeletes;
-    use HybridRelations;
 
-    protected $connection = 'mongodb';
-    protected $collection = 'ml_training_data_collections';
+    const ITEM_TOKEN_LENGTH = 25;
+
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'deleted_at',
+    ];
 
     protected $fillable = [
-        'algorithm',
         'params',
         'mime_type',
-        'data',
-        'ml_model_state_id',
+        'file_path',
+    ];
+
+    protected $hidden = [
+        'token',
     ];
 
     /**
@@ -34,7 +40,7 @@ class MlModelStateTrainingData extends Eloquent
      */
     public function state()
     {
-        return $this->belongsTo(MlModelState::class, 'ml_model_state');
+        return $this->belongsTo(MlModelState::class, 'ml_model_state_id');
     }
 
     public function setState($state)

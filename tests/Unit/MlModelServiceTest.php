@@ -81,7 +81,6 @@ class MlModelServiceTest extends TestCase
         /** @var MlModelPredictionData $predictionData1 */
         $predictionData1 = factory(MlModelPredictionData::class)->create(
             [
-                'algorithm'              => json_encode($state1->algorithm),
                 'params'                 => $state1->params,
                 'ml_model_prediction_id' => $prediction1->id,
             ]
@@ -90,7 +89,6 @@ class MlModelServiceTest extends TestCase
         /** @var MlModelPredictionData $predictionData1 */
         $predictionData2 = factory(MlModelPredictionData::class)->create(
             [
-                'algorithm'              => json_encode($state1->algorithm),
                 'params'                 => $state1->params,
                 'ml_model_prediction_id' => $prediction2->id,
             ]
