@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
 use App\Models\MlModelPredictionData;
@@ -25,19 +26,24 @@ class MlModelPredictionDataServiceTest extends TestCase
         // Given
         $file = UploadedFile::fake()->create('data.csv', 10000);
 
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
         /** @var MlModelState $state */
         $state = factory(MlModelState::class)->create();
 
         /** @var MlModel $model */
         $model = factory(MlModel::class)->create();
         $state->setModel($model);
+        $state->setAlgorithm($algorithm);
 
         /** @var MlModelPrediction $prediction */
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
         $stubModel = factory(MlModelPredictionData::class)->make([
-            'mime_type'         => $file->getMimeType(),
+            'mime_type' => $file->getMimeType(),
+            'data'      => $file->getFilename(),
         ]);
 
         /** @var  MockObject|MlModelPredictionDataRepository $mlModelPredictionDataRepository */
@@ -47,7 +53,7 @@ class MlModelPredictionDataServiceTest extends TestCase
         $predictionDataService = new MlModelPredictionDataService($mlModelPredictionDataRepository);
 
         // When
-        $data = $predictionDataService->create($prediction, $file);
+        $data = $predictionDataService->create($prediction, $file->getFilename(), $file->getMimeType());
 
         // Then
         $this->assertInstanceOf(MlModelPredictionData::class, $data);

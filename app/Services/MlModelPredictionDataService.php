@@ -27,18 +27,20 @@ class MlModelPredictionDataService
      *
      * @param MlModelPrediction $prediction
      *
-     * @param UploadedFile      $file
+     * @param                   $file
+     *
+     * @param                   $mime
      *
      * @return Model
      */
-    public function create(MlModelPrediction $prediction, UploadedFile $file)
+    public function create(MlModelPrediction $prediction, $file, $mime)
     {
         $state = $prediction->model->getCurrentState();
 
-        $params['algorithm'] = json_encode($state->algorithm);
+        $params['ml_algorithm_id'] = $state->algorithm->id;
         $params['params'] = $state->params;
-        $params['mime_type'] = $file->getMimeType();
-        $params['data'] = $file->openFile('r')->fread($file->getSize());
+        $params['mime_type'] = $mime;
+        $params['data'] = $file;
 
         return $this->mlModelPredictionDataRepository->create($params);
     }
@@ -48,17 +50,19 @@ class MlModelPredictionDataService
      *
      * @param UploadedFile      $file
      *
+     * @param null              $mime
+     *
      * @return Model
      */
-    public function update(MlModelPrediction $prediction, UploadedFile $file = null)
+    public function update(MlModelPrediction $prediction, $file = null, $mime = null)
     {
         $state = $prediction->model->getCurrentState();
 
-        $params['algorithm'] = json_encode($state->algorithm);
+        $params['ml_algorithm_id'] = $state->algorithm->id;
         $params['params'] = $state->params;
         if (!is_null($file)) {
-            $params['mime_type'] = $file->getMimeType();
-            $params['data'] = $file->openFile('r')->fread($file->getSize());
+            $params['mime_type'] = $mime;
+            $params['data'] = $file;
         }
 
         $predictionData = $this->mlModelPredictionDataRepository->findOneOrFailById($prediction->predictionData->id);

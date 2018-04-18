@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factory;
 $factory->define(MlModelStateTrainingData::class, function (Faker $faker) {
     return [
         'mime_type' => $faker->mimeType,
-        'data'      => $faker->words(10),
+        'data'      => $faker->word,
         'algorithm' => null,
         'params'    => null,
     ];

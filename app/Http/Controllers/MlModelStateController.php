@@ -20,6 +20,7 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class MlModelStateController extends ApiController
 {
@@ -125,7 +126,8 @@ class MlModelStateController extends ApiController
                 throw new DataFileErrorException('Training data file was corrupted.');
             }
 
-            $file = $request->file(self::TRAINING_DATA_FILE_PARAMETER);
+            $file = $request->file(self::TRAINING_DATA_FILE_PARAMETER)->store('training');
+            $mime = $request->file(self::TRAINING_DATA_FILE_PARAMETER)->getMimeType();
 
             /** @var MlAlgorithm $algorithm */
             $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params[self::ALGORITHM_ID_PARAMETER]);
@@ -136,7 +138,7 @@ class MlModelStateController extends ApiController
             $state->setAlgorithm($algorithm);
 
             /** @var MlModelStateTrainingData $modelStateTrainingData */
-            $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $state);
+            $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $mime, $state);
             $state->trainingData()->save($modelStateTrainingData);
 
             RunMachineLearningModelTrainingScript::dispatch($state);
@@ -179,8 +181,10 @@ class MlModelStateController extends ApiController
                 if (!$request->file(self::TRAINING_DATA_FILE_PARAMETER)->isValid()) {
                     throw new DataFileErrorException('Training data file was corrupted.');
                 }
-                $file = $request->file(self::TRAINING_DATA_FILE_PARAMETER);
-                $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $state);
+                $file = $request->file(self::TRAINING_DATA_FILE_PARAMETER)->store('training');
+                $mime = $request->file(self::TRAINING_DATA_FILE_PARAMETER)->getMimeType();
+
+                $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $mime, $state);
             } else {
                 /** @var MlModelState $currentState */
                 $currentState = $baseState->model->getCurrentState();
