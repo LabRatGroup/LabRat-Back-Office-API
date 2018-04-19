@@ -840,6 +840,8 @@ class MlModelStateControllerTest extends TestCase
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
+
+        $response->assertJson(['data' => ['is_current' => '1']]);
         $this->assertDatabaseHas('ml_model_states', [
             'id'         => $state1->id,
             'is_current' => 0,

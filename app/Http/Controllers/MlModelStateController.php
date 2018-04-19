@@ -246,7 +246,7 @@ class MlModelStateController extends ApiController
 
             $this->mlModelService->reviewModelPerformance($state->model->token);
 
-            return $this->responseOk($state);
+            return $this->responseOk($state->refresh());
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
         } catch (Exception $e) {
