@@ -17,14 +17,10 @@ $factory->define(MlModelStateScore::class, function (Faker $faker) {
         'params'            => $params,
         'kappa'             => $faker->randomFloat(5, 1, 100),
         'accuracy'          => $faker->randomFloat(5, 1, 100),
-        'tp'                => $faker->randomNumber(2),
-        'tn'                => $faker->randomNumber(2),
-        'fp'                => $faker->randomNumber(2),
-        'fn'                => $faker->randomNumber(2),
+        'confusion_matrix'  => $params,
         'sensitivity'       => $faker->randomFloat(5, 1, 100),
         'specificity'       => $faker->randomFloat(5, 1, 100),
         'precision'         => $faker->randomFloat(5, 1, 100),
         'recall'            => $faker->randomFloat(5, 1, 100),
-        'auc'               => $faker->randomFloat(5, 1, 100),
     ];
 });
