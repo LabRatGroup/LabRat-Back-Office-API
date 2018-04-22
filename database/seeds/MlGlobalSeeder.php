@@ -36,8 +36,9 @@ class MlGlobalSeeder extends Seeder
         $algorithmParams = json_encode(
             [
                 'method'        => 'knn',
-                'preprocessing' => 'range',
+                'preprocessing' => 'center',
                 'metric'        => 'Accuracy',
+                'positive'      => 'Cleaved',
                 'control'       => [
                     'trainControlMethodRounds' => 10,
                     'trainControlMethod'       => 'cv',

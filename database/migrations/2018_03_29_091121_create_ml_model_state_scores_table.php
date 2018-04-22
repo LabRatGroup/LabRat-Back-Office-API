@@ -20,15 +20,11 @@ class CreateMlModelStateScoresTable extends Migration
             $table->string('params')->nullable(false);
             $table->float('kappa')->nullable(false);
             $table->float('accuracy')->nullable(false);
-            $table->integer('tp')->nullable(false);
-            $table->integer('tn')->nullable(false);
-            $table->integer('fp')->nullable(false);
-            $table->integer('fn')->nullable(false);
+            $table->string('confusion_matrix')->nullable(false);
             $table->float('sensitivity')->nullable(false);
             $table->float('specificity')->nullable(false);
             $table->float('precision')->nullable(false);
             $table->float('recall')->nullable(false);
-            $table->float('auc')->nullable(false);
             $table->timestamps();
             $table->softDeletes();
         });
