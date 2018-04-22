@@ -114,14 +114,15 @@ class MlModelPredictionController extends ApiController
                 throw new DataFileErrorException('Prediction data file was corrupted.');
             }
 
-            $file = $request->file(self::PREDICTION_DATA_FILE_PARAMETER);
+            $file = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->store('predictions');
+            $mime = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
 
             /** @var MlModelPrediction $prediction */
             $prediction = $this->mlModelPredicionRepository->create($params);
             $prediction->setModel($model);
 
             /** @var MlModelPredictionData $modelPredictionData */
-            $modelPredictionData = $this->mlModelPredictionDataService->create($prediction, $file);
+            $modelPredictionData = $this->mlModelPredictionDataService->create($prediction, $file, $mime);
             $prediction->predictionData()->save($modelPredictionData);
 
             RunMachineLearningPredictionScript::dispatch($prediction);
@@ -170,10 +171,11 @@ class MlModelPredictionController extends ApiController
                     throw new DataFileErrorException('Prediction data file was corrupted.');
                 }
 
-                $file = $request->file(self::PREDICTION_DATA_FILE_PARAMETER);
+                $file = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->store('predictions');
+                $mime = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
 
                 /** @var MlModelPredictionData $modelPredictionData */
-                $this->mlModelPredictionDataService->update($prediction, $file);
+                $this->mlModelPredictionDataService->update($prediction, $file, $mime);
                 $prediction->load('predictionData');
                 RunMachineLearningPredictionScript::dispatch($prediction);
             }

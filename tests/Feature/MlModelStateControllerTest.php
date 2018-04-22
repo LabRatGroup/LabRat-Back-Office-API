@@ -15,6 +15,7 @@ use App\Models\Team;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -30,6 +31,7 @@ class MlModelStateControllerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Storage::fake(env('FILESYSTEM_DRIVER'));
         $this->file = UploadedFile::fake()->create('data.csv', self::FILE_SIZE);
     }
 
@@ -79,7 +81,6 @@ class MlModelStateControllerTest extends TestCase
         /** @var MlModelState $stateDB */
         $stateDB = MlModelState::find($response->json('data')['id']);
 
-
         // Then
         $response->assertStatus(HttpResponse::HTTP_CREATED);
         $this->assertInstanceOf(MlModelStateTrainingData::class, $stateDB->trainingData);
@@ -88,7 +89,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
         ]);
-
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
     }
 
     /** @test */
@@ -144,12 +145,16 @@ class MlModelStateControllerTest extends TestCase
         // When
         $response = $this->postJson(route('state.create'), $data, $this->getAuthHeader($member));
 
+        /** @var MlModelState $stateDB */
+        $stateDB = MlModelState::find($response->json('data')['id']);
+
         // Then
         $response->assertStatus(HttpResponse::HTTP_CREATED);
         $this->assertDatabaseHas('ml_model_states', [
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
         ]);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
     }
 
     /** @test */
@@ -569,12 +574,18 @@ class MlModelStateControllerTest extends TestCase
         /** @var Collection $trainingDataItems */
         $trainingDataItems = MlModelStateTrainingData::all();
 
+        /** @var MlModelState $stateDB */
+        $stateDB = MlModelState::find($response->json('data')['id']);
+
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
         $response->assertJsonFragment(['params' => json_encode($params)]);
 
         $this->assertCount(2, $model->states);
         $this->assertCount(2, $trainingDataItems);
+
+
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
     }
 
     /** @test */
@@ -643,7 +654,7 @@ class MlModelStateControllerTest extends TestCase
     }
 
     /** @test */
-    public function project_member_user_should_not_update_state()
+    public function project_member_user_should_update_state()
     {
         // Given
         $user = factory(User::class)->create();
@@ -697,11 +708,16 @@ class MlModelStateControllerTest extends TestCase
         // When
         $response = $this->post(route('state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
 
+        /** @var MlModelState $stateDB */
+        $stateDB = MlModelState::find($response->json('data')['id']);
+
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
         $response->assertJsonFragment(['params' => json_encode($params)]);
 
         $this->assertCount(2, $model->states);
+
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
     }
 
     /** @test */
@@ -769,6 +785,9 @@ class MlModelStateControllerTest extends TestCase
         $user = factory(User::class)->create();
         $this->be($user);
 
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
         /** @var Project $project */
         $project = factory(Project::class)->create();
 
@@ -800,12 +819,19 @@ class MlModelStateControllerTest extends TestCase
         $predictionData2 = factory(MlModelPredictionData::class)->create();
 
         $model->setProject($project);
+
         $state1->setModel($model);
+        $state1->setAlgorithm($algorithm);
+
         $state2->setModel($model);
+        $state2->setAlgorithm($algorithm);
+
         $score1->setState($state1);
         $score2->setState($state2);
+
         $prediction1->setModel($model);
         $prediction2->setModel($model);
+
         $predictionData1->setPrediction($prediction1);
         $predictionData2->setPrediction($prediction2);
 
@@ -814,6 +840,8 @@ class MlModelStateControllerTest extends TestCase
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
+
+        $response->assertJson(['data' => ['is_current' => '1']]);
         $this->assertDatabaseHas('ml_model_states', [
             'id'         => $state1->id,
             'is_current' => 0,

@@ -13,6 +13,7 @@ use App\Models\Team;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -29,6 +30,7 @@ class MlModelPredictionControllerTest extends TestCase
     public function setUp()
     {
         parent::setUp();
+        Storage::fake(env('FILESYSTEM_DRIVER'));
         $this->file = UploadedFile::fake()->create('data.csv', self::FILE_SIZE);
     }
 
@@ -76,6 +78,7 @@ class MlModelPredictionControllerTest extends TestCase
             'ml_model_id' => $model->id,
             'title'       => $title,
         ]);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
     }
 
     /** @test */
@@ -131,6 +134,9 @@ class MlModelPredictionControllerTest extends TestCase
             'ml_model_id' => $model->id,
             'title'       => $title,
         ]);
+
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
+
     }
 
     /** @test */
@@ -274,6 +280,9 @@ class MlModelPredictionControllerTest extends TestCase
             'title'       => $title,
         ]);
         $this->assertEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
+
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
+
     }
 
     /** @test */
@@ -341,6 +350,9 @@ class MlModelPredictionControllerTest extends TestCase
             'title'       => $title,
         ]);
         $this->assertEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
+
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
+
     }
 
     /** @test */
@@ -398,7 +410,7 @@ class MlModelPredictionControllerTest extends TestCase
     }
 
     /** @test */
-    public function non_project_user_should_update_model_prediction()
+    public function non_project_user_should_not_update_model_prediction()
     {
         // Given
         $title = 'PREDICTION_TITLE';

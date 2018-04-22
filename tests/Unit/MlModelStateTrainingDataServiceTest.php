@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\MlAlgorithm;
 use App\Models\MlModelState;
 use App\Models\MlModelStateTrainingData;
 use App\Repositories\MlModelStateTrainingDataRepository;
@@ -23,12 +24,17 @@ class MlModelStateTrainingDataServiceTest extends TestCase
         // Given
         $file = UploadedFile::fake()->create('data.csv', 10000);
 
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
         /** @var MlModelState $state */
         $state = factory(MlModelState::class)->make();
+        $state->setAlgorithm($algorithm);
 
         /** @var MlModelStateTrainingData $stubModel */
         $stubModel = factory(MlModelStateTrainingData::class)->make([
-            'mime_type'         => $file->getMimeType(),
+            'mime_type' => $file->getMimeType(),
+            'data'      => $file->getFilename(),
         ]);
 
         /** @var  MockObject|MlModelStateTrainingDataRepository $mlModelStateTrainingDataRepository */
@@ -38,7 +44,7 @@ class MlModelStateTrainingDataServiceTest extends TestCase
         $trainingDataService = new MlModelStateTrainingDataService($mlModelStateTrainingDataRepository);
 
         // When
-        $data = $trainingDataService->create($file, $state);
+        $data = $trainingDataService->create($file->getFilename(), $file->getMimeType(),  $state);
 
         // Then
         $this->assertInstanceOf(MlModelStateTrainingData::class, $data);

@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
 use App\Models\MlModelPredictionData;
@@ -26,11 +27,15 @@ class MlModelServiceTest extends TestCase
         /** @var MlModel $model */
         $model = factory(MlModel::class)->create();
 
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
         /** @var MlModelState $state1 */
         $state1 = factory(MlModelState::class)->create(
             [
-                'is_current'  => true,
-                'ml_model_id' => $model->id,
+                'is_current'      => true,
+                'ml_model_id'     => $model->id,
+                'ml_algorithm_id' => $algorithm->id,
             ]
         );
 
@@ -45,8 +50,9 @@ class MlModelServiceTest extends TestCase
         /** @var MlModelState $state2 */
         $state2 = factory(MlModelState::class)->create(
             [
-                'is_current'  => false,
-                'ml_model_id' => $model->id,
+                'is_current'      => false,
+                'ml_model_id'     => $model->id,
+                'ml_algorithm_id' => $algorithm->id,
             ]
         );
 
@@ -75,8 +81,7 @@ class MlModelServiceTest extends TestCase
         /** @var MlModelPredictionData $predictionData1 */
         $predictionData1 = factory(MlModelPredictionData::class)->create(
             [
-                'algorithm'           => json_encode($state1->algorithm),
-                'params'              => $state1->params,
+                'params'                 => $state1->params,
                 'ml_model_prediction_id' => $prediction1->id,
             ]
         );
@@ -84,8 +89,7 @@ class MlModelServiceTest extends TestCase
         /** @var MlModelPredictionData $predictionData1 */
         $predictionData2 = factory(MlModelPredictionData::class)->create(
             [
-                'algorithm'           => json_encode($state1->algorithm),
-                'params'              => $state1->params,
+                'params'                 => $state1->params,
                 'ml_model_prediction_id' => $prediction2->id,
             ]
         );

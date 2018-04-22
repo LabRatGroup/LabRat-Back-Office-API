@@ -21,8 +21,6 @@ abstract class TestCase extends BaseTestCase
             '--database' => 'sqlite_testing'
         ]);
 
-        MlModelStateTrainingData::truncate();
-        MlModelPredictionData::truncate();
         MlModelPredictionScore::truncate();
     }
 

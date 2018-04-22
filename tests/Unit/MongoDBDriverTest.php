@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\MlModelPredictionScore;
 use App\Models\MlModelStateTrainingData;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -13,15 +14,15 @@ class MongoDBDriverTest extends TestCase
     /** @test */
     public function should_store_data()
     {
-        $model = New MlModelStateTrainingData();
-        $model->trainData = "FILE_DATA";
+        $model = New MlModelPredictionScore();
+        $model->data = "FILE_DATA";
         $model->save();
 
-        /** @var MlModelStateTrainingData $modelOut */
+        /** @var MlModelPredictionScore $modelOut */
         $modelOut = $model->find($model->getQueueableId());
 
-        $this->assertInstanceOf(MlModelStateTrainingData::class, $model);
-        $this->assertInstanceOf(MlModelStateTrainingData::class, $modelOut);
+        $this->assertInstanceOf(MlModelPredictionScore::class, $model);
+        $this->assertInstanceOf(MlModelPredictionScore::class, $modelOut);
         $this->assertEquals($model->getQueueableId(), $modelOut->getQueueableId());
     }
 }
