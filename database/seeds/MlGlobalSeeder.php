@@ -20,7 +20,6 @@ class MlGlobalSeeder extends Seeder
      */
     public function run()
     {
-
         /** @var User $user */
         $user = factory(User::class)->create();
 
