@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\RunMachineLearningPredictionScript;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
@@ -13,6 +14,7 @@ use App\Models\Team;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -31,6 +33,7 @@ class MlModelPredictionControllerTest extends TestCase
     {
         parent::setUp();
         Storage::fake(env('FILESYSTEM_DRIVER'));
+        Bus::fake();
         $this->file = UploadedFile::fake()->create('data.csv', self::FILE_SIZE);
     }
 
@@ -79,6 +82,7 @@ class MlModelPredictionControllerTest extends TestCase
             'title'       => $title,
         ]);
         Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
+        Bus::assertDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
@@ -136,7 +140,7 @@ class MlModelPredictionControllerTest extends TestCase
         ]);
 
         Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
-
+        Bus::assertDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
@@ -180,6 +184,7 @@ class MlModelPredictionControllerTest extends TestCase
             'ml_model_id' => $model->id,
             'title'       => $title,
         ]);
+        Bus::assertNotDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
@@ -223,6 +228,7 @@ class MlModelPredictionControllerTest extends TestCase
             'ml_model_id' => $model->id,
             'title'       => $title,
         ]);
+        Bus::assertNotDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
@@ -282,7 +288,7 @@ class MlModelPredictionControllerTest extends TestCase
         $this->assertEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
 
         Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
-
+        Bus::assertDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
@@ -352,7 +358,7 @@ class MlModelPredictionControllerTest extends TestCase
         $this->assertEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
 
         Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
-
+        Bus::assertDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
@@ -407,6 +413,7 @@ class MlModelPredictionControllerTest extends TestCase
             'title'       => $title,
         ]);
         $this->assertNotEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
+        Bus::assertNotDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
@@ -461,6 +468,7 @@ class MlModelPredictionControllerTest extends TestCase
             'title'       => $title,
         ]);
         $this->assertNotEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
+        Bus::assertNotDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
@@ -843,10 +851,11 @@ class MlModelPredictionControllerTest extends TestCase
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
+        Bus::assertDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
-    public function project_user_should_run_prediction_when_missing_data()
+    public function project_user_should_run_not_prediction_when_missing_data()
     {
         // Given
         $user = factory(User::class)->create();
@@ -877,6 +886,7 @@ class MlModelPredictionControllerTest extends TestCase
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
+        Bus::assertNotDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
@@ -916,6 +926,7 @@ class MlModelPredictionControllerTest extends TestCase
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
+        Bus::assertNotDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
@@ -955,5 +966,6 @@ class MlModelPredictionControllerTest extends TestCase
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
+        Bus::assertNotDispatched(RunMachineLearningPredictionScript::Class);
     }
 }
