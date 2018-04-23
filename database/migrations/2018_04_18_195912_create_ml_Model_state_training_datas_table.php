@@ -16,7 +16,7 @@ class CreateMlModelStateTrainingDatasTable extends Migration
         Schema::create('ml_model_state_training_datas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('token');
-            $table->string('params')->nullable(false);
+            $table->longText('params')->nullable(false);
             $table->string('mime_type')->nullable(false);
             $table->string('file_path')->nullable(false);
             $table->unsignedInteger('ml_model_state_id')->nullable(true);

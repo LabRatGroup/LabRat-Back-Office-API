@@ -16,7 +16,7 @@ class CreateMlModelPredictionsTable extends Migration
         Schema::create('ml_model_predictions', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title')->nullable(false);
-            $table->string('description')->nullable();
+            $table->mediumText('description')->nullable();
             $table->string('token');
             $table->unsignedInteger('ml_model_id')->nullable(true);
             $table->timestamps();
