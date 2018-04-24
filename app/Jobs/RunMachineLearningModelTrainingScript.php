@@ -37,10 +37,10 @@ class RunMachineLearningModelTrainingScript implements ShouldQueue
     {
         $token = $this->state->trainingData->token;
         Log::info('Launching model training job for data ' . $token);
-        //$token = 'OEl8Wev85Tmb53FIWUDhI8lgA';
+
         $client = new Client();
-        $res = $client->get('http://127.0.0.1:3000/train/' . $token);
-        echo $res->getStatusCode(); // 200
-        echo $res->getBody(); // { "type": "User", ....
+        $res = $client->get('http://'.env('ML_HOST').':'.env('ML_PORT').'/train/' . $token);
+        echo $res->getStatusCode();
+        echo $res->getBody();
     }
 }

@@ -17,6 +17,7 @@ trait CreatesApplication
     {
         putenv('DB_CONNECTION=sqlite_testing');
         putenv('JWT_SECRET=HHs01dhYDQ60cZqN5xAXfTv2YWJ4kv68');
+        putenv('QUEUE_DRIVER=database');
 
         $app = require __DIR__ . '/../bootstrap/app.php';
 

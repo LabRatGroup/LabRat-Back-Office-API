@@ -10,6 +10,7 @@ use App\Models\MlModelStateTrainingData;
 use App\Models\Project;
 use App\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Auth;
 
 class MlGlobalSeeder extends Seeder
 {
@@ -21,7 +22,15 @@ class MlGlobalSeeder extends Seeder
     public function run()
     {
         /** @var User $user */
-        $user = factory(User::class)->create();
+        $user = factory(User::class)->create(
+            [
+                'name'    => 'Julio Fernandez',
+                'email'   => 'jfernandez74@gmail.com',
+                'password' => 'decolores',
+            ]
+        );
+
+        Auth::login($user);
 
         /** @var Project $project */
         $project = factory(Project::class)->create();
