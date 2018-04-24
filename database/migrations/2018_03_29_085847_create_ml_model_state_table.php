@@ -16,7 +16,7 @@ class CreateMlModelStateTable extends Migration
         Schema::create('ml_model_states', function (Blueprint $table) {
             $table->increments('id');
             $table->string('token');
-            $table->string('params')->nullable(false);
+            $table->longText('params')->nullable(false);
             $table->boolean('is_current')->default(false);
             $table->unsignedInteger('ml_model_id')->nullable(true);
             $table->unsignedInteger('ml_algorithm_id')->nullable(true);

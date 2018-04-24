@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\RunMachineLearningModelTrainingScript;
+use App\Jobs\RunMachineLearningPredictionScript;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
@@ -15,6 +17,7 @@ use App\Models\Team;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
@@ -32,6 +35,7 @@ class MlModelStateControllerTest extends TestCase
     {
         parent::setUp();
         Storage::fake(env('FILESYSTEM_DRIVER'));
+        Bus::fake();
         $this->file = UploadedFile::fake()->create('data.csv', self::FILE_SIZE);
     }
 
@@ -51,10 +55,11 @@ class MlModelStateControllerTest extends TestCase
 
         $algorithm = MlAlgorithm::where('alias', 'knn')->first();
 
-        $params = [
+        $params =  [
             'method'        => 'knn',
-            'preprocessing' => 'range',
+            'preprocessing' => 'center',
             'metric'        => 'Accuracy',
+            'positive'      => 'Cleaved',
             'control'       => [
                 'trainControlMethodRounds' => 10,
                 'trainControlMethod'       => 'cv',
@@ -90,6 +95,7 @@ class MlModelStateControllerTest extends TestCase
             'params'          => json_encode($params),
         ]);
         Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
     /** @test */
@@ -155,6 +161,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_algorithm_id' => $algorithm->id,
         ]);
         Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
     /** @test */
@@ -207,6 +214,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
         ]);
+        Bus::assertNotDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
     /** @test */
@@ -258,6 +266,7 @@ class MlModelStateControllerTest extends TestCase
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
         ]);
+        Bus::assertNotDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
     /** @test */
@@ -586,6 +595,7 @@ class MlModelStateControllerTest extends TestCase
 
 
         Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
     /** @test */
@@ -651,6 +661,7 @@ class MlModelStateControllerTest extends TestCase
 
         $this->assertCount(2, $model->states);
         $this->assertCount(2, $trainingDataItems);
+        Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
     /** @test */
@@ -718,6 +729,7 @@ class MlModelStateControllerTest extends TestCase
         $this->assertCount(2, $model->states);
 
         Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
     /** @test */
@@ -776,9 +788,9 @@ class MlModelStateControllerTest extends TestCase
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
         $this->assertCount(1, $model->states);
+        Bus::assertNotDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
-    /** @test */
     public function project_user_should_set_model_state_as_active()
     {
         // Given
@@ -850,10 +862,11 @@ class MlModelStateControllerTest extends TestCase
             'id'         => $state2->id,
             'is_current' => 1,
         ]);
+        Bus::assertDispatched(RunMachineLearningPredictionScript::Class);
     }
 
     /** @test */
-    public function non_project_user_should_set_model_state_as_active()
+    public function non_project_user_should_not_set_model_state_as_active()
     {
         // Given
         $user = factory(User::class)->create();
@@ -893,5 +906,6 @@ class MlModelStateControllerTest extends TestCase
             'id'         => $state2->id,
             'is_current' => 0,
         ]);
+        Bus::assertNotDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 }

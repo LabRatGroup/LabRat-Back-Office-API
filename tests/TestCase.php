@@ -18,7 +18,7 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
 
         Artisan::call('db:seed', [
-            '--database' => 'sqlite_testing'
+            '--database' => env('DB_CONNECTION')
         ]);
 
         MlModelPredictionScore::truncate();
