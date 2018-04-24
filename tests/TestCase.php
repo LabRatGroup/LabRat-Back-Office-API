@@ -21,7 +21,7 @@ abstract class TestCase extends BaseTestCase
             '--database' => env('DB_CONNECTION')
         ]);
 
-//        MlModelPredictionScore::truncate();
+        MlModelPredictionScore::truncate();
     }
 
     protected function getAuthHeader(User $user)
