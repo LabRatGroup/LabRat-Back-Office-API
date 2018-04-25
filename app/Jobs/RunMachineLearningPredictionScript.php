@@ -3,11 +3,13 @@
 namespace App\Jobs;
 
 use App\Models\MlModelPrediction;
+use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Support\Facades\Log;
 
 class RunMachineLearningPredictionScript implements ShouldQueue
 {
@@ -33,6 +35,12 @@ class RunMachineLearningPredictionScript implements ShouldQueue
      */
     public function handle()
     {
-        //
+        $token = $this->prediction->trainingData->token;
+        Log::info('Launching prediction job for data ' . $token);
+
+        $client = new Client();
+        $res = $client->get('http://'.env('ML_HOST').':'.env('ML_PORT').'/predict/' . $token);
+        echo $res->getStatusCode();
+        echo $res->getBody();
     }
 }
