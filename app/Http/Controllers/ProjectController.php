@@ -11,6 +11,12 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @resource Project
+ *           Allows the management or machine learning modeling and prediction of general projects.
+ *
+ * @package  App\Http\Controllers
+ */
 class ProjectController extends ApiController
 {
     /** @var ProjectRepository */
@@ -27,7 +33,8 @@ class ProjectController extends ApiController
     }
 
     /**
-     * List all user related projects.
+     * Project list
+     * Retrieves the list of all available project for which the current user has access to.
      *
      * @return JsonResponse
      */
