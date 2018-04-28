@@ -15,6 +15,7 @@ $factory->define(MlModelStateScore::class, function (Faker $faker) {
     return [
         'ml_model_state_id' => null,
         'params'            => $params,
+        'results'            => $params,
         'kappa'             => $faker->randomFloat(5, 1, 100),
         'accuracy'          => $faker->randomFloat(5, 1, 100),
         'confusion_matrix'  => $params,

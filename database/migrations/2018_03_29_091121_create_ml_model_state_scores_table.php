@@ -18,6 +18,7 @@ class CreateMlModelStateScoresTable extends Migration
             $table->string('token');
             $table->unsignedInteger('ml_model_state_id')->nullable(true);
             $table->longText('params')->nullable(false);
+            $table->longText('results')->nullable(false);
             $table->float('kappa')->nullable(false);
             $table->float('accuracy')->nullable(false);
             $table->string('confusion_matrix')->nullable(false);
