@@ -25,6 +25,13 @@ class MlAlgorithmParamSeeder extends Seeder
             'step'            => 1,
             'classType'       => 'numeric',
             'options'         => null,
+            'default_value'   => json_encode([
+                'k' => [
+                    'min'  => 2,
+                    'max'  => 5,
+                    'step' => 1,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
@@ -40,6 +47,13 @@ class MlAlgorithmParamSeeder extends Seeder
             'step'            => 0.5,
             'classType'       => 'numeric',
             'options'         => null,
+            'default_value'   => json_encode([
+                'fl' => [
+                    'min'  => 2,
+                    'max'  => 5,
+                    'step' => 1,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
@@ -52,19 +66,31 @@ class MlAlgorithmParamSeeder extends Seeder
             'step'            => null,
             'classType'       => 'logical',
             'options'         => null,
+            'default_value'   => json_encode([
+                'usekernel' => [
+                    'value' => true,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
 
         MlAlgorithmParam::create([
-            'name'            => 'Bandwidth Adjustment',
-            'description'     => '',
-            'key'             => 'adjust',
-            'low_range'       => 1,
-            'high_range'      => 10,
-            'step'            => 0.5,
-            'classType'       => 'numeric',
-            'options'         => null,
+            'name'          => 'Bandwidth Adjustment',
+            'description'   => '',
+            'key'           => 'adjust',
+            'low_range'     => 1,
+            'high_range'    => 10,
+            'step'          => 0.5,
+            'classType'     => 'numeric',
+            'options'       => null,
+            'default_value' => json_encode([
+                'adjust' => [
+                    'min'  => 2,
+                    'max'  => 5,
+                    'step' => 1,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
@@ -80,18 +106,32 @@ class MlAlgorithmParamSeeder extends Seeder
             'step'            => 1,
             'classType'       => 'numeric',
             'options'         => null,
+            'default_value'   => json_encode([
+                'size' => [
+                    'min'  => 2,
+                    'max'  => 5,
+                    'step' => 1,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
         MlAlgorithmParam::create([
-            'name'            => 'Weight Decay',
-            'description'     => '',
-            'key'             => 'decay',
-            'low_range'       => 1,
-            'high_range'      => 10,
-            'step'            => 1,
-            'classType'       => 'numeric',
-            'options'         => null,
+            'name'          => 'Weight Decay',
+            'description'   => '',
+            'key'           => 'decay',
+            'low_range'     => 1,
+            'high_range'    => 10,
+            'step'          => 1,
+            'classType'     => 'numeric',
+            'options'       => null,
+            'default_value' => json_encode([
+                'decay' => [
+                    'min'  => 2,
+                    'max'  => 5,
+                    'step' => 1,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
@@ -107,6 +147,13 @@ class MlAlgorithmParamSeeder extends Seeder
             'step'            => 1,
             'classType'       => 'numeric',
             'options'         => null,
+            'default_value'   => json_encode([
+                'C' => [
+                    'min'  => 2,
+                    'max'  => 5,
+                    'step' => 1,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
@@ -122,6 +169,13 @@ class MlAlgorithmParamSeeder extends Seeder
             'step'            => 1,
             'classType'       => 'numeric',
             'options'         => null,
+            'default_value'   => json_encode([
+                'C' => [
+                    'min'  => 2,
+                    'max'  => 5,
+                    'step' => 1,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
@@ -134,6 +188,13 @@ class MlAlgorithmParamSeeder extends Seeder
             'step'            => 1,
             'classType'       => 'numeric',
             'options'         => null,
+            'default_value'   => json_encode([
+                'sigma' => [
+                    'min'  => 2,
+                    'max'  => 5,
+                    'step' => 1,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
@@ -149,6 +210,11 @@ class MlAlgorithmParamSeeder extends Seeder
             'step'            => null,
             'classType'       => 'character',
             'options'         => '[A,B,C]',
+            'default_value'   => json_encode([
+                'model' => [
+                    'value' => 'A',
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
@@ -161,6 +227,13 @@ class MlAlgorithmParamSeeder extends Seeder
             'step'            => 1,
             'classType'       => 'numeric',
             'options'         => null,
+            'default_value'   => json_encode([
+                'trials' => [
+                    'min'  => 2,
+                    'max'  => 5,
+                    'step' => 1,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
@@ -173,6 +246,11 @@ class MlAlgorithmParamSeeder extends Seeder
             'step'            => null,
             'classType'       => 'logical',
             'options'         => null,
+            'default_value'   => json_encode([
+                'winnow' => [
+                    'value' => 'true',
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
 
@@ -184,10 +262,17 @@ class MlAlgorithmParamSeeder extends Seeder
             'description'     => '',
             'key'             => 'mtry',
             'low_range'       => 1,
-            'high_range'      => 100,
+            'high_range'      => 10,
             'step'            => 1,
             'classType'       => 'numeric',
             'options'         => null,
+            'default_value'   => json_encode([
+                'mtry' => [
+                    'min'  => 2,
+                    'max'  => 5,
+                    'step' => 1,
+                ],
+            ]),
             'ml_algorithm_id' => $model->id,
         ]);
     }

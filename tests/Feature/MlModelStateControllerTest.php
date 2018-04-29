@@ -55,7 +55,7 @@ class MlModelStateControllerTest extends TestCase
 
         $algorithm = MlAlgorithm::where('alias', 'knn')->first();
 
-        $params =  [
+        $params = [
             'method'        => 'knn',
             'preprocessing' => 'center',
             'metric'        => 'Accuracy',
@@ -66,7 +66,7 @@ class MlModelStateControllerTest extends TestCase
             ],
             'tune'          => [
                 'k' => [
-                    'mix'  => 2,
+                    'min'  => 2,
                     'max'  => 8,
                     'step' => 1,
                 ],
@@ -93,6 +93,44 @@ class MlModelStateControllerTest extends TestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
+        ]);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
+    }
+
+    /** @test */
+    public function project_user_should_create_model_state_without_algorithm()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+        $model->setProject($project);
+
+        $data = [
+            'ml_model_id' => $model->id,
+            'file'        => $this->file
+        ];
+
+        // When
+        $response = $this->postJson(route('state.create'), $data, $this->getAuthHeader($user));
+
+        /** @var MlModelState $stateDB */
+        $stateDB = MlModelState::find($response->json('data')['id']);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_CREATED);
+        $response->assertJsonStructure(['data' => ['params']]);
+        $this->assertTrue(sizeof(json_decode($response->json('data')['params']), true) > 0);
+        $this->assertInstanceOf(MlModelStateTrainingData::class, $stateDB->trainingData);
+        $this->assertDatabaseHas('ml_model_states', [
+            'ml_model_id' => $model->id,
+
         ]);
         Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
         Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
@@ -134,7 +172,7 @@ class MlModelStateControllerTest extends TestCase
             ],
             'tune'          => [
                 'k' => [
-                    'mix'  => 2,
+                    'min'  => 2,
                     'max'  => 8,
                     'step' => 1,
                 ],
@@ -191,7 +229,7 @@ class MlModelStateControllerTest extends TestCase
             ],
             'tune'          => [
                 'k' => [
-                    'mix'  => 2,
+                    'min'  => 2,
                     'max'  => 8,
                     'step' => 1,
                 ],
@@ -243,7 +281,7 @@ class MlModelStateControllerTest extends TestCase
             ],
             'tune'          => [
                 'k' => [
-                    'mix'  => 2,
+                    'min'  => 2,
                     'max'  => 8,
                     'step' => 1,
                 ],
@@ -563,7 +601,7 @@ class MlModelStateControllerTest extends TestCase
             ],
             'tune'          => [
                 'k' => [
-                    'mix'  => 2,
+                    'min'  => 2,
                     'max'  => 8,
                     'step' => 1,
                 ],
@@ -589,6 +627,60 @@ class MlModelStateControllerTest extends TestCase
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
         $response->assertJsonFragment(['params' => json_encode($params)]);
+
+        $this->assertCount(2, $model->states);
+        $this->assertCount(2, $trainingDataItems);
+
+
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
+    }
+
+    /** @test */
+    public function project_user_should_update_state_without_algorithm()
+    {
+        // Given
+        $user = factory(User::class)->create();
+        $member = factory(User::class)->create();
+        $role = Role::where('alias', Project::PROJECT_DEFAULT_ROLE_ALIAS)->first();
+        $this->be($user);
+
+        /** @var Project $project */
+        $project = factory(Project::class)->create();
+        $project->users()->attach($member, ['role_id' => $role->id]);
+
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlModelState $state */
+        $state = factory(MlModelState::class)->create();
+
+        /** @var MlModelStateTrainingData $trainingData */
+        $trainingData = factory(MlModelStateTrainingData::class)->create();
+
+        $model->setProject($project);
+        $state->setModel($model);
+        $state->trainingData()->save($trainingData);
+
+
+        $data = [
+            'ml_model_id'     => $model->id,
+            'file'            => $this->file,
+        ];
+
+        // When
+        $response = $this->post(route('state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+
+        /** @var Collection $trainingDataItems */
+        $trainingDataItems = MlModelStateTrainingData::all();
+
+        /** @var MlModelState $stateDB */
+        $stateDB = MlModelState::find($response->json('data')['id']);
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonStructure(['data' => ['params']]);
+        $this->assertTrue(sizeof(json_decode($response->json('data')['params']), true) > 0);
 
         $this->assertCount(2, $model->states);
         $this->assertCount(2, $trainingDataItems);
@@ -636,7 +728,7 @@ class MlModelStateControllerTest extends TestCase
             ],
             'tune'          => [
                 'k' => [
-                    'mix'  => 2,
+                    'min'  => 2,
                     'max'  => 8,
                     'step' => 1,
                 ],
@@ -702,7 +794,7 @@ class MlModelStateControllerTest extends TestCase
             ],
             'tune'          => [
                 'k' => [
-                    'mix'  => 2,
+                    'min'  => 2,
                     'max'  => 8,
                     'step' => 1,
                 ],
@@ -768,7 +860,7 @@ class MlModelStateControllerTest extends TestCase
             ],
             'tune'          => [
                 'k' => [
-                    'mix'  => 2,
+                    'min'  => 2,
                     'max'  => 8,
                     'step' => 1,
                 ],

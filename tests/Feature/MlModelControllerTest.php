@@ -177,11 +177,13 @@ class MlModelControllerTest extends TestCase
         $this->be($user);
 
         $modelTitle = 'MODEL_TITLE';
+        $modelPositiveField = "MODEL_POSITIVE";
         $project = factory(Project::class)->create();
 
         $data = [
             'title'      => $modelTitle,
             'project_id' => $project->id,
+            'positive'   => $modelPositiveField,
         ];
 
         // When
@@ -207,11 +209,14 @@ class MlModelControllerTest extends TestCase
         $this->be($user);
 
         $modelTitle = 'MODEL_TITLE';
+        $modelPositiveField = "MODEL_POSITIVE";
+        $modelPositiveField = "MODEL_POSITIVE";
         $project = factory(Project::class)->create();
 
         $data = [
             'title'      => $modelTitle,
             'project_id' => $project->id,
+            'positive'    => $modelPositiveField,
         ];
 
         // When
@@ -223,6 +228,7 @@ class MlModelControllerTest extends TestCase
             [
                 'title'      => $modelTitle,
                 'project_id' => $project->id,
+                'positive'   => $modelPositiveField,
             ]
         );
     }

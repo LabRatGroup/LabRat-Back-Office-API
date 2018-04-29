@@ -16,6 +16,7 @@ class CreateMlModelsTable extends Migration
         Schema::create('ml_models', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title')->nullable(false);
+            $table->string('positive')->nullable(false);
             $table->string('description')->nullable();
             $table->string('token');
             $table->unsignedInteger('project_id')->nullable(true);

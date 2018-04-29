@@ -9,18 +9,18 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int     $id
- * @property mixed   $algorithm
- * @property MlModelStateScore   $score
- * @property mixed   $model
- * @property string  token
- * @property Carbon  $created_at
- * @property Carbon  $updated_at
- * @property Carbon  $deleted_at
- * @property mixed   params
- * @property boolean is_current
- * @property mixed   file_extension
- * @property mixed   trainingData
+ * @property int               $id
+ * @property mixed             $algorithm
+ * @property MlModelStateScore $score
+ * @property mixed             $model
+ * @property string            token
+ * @property Carbon            $created_at
+ * @property Carbon            $updated_at
+ * @property Carbon            $deleted_at
+ * @property mixed             params
+ * @property boolean           is_current
+ * @property mixed             file_extension
+ * @property mixed             trainingData
  */
 class MlModelState extends BaseEntity
 {
@@ -109,5 +109,10 @@ class MlModelState extends BaseEntity
     {
         $this->is_current = $value;
         $this->save();
+    }
+
+    public function unSetAlgorithm()
+    {
+        $this->algorithm()->dissociate()->save();
     }
 }

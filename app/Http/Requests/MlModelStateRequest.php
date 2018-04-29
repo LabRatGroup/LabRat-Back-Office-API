@@ -24,9 +24,7 @@ class MlModelStateRequest extends FormRequest
     public function rules()
     {
         return [
-            'params'          => 'required',
             'ml_model_id'     => 'required',
-            'ml_algorithm_id' => 'required',
             'file'            => 'required',
         ];
     }
@@ -34,9 +32,7 @@ class MlModelStateRequest extends FormRequest
     public function messages()
     {
         return [
-            'params.required'          => 'Provide the model training parameters.',
             'ml_model_id.required'     => 'Provide a parent model.',
-            'ml_algorithm_id.required' => 'Provide a prediction algorithm.',
             'file.required'            => 'Provide a training data file.'
         ];
     }

@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property mixed  $algorithm
+ * @property mixed  key
+ * @property mixed  default_value
  */
 class MlAlgorithmParam extends BaseEntity
 {
