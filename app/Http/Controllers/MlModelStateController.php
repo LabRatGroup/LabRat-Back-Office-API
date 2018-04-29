@@ -14,6 +14,7 @@ use App\Repositories\MlAlgorithmRepository;
 use App\Repositories\MlModelRepository;
 use App\Repositories\MlModelStateRepository;
 use App\Services\MlModelService;
+use App\Services\MlModelStateService;
 use App\Services\MlModelStateTrainingDataService;
 use Exception;
 
@@ -43,6 +44,9 @@ class MlModelStateController extends ApiController
     /** @var MlModelService */
     private $mlModelService;
 
+    /** @var MlModelStateService */
+    private $mlModelStateService;
+
     /**
      * MlModelStateController constructor.
      *
@@ -51,15 +55,18 @@ class MlModelStateController extends ApiController
      * @param MlAlgorithmRepository           $mlAlgorithmRepository
      * @param MlModelStateTrainingDataService $mlModelStateTrainingDataService
      * @param MlModelService                  $mlModelService
+     * @param MlModelStateService             $mlModelStateService
      */
-    public function __construct(MlModelStateRepository $mlModelStateRepository, MlModelRepository $mlModelRepository, MlAlgorithmRepository $mlAlgorithmRepository, MlModelStateTrainingDataService $mlModelStateTrainingDataService, MlModelService $mlModelService)
+    public function __construct(MlModelStateRepository $mlModelStateRepository, MlModelRepository $mlModelRepository, MlAlgorithmRepository $mlAlgorithmRepository, MlModelStateTrainingDataService $mlModelStateTrainingDataService, MlModelService $mlModelService, MlModelStateService $mlModelStateService)
     {
         $this->mlModelStateRepository = $mlModelStateRepository;
         $this->mlModelRepository = $mlModelRepository;
         $this->mlAlgorithmRepository = $mlAlgorithmRepository;
         $this->mlModelStateTrainingDataService = $mlModelStateTrainingDataService;
         $this->mlModelService = $mlModelService;
+        $this->mlModelStateService = $mlModelStateService;
     }
+
 
     /**
      * Retrieves all model states by model id.
@@ -128,13 +135,18 @@ class MlModelStateController extends ApiController
             $file = $request->file(self::TRAINING_DATA_FILE_PARAMETER)->store('training');
             $mime = $request->file(self::TRAINING_DATA_FILE_PARAMETER)->getMimeType();
 
-            /** @var MlAlgorithm $algorithm */
-            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params[self::ALGORITHM_ID_PARAMETER]);
+
+            if (isset($params[self::ALGORITHM_ID_PARAMETER])) {
+                /** @var MlAlgorithm $algorithm */
+                $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params[self::ALGORITHM_ID_PARAMETER]);
+            } else {
+                $params[self::MODEL_STATE_PARAMS_PARAMETER] = $this->mlModelStateService->generateGlobalPredictionParams($model);
+            }
 
             /** @var MlModelState $state */
             $state = $this->mlModelStateRepository->create($params);
             $state->setModel($model);
-            $state->setAlgorithm($algorithm);
+            if (isset($algorithm)) $state->setAlgorithm($algorithm);
 
             /** @var MlModelStateTrainingData $modelStateTrainingData */
             $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $mime, $state);
@@ -168,13 +180,21 @@ class MlModelStateController extends ApiController
             $baseState = $this->mlModelStateRepository->findOneOrFailById($id);
             $this->authorize('view', $baseState->model->project);
 
-            /** @var MlAlgorithm $algorithm */
-            $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params[self::ALGORITHM_ID_PARAMETER]);
+            if (isset($params[self::ALGORITHM_ID_PARAMETER])) {
+                /** @var MlAlgorithm $algorithm */
+                $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params[self::ALGORITHM_ID_PARAMETER]);
+            } else {
+                $params[self::MODEL_STATE_PARAMS_PARAMETER] = $this->mlModelStateService->generateGlobalPredictionParams($baseState->model);
+            }
 
             /** @var MlModelState $state */
             $state = $this->mlModelStateRepository->create($params);
             $state->setModel($baseState->model);
-            $state->setAlgorithm($algorithm);
+            if (isset($algorithm)) {
+                $state->setAlgorithm($algorithm);
+            } else {
+                $state->unSetAlgorithm();
+            }
 
             if ($request->hasFile(self::TRAINING_DATA_FILE_PARAMETER)) {
                 if (!$request->file(self::TRAINING_DATA_FILE_PARAMETER)->isValid()) {
