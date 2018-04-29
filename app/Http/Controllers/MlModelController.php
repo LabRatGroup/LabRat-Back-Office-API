@@ -94,7 +94,8 @@ class MlModelController extends ApiController
             $params = $request->only([
                 'title',
                 'description',
-                'project_id'
+                'project_id',
+                'positive',
             ]);
 
             /** @var Project $project */

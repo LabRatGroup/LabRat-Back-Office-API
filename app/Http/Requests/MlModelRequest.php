@@ -26,6 +26,7 @@ class MlModelRequest extends FormRequest
         return [
             'title'      => 'required|min:5|max:255',
             'project_id' => 'required',
+            'positive'   => 'required',
         ];
     }
 
@@ -35,7 +36,8 @@ class MlModelRequest extends FormRequest
             'title.required'      => 'Model title is required.',
             'title.min'           => 'Model title must be at least 5 character length.',
             'title.max'           => 'Model title must not exceed the 255 character length.',
-            'project_id.required' => 'Please provide a project to associate this model to.'
+            'project_id.required' => 'Please provide a project to associate this model to.',
+            'positive.required'   => 'Please provide the data field stated as positive value.',
         ];
     }
 }

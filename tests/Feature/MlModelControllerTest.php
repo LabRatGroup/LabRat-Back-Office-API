@@ -177,12 +177,13 @@ class MlModelControllerTest extends TestCase
         $this->be($user);
 
         $modelTitle = 'MODEL_TITLE';
+        $modelPositiveField = "MODEL_POSITIVE";
         $project = factory(Project::class)->create();
 
         $data = [
             'title'      => $modelTitle,
             'project_id' => $project->id,
-            'positive'   => 'word',
+            'positive'   => $modelPositiveField,
         ];
 
         // When
