@@ -182,6 +182,7 @@ class MlModelControllerTest extends TestCase
         $data = [
             'title'      => $modelTitle,
             'project_id' => $project->id,
+            'positive'   => 'word',
         ];
 
         // When

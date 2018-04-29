@@ -34,6 +34,7 @@ class MlModel extends BaseEntity
     protected $fillable = [
         'title',
         'description',
+        'positive',
     ];
 
     protected $hidden = [
