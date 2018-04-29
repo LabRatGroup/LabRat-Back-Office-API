@@ -19,6 +19,7 @@ class CreateMlAlgorithmsTable extends Migration
             $table->longText('description')->nullable(true);
             $table->string('alias')->nullable(false);
             $table->string('type')->nullable(false);
+            $table->text('default_value')->nullable(true);
             $table->timestamps();
         });
 

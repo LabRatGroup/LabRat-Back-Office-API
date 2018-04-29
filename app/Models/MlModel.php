@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $deleted_at
  * @property mixed  $states
  * @property mixed  predictions
+ * @property mixed  positive
  */
 class MlModel extends BaseEntity
 {

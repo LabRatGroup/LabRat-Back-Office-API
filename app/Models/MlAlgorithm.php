@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon $updated_at
  * @property Carbon $created_at
  * @property mixed  alias
+ * @property mixed  default_value
  */
 class MlAlgorithm extends BaseEntity
 {
