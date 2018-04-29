@@ -14,5 +14,6 @@ class DatabaseSeeder extends Seeder
         $this->call(RoleTableSeeder::class);
         $this->call(MlAlgorithmSeeder::class);
         $this->call(MlAlgorithmParamSeeder::class);
+        $this->call(MlGlobalSeeder::class);
     }
 }
