@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property boolean           is_current
  * @property mixed             file_extension
  * @property mixed             trainingData
+ * @property  string           code
  */
 class MlModelState extends BaseEntity
 {
@@ -114,5 +115,11 @@ class MlModelState extends BaseEntity
     public function unSetAlgorithm()
     {
         $this->algorithm()->dissociate()->save();
+    }
+
+    public function setStatus($code)
+    {
+        $this->code = $code;
+        $this->save();
     }
 }

@@ -18,6 +18,7 @@ class CreateMlModelPredictionsTable extends Migration
             $table->string('title')->nullable(false);
             $table->mediumText('description')->nullable();
             $table->string('token');
+            $table->string('code')->nullable(true);
             $table->unsignedInteger('ml_model_id')->nullable(true);
             $table->timestamps();
             $table->softDeletes();

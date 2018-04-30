@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\MlModelState;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -39,8 +40,18 @@ class RunMachineLearningModelTrainingScript implements ShouldQueue
         Log::info('Launching model training job for data ' . $token);
 
         $client = new Client();
-        $res = $client->get('http://'.env('ML_HOST').':'.env('ML_PORT').'/train/' . $token);
-        echo $res->getStatusCode();
-        echo $res->getBody();
+        $res = $client->get('http://' . env('ML_HOST') . ':' . env('ML_PORT') . '/train/' . $token);
+
+        Log::info('Status for training job ' . $token . ': ' . $res->getStatusCode());
+
+        $this->state->setStatus($res->getStatusCode());
+    }
+
+    /**
+     * @param Exception $exception
+     */
+    public function failed(Exception $exception)
+    {
+        $this->state->setStatus($exception->getCode());
     }
 }
