@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\MlModelPrediction;
+use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
@@ -35,12 +36,22 @@ class RunMachineLearningPredictionScript implements ShouldQueue
      */
     public function handle()
     {
-        $token = $this->prediction->trainingData->token;
+        $token = $this->prediction->predictionData->token;
         Log::info('Launching prediction job for data ' . $token);
 
         $client = new Client();
-        $res = $client->get('http://'.env('ML_HOST').':'.env('ML_PORT').'/predict/' . $token);
-        echo $res->getStatusCode();
-        echo $res->getBody();
+        $res = $client->get('http://' . env('ML_HOST') . ':' . env('ML_PORT') . '/predict/' . $token);
+
+        Log::info('Status for prediction job ' . $token . ': ' . $res->getStatusCode());
+
+        $this->prediction->setStatus($res->getStatusCode());
+    }
+
+    /**
+     * @param Exception $exception
+     */
+    public function failed(Exception $exception)
+    {
+        $this->prediction->setStatus($exception->getCode());
     }
 }

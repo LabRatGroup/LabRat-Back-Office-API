@@ -20,6 +20,7 @@ class CreateMlModelStateTable extends Migration
             $table->boolean('is_current')->default(false);
             $table->unsignedInteger('ml_model_id')->nullable(true);
             $table->unsignedInteger('ml_algorithm_id')->nullable(true);
+            $table->string('code')->nullable(true);
             $table->timestamps();
             $table->softDeletes();
         });
