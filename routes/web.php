@@ -15,3 +15,6 @@
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+
+Route::get('/secure', 'HomeController@secure')->name('secure');
