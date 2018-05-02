@@ -13,7 +13,6 @@ class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
     public function should_register_user()
     {
         // Given
@@ -57,7 +56,6 @@ class UserControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
     public function should_login_user()
     {
         // Given
