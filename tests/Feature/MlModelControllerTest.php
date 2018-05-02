@@ -31,7 +31,7 @@ class MlModelControllerTest extends TestCase
         $model->setProject($project);
 
         // When
-        $response = $this->get(route('model.show', ['id' => $model->id]), $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->get(route('model.show', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -62,7 +62,7 @@ class MlModelControllerTest extends TestCase
         $project->teams()->attach($team);
 
         // When
-        $response = $this->get(route('model.show', ['id' => $model->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('model.show', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -86,7 +86,7 @@ class MlModelControllerTest extends TestCase
         $model->setProject($project);
 
         // When
-        $response = $this->get(route('model.show', ['id' => $model->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('model.show', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -108,7 +108,7 @@ class MlModelControllerTest extends TestCase
         $model->setProject($project);
 
         // When
-        $response = $this->get(route('model.index', ['id' => $project->id]), $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->get(route('model.index', ['id' => $project->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -139,7 +139,7 @@ class MlModelControllerTest extends TestCase
         $project->teams()->attach($team);
 
         // When
-        $response = $this->get(route('model.index', ['id' => $project->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('model.index', ['id' => $project->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -163,7 +163,7 @@ class MlModelControllerTest extends TestCase
         $model->setProject($project);
 
         // When
-        $response = $this->get(route('model.index', ['id' => $project->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('model.index', ['id' => $project->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -187,7 +187,7 @@ class MlModelControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('model.create'), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('model.create'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_CREATED);
@@ -220,7 +220,7 @@ class MlModelControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('model.create'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('model.create'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -249,7 +249,7 @@ class MlModelControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('model.update', ['id' => $model->id]), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('model.update', ['id' => $model->id]), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -279,7 +279,7 @@ class MlModelControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('model.update', ['id' => $model->id]), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('model.update', ['id' => $model->id]), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -302,7 +302,7 @@ class MlModelControllerTest extends TestCase
         $model = factory(MlModel::class)->create(['project_id' => $project->id]);
 
         // When
-        $response = $this->deleteJson(route('model.delete', ['id' => $model->id]), [], $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->deleteJson(route('model.delete', ['id' => $model->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -327,7 +327,7 @@ class MlModelControllerTest extends TestCase
         $model = factory(MlModel::class)->create(['project_id' => $project->id]);
 
         // When
-        $response = $this->deleteJson(route('model.delete', ['id' => $model->id]), [], $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->deleteJson(route('model.delete', ['id' => $model->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

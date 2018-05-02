@@ -19,7 +19,7 @@ class MlAlgorithmControllerTest extends TestCase
         $this->be($user);
 
         // When
-        $response = $this->get(route('algorithm.index'), $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->get(route('algorithm.index'));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -34,7 +34,7 @@ class MlAlgorithmControllerTest extends TestCase
         $this->be($user);
 
         // When
-        $response = $this->get(route('algorithm.show', ['id' => '5']), $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->get(route('algorithm.show', ['id' => '5']));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);

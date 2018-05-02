@@ -24,8 +24,7 @@ class TeamControllerTest extends TestCase
         $team = factory(Team::class)->create();
 
         // When
-        $header = $this->getAuthHeader($user);
-        $response = $this->get(route('team.show', ['id' => $team->id]), $header);
+        $response = $this->actingAs($user)->get(route('team.show', ['id' => $team->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -45,8 +44,7 @@ class TeamControllerTest extends TestCase
 
         // When
         $this->be($otherUser);
-        $header = $this->getAuthHeader($otherUser);
-        $response = $this->get(route('team.show', ['id' => $team->id]), $header);
+        $response = $this->actingAs($otherUser)->get(route('team.show', ['id' => $team->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -64,8 +62,7 @@ class TeamControllerTest extends TestCase
         $team2 = factory(Team::class)->create();
 
         // When
-        $header = $this->getAuthHeader($user);
-        $response = $this->get(route('team.index'), $header);
+        $response = $this->actingAs($user)->get(route('team.index'));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -86,8 +83,7 @@ class TeamControllerTest extends TestCase
         $team2 = factory(Team::class)->create();
 
         // When
-        $header = $this->getAuthHeader($user1);
-        $response = $this->get(route('team.index'), $header);
+        $response = $this->actingAs($user1)->get(route('team.index'));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -106,7 +102,7 @@ class TeamControllerTest extends TestCase
         $data = ['name' => $name];
 
         // When
-        $response = $this->postJson(route('team.create'), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('team.create'), $data);
         $team = DB::table('teams')->where('name', $name)->first();
 
         // Then
@@ -127,8 +123,8 @@ class TeamControllerTest extends TestCase
     {
         // Given
         $user = factory(User::class)->create();
-        $header = $this->getAuthHeader($user);
-
+        $this->be($user);
+        
         $teamName1 = 'TEAM_NAME_1';
         $team = factory(Team::class)->create(['name' => $teamName1]);
 
@@ -139,7 +135,7 @@ class TeamControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('team.update', ['id' => $team->id]), $data, $header);
+        $response = $this->actingAs($user)->postJson(route('team.update', ['id' => $team->id]), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -173,8 +169,7 @@ class TeamControllerTest extends TestCase
 
         // When
         $this->be($otherUser);
-        $header = $this->getAuthHeader($otherUser);
-        $response = $this->postJson(route('team.update', ['id' => $team->id]), $data, $header);
+        $response = $this->actingAs($otherUser)->postJson(route('team.update', ['id' => $team->id]), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -194,12 +189,11 @@ class TeamControllerTest extends TestCase
         // Given
         $user = factory(User::class)->create();
         $this->be($user);
-        $header = $this->getAuthHeader($user);
 
         $team = factory(Team::class)->create();
 
         // When
-        $response = $this->delete(route('team.delete', ['id' => $team->id]), [], $header);
+        $response = $this->actingAs($user)->delete(route('team.delete', ['id' => $team->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -224,8 +218,7 @@ class TeamControllerTest extends TestCase
 
         // When
         $this->be($otherUser);
-        $header = $this->getAuthHeader($otherUser);
-        $response = $this->delete(route('team.delete', ['id' => $team->id]), [], $header);
+        $response = $this->actingAs($otherUser)->delete(route('team.delete', ['id' => $team->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

@@ -13,16 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('recover', 'UserController@recover')->name('user.recover');
-Route::post('register', 'UserController@register')->name('user.register');
-Route::post('login', 'UserController@login')->name('user.login');
+//Route::post('recover', 'UserController@recover')->name('user.recover');
+//Route::post('register', 'UserController@register')->name('user.register');
+//Route::post('login', 'UserController@login')->name('user.login');
+//
+//Route::group(['middleware' => ['auth']], function () {
+//    Route::post('logout', 'UserController@logout')->name('user.logout');
+//    Route::post('un-register', 'UserController@unRegister')->name('user.un-register');
+//});
 
-Route::group(['middleware' => ['jwt.auth']], function () {
-    Route::post('logout', 'UserController@logout')->name('user.logout');
-    Route::post('un-register', 'UserController@unRegister')->name('user.un-register');
-});
-
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('team', 'TeamController@index')->name('team.index');
     Route::get('team/show/{id}', 'TeamController@show')->name('team.show');
     Route::post('team/create', 'TeamController@create')->name('team.create');
@@ -30,13 +30,13 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::delete('team/{id}/delete', 'TeamController@delete')->name('team.delete');
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::post('team/addMember', 'TeamMemberController@addMember')->name('team.addMember');
     Route::post('team/updateMember', 'TeamMemberController@updateMember')->name('team.updateMember');
     Route::post('team/deleteMember', 'TeamMemberController@deleteMember')->name('team.deleteMember');
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('project', 'ProjectController@index')->name('project.index');
     Route::get('project/show/{id}', 'ProjectController@show')->name('project.show');
     Route::post('project/create', 'ProjectController@create')->name('project.create');
@@ -44,18 +44,18 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::delete('project/{id}/delete', 'ProjectController@delete')->name('project.delete');
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::post('project/addMember', 'ProjectMemberController@addMember')->name('project.addMember');
     Route::post('project/updateMember', 'ProjectMemberController@updateMember')->name('project.updateMember');
     Route::post('project/deleteMember', 'ProjectMemberController@deleteMember')->name('project.deleteMember');
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::post('project/addTeam', 'ProjectTeamController@addTeam')->name('project.addTeam');
     Route::post('project/deleteTeam', 'ProjectTeamController@deleteTeam')->name('project.deleteTeam');
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('models/project/{id}', 'MlModelController@index')->name('model.index');
     Route::get('model/show/{id}', 'MlModelController@show')->name('model.show');
     Route::post('model/create', 'MlModelController@create')->name('model.create');
@@ -63,12 +63,12 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::delete('model/{id}/delete', 'MlModelController@delete')->name('model.delete');
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('algorithm', 'MlAlgorithmController@index')->name('algorithm.index');
     Route::get('algorithm/show/{id}', 'MlAlgorithmController@show')->name('algorithm.show');
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('state/model/{id}', 'MlModelStateController@index')->name('state.index');
     Route::get('state/show/{id}', 'MlModelStateController@show')->name('state.show');
     Route::post('state/create', 'MlModelStateController@create')->name('state.create');
@@ -77,11 +77,11 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::post('state/{id}/current', 'MlModelStateController@current')->name('state.current');
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('score/state/{id}/show', 'MlModelStateScoreController@show')->name('score.show');
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('prediction/model/{id}', 'MlModelPredictionController@index')->name('prediction.index');
     Route::get('prediction/show/{id}', 'MlModelPredictionController@show')->name('prediction.show');
     Route::post('prediction/create', 'MlModelPredictionController@create')->name('prediction.create');
@@ -90,7 +90,7 @@ Route::group(['middleware' => ['jwt.auth']], function () {
     Route::get('prediction/{id}/run', 'MlModelPredictionController@run')->name('prediction.run');
 });
 
-Route::group(['middleware' => ['jwt.auth']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('score/prediction/{id}/show', 'MlModelPredictionScoreController@show')->name('score.prediction.show');
     Route::delete('score/prediction/{id}/delete', 'MlModelPredictionScoreController@delete')->name('score.prediction.delete');
 

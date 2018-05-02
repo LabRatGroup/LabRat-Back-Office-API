@@ -122,7 +122,7 @@ class RealMicroServiceTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('state.create'), $data, $this->getAuthHeader($this->user));
+        $response = $this->actingAs($this->user)->postJson(route('state.create'), $data);
 //        dd($response->json());
 
         // Then

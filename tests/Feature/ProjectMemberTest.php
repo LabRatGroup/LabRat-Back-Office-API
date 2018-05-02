@@ -31,7 +31,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.addMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.addMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -64,7 +64,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.addMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.addMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -103,7 +103,7 @@ class ProjectMemberTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('project.addMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('project.addMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -139,7 +139,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.addMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.addMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -176,7 +176,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -219,7 +219,7 @@ class ProjectMemberTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('project.updateMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -256,7 +256,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -286,7 +286,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -322,7 +322,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -359,7 +359,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -402,7 +402,7 @@ class ProjectMemberTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('project.updateMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -435,7 +435,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -471,7 +471,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.deleteMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.deleteMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -508,7 +508,7 @@ class ProjectMemberTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('project.deleteMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('project.deleteMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -545,7 +545,7 @@ class ProjectMemberTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('project.deleteMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('project.deleteMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -582,7 +582,7 @@ class ProjectMemberTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('project.deleteMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('project.deleteMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -611,7 +611,7 @@ class ProjectMemberTest extends TestCase
         ];
 
         // When
-        $response = $this->postJson(route('project.deleteMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('project.deleteMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

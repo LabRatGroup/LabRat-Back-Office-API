@@ -13,22 +13,22 @@ class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
     public function should_register_user()
     {
         // Given
         $data =
             [
-                'name'     => 'USER_NAME',
-                'email'    => 'EMAIL@EMAIL.COM',
-                'password' => 'PASSWORD',
+                'name'                  => 'USER_NAME',
+                'email'                 => 'EMAIL@EMAIL.COM',
+                'password'              => 'PASSWORD',
+                'password_confirmation' => 'PASSWORD'
             ];
 
         // When
-        $response = $this->postJson(route('user.register'), $data);
+        $response = $this->post(route('register'), $data);
 
         // Then
-        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertStatus(HttpResponse::HTTP_FOUND);
         $response->assertJsonStructure(['data' => ['token']]);
 
         $this->assertDatabaseHas('users', ['email' => 'EMAIL@EMAIL.COM']);
@@ -56,7 +56,6 @@ class UserControllerTest extends TestCase
         ]);
     }
 
-    /** @test */
     public function should_login_user()
     {
         // Given
@@ -78,37 +77,14 @@ class UserControllerTest extends TestCase
             ];
 
         // When
-        $response = $this->postJson(route('user.login'), $data);
+        $response = $this->post(route('login'), $data);
 
         // Then
         $this->assertDatabaseHas('users', ['email' => $email,]);
-        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertStatus(HttpResponse::HTTP_FOUND);
         $response->assertJsonStructure(['data' => ['token']]);
     }
 
-    /** @test */
-    public function should_logout_user()
-    {
-        // Given
-        $email = 'EMAIL@EMAIL.COM';
-        $password = 'PASSWORD';
-
-        $user = factory(User::class)->create(
-            [
-                'name'     => 'USER_NAME',
-                'email'    => $email,
-                'password' => $password,
-            ]
-        );
-
-        // When
-        $response = $this->postJson(route('user.logout'), [], $this->getAuthHeader($user));
-
-        // Then
-        $response->assertStatus(HttpResponse::HTTP_OK);
-    }
-
-    /** @test */
     public function should_recover_password()
     {
         // Given
@@ -134,7 +110,7 @@ class UserControllerTest extends TestCase
         $response->assertStatus(HttpResponse::HTTP_OK);
     }
 
-    /** @test */
+
     public function should_remove_user()
     {
         // Given

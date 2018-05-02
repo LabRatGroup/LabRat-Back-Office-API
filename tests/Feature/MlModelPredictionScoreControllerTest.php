@@ -51,7 +51,7 @@ class MlModelPredictionScoreControllerTest extends TestCase
         $predictionScore->setPrediction($prediction);
 
         // When
-        $response = $this->get(route('score.prediction.show', ['id' => $prediction->id]), $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->get(route('score.prediction.show', ['id' => $prediction->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -97,7 +97,7 @@ class MlModelPredictionScoreControllerTest extends TestCase
         $predictionScore->setPrediction($prediction);
 
         // When
-        $response = $this->get(route('score.prediction.show', ['id' => $prediction->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('score.prediction.show', ['id' => $prediction->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -137,7 +137,7 @@ class MlModelPredictionScoreControllerTest extends TestCase
         $predictionScore->setPrediction($prediction);
 
         // When
-        $response = $this->get(route('score.prediction.show', ['id' => $prediction->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('score.prediction.show', ['id' => $prediction->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -175,7 +175,7 @@ class MlModelPredictionScoreControllerTest extends TestCase
         $predictionScore->setPrediction($prediction);
 
         // When
-        $response = $this->delete(route('score.prediction.delete', ['id' => $prediction->id]), [], $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->delete(route('score.prediction.delete', ['id' => $prediction->id]), []);
         $scores = MlModelPredictionScore::all();
 
         // Then
@@ -216,7 +216,7 @@ class MlModelPredictionScoreControllerTest extends TestCase
         $predictionScore->setPrediction($prediction);
 
         // When
-        $response = $this->delete(route('score.prediction.delete', ['id' => $prediction->id]), [], $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->delete(route('score.prediction.delete', ['id' => $prediction->id]), []);
         $scores = MlModelPredictionScore::all();
 
         // Then
