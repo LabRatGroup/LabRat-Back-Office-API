@@ -13,15 +13,15 @@ class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+c
     public function should_register_user()
     {
         // Given
         $data =
             [
-                'name'     => 'USER_NAME',
-                'email'    => 'EMAIL@EMAIL.COM',
-                'password' => 'PASSWORD',
+                'name'                  => 'USER_NAME',
+                'email'                 => 'EMAIL@EMAIL.COM',
+                'password'              => 'PASSWORD',
                 'password_confirmation' => 'PASSWORD'
             ];
 
@@ -29,7 +29,7 @@ class UserControllerTest extends TestCase
         $response = $this->post(route('register'), $data);
 
         // Then
-        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertStatus(HttpResponse::HTTP_FOUND);
         $response->assertJsonStructure(['data' => ['token']]);
 
         $this->assertDatabaseHas('users', ['email' => 'EMAIL@EMAIL.COM']);
@@ -57,7 +57,8 @@ class UserControllerTest extends TestCase
         ]);
     }
 
-     public function should_login_user()
+    /** @test */
+    public function should_login_user()
     {
         // Given
         $email = 'EMAIL@EMAIL.COM';
@@ -82,7 +83,7 @@ class UserControllerTest extends TestCase
 
         // Then
         $this->assertDatabaseHas('users', ['email' => $email,]);
-        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertStatus(HttpResponse::HTTP_FOUND);
         $response->assertJsonStructure(['data' => ['token']]);
     }
 
