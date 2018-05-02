@@ -13,7 +13,7 @@ class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-c
+    /** @test */
     public function should_register_user()
     {
         // Given
