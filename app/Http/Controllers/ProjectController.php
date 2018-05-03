@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Repositories\ProjectRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 /**
  * @resource Project
@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
  *
  * @package  App\Http\Controllers
  */
-class ProjectController extends ApiController
+class ProjectController extends Controller
 {
     /** @var ProjectRepository */
     private $projectRepository;
@@ -36,22 +36,18 @@ class ProjectController extends ApiController
      * Project list
      * Retrieves the list of all available project for which the current user has access to.
      *
-     * @return JsonResponse
+     * @return View
+     * @throws AuthorizationException
      */
     public function index()
     {
-        try {
-            $this->authorize('list', Project::class);
-            $user = auth()->user();
-            $userTeams = array_column(auth()->user()->teams->toArray(), 'id');
-            $projects = $this->projectRepository->findAllByUserOrTeamMember($user->id, $userTeams);
+        $this->authorize('list', Project::class);
+        $user = auth()->user();
+        $userTeams = array_column(auth()->user()->teams->toArray(), 'id');
+        $projects = $this->projectRepository->findAllByUserOrTeamMember($user->id, $userTeams);
 
-            return $this->responseOk($projects);
-        } catch (AuthorizationException $authorizationException) {
-            return $this->responseForbidden($authorizationException->getMessage());
-        } catch (Exception $e) {
-            return $this->responseInternalError($e->getMessage());
-        }
+        return view('projects.index')
+            ->with('projects', $projects);
     }
 
     /**
@@ -59,20 +55,31 @@ class ProjectController extends ApiController
      *
      * @param $id
      *
-     * @return JsonResponse
+     * @return mixed
+     * @throws AuthorizationException
      */
     public function show($id)
     {
-        try {
-            $project = $this->projectRepository->findOneOrFailById($id);
-            $this->authorize('view', $project);
+        $project = $this->projectRepository->findOneOrFailById($id);
+        $this->authorize('view', $project);
 
-            return $this->responseOk($project);
-        } catch (AuthorizationException $authorizationException) {
-            return $this->responseForbidden($authorizationException->getMessage());
-        } catch (Exception $e) {
-            return $this->responseInternalError($e->getMessage());
-        }
+        return view('projects.show')
+            ->with('project', $project);
+    }
+
+    /**
+     * Display project creation form.
+     *
+     * @return View
+     * @throws AuthorizationException
+     */
+    public function create()
+    {
+        $this->authorize('create', Project::class);
+        $project = $this->projectRepository->getModel();
+
+        return view('projects.form')
+            ->with('project', $project);
     }
 
     /**
@@ -80,52 +87,61 @@ class ProjectController extends ApiController
      *
      * @param ProjectRequest $request
      *
-     * @return JsonResponse
+     * @return RedirectResponse
+     * @throws AuthorizationException
      */
-    public function create(ProjectRequest $request)
+    public function store(ProjectRequest $request)
     {
-        try {
-            $params = $request->only([
-                'title',
-                'description'
-            ]);
-            $this->authorize('create', Project::class);
-            $project = $this->projectRepository->create($params);
+        $params = $request->only([
+            'title',
+            'description'
+        ]);
+        $this->authorize('create', Project::class);
+        $project = $this->projectRepository->create($params);
 
-            return $this->responseCreated($project);
-        } catch (AuthorizationException $authorizationException) {
-            return $this->responseForbidden($authorizationException->getMessage());
-        } catch (Exception $e) {
-            return $this->responseInternalError($e->getMessage());
-        }
+        return redirect()->action('ProjectController@index')
+            ->with('project', $project);
+    }
+
+    /**
+     * Project update form.
+     *
+     * @param $id
+     *
+     * @return View
+     * @throws AuthorizationException
+     */
+    public function update($id)
+    {
+        $project = $this->projectRepository->findOneOrFailById($id);
+        $this->authorize('update', $project);
+
+        return view('projects.form')
+            ->with('project', $project);
     }
 
     /**
      * Updates project data.
      *
-     * @param                $id
-     * @param Request        $request
+     * @param         $id
+     * @param Request $request
      *
-     * @return JsonResponse
+     * @return mixed
+     * @throws AuthorizationException
      */
-    public function update($id, Request $request)
+    public function save($id, Request $request)
     {
+        $params = $request->only([
+            'title',
+            'description'
+        ]);
+        $project = $this->projectRepository->findOneOrFailById($id);
+        $this->authorize('update', $project);
 
-        try {
-            $params = $request->only([
-                'title',
-                'description'
-            ]);
-            $project = $this->projectRepository->findOneOrFailById($id);
-            $this->authorize('update', $project);
-            $project = $this->projectRepository->update($project, $params);
+        $project = $this->projectRepository->update($project, $params);
 
-            return $this->responseUpdated($project);
-        } catch (AuthorizationException $authorizationException) {
-            return $this->responseForbidden($authorizationException->getMessage());
-        } catch (Exception $e) {
-            return $this->responseInternalError($e->getMessage());
-        }
+        return redirect()->action('ProjectController@index')
+            ->with('project', $project);
     }
 
     /**
@@ -133,21 +149,19 @@ class ProjectController extends ApiController
      *
      * @param $id
      *
-     * @return JsonResponse
+     * @return mixed
+     * @throws AuthorizationException
+     * @throws Exception
      */
     public function delete($id)
     {
-        try {
-            $project = $this->projectRepository->findOneOrFailById($id);
-            $this->authorize('delete', $project);
-            $project->users()->detach();
-            $this->projectRepository->delete($project);
+        $project = $this->projectRepository->findOneOrFailById($id);
+        $this->authorize('delete', $project);
 
-            return $this->responseDeleted();
-        } catch (AuthorizationException $authorizationException) {
-            return $this->responseForbidden($authorizationException->getMessage());
-        } catch (Exception $e) {
-            return $this->responseInternalError($e->getMessage());
-        }
+        $project->users()->detach();
+        $this->projectRepository->delete($project);
+
+        return redirect()->action('ProjectController@index')
+            ->with('project', $project);
     }
 }
