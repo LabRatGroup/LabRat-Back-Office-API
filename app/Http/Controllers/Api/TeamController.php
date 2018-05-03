@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\TeamRequest;
 use App\Models\Team;
 use App\Repositories\TeamRepository;
-use \Exception;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 

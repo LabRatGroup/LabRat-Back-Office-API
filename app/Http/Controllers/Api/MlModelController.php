@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\MlModelRequest;
 use App\Models\MlModel;
 use App\Models\Project;

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\ApiController;
 use App\Models\MlModelState;
 use App\Repositories\MlModelStateRepository;
 use App\Repositories\MlModelStateScoreRepository;
