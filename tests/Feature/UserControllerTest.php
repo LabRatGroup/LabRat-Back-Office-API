@@ -5,14 +5,16 @@ namespace Tests\Feature;
 use App\Models\Role;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class UserControllerTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase, WithoutMiddleware;
 
+    /** @test */
     public function should_register_user()
     {
         // Given
@@ -29,8 +31,6 @@ class UserControllerTest extends TestCase
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FOUND);
-        $response->assertJsonStructure(['data' => ['token']]);
-
         $this->assertDatabaseHas('users', ['email' => 'EMAIL@EMAIL.COM']);
     }
 

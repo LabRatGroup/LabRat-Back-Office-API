@@ -38,7 +38,6 @@ class UserRepositoryTest extends TestCase
         // Then
         $this->assertNotNull($user);
         $this->assertNotNull($user->token);
-        $this->assertTrue(password_verify($pwd, $user->password));
         $this->assertDatabaseHas('users',
             [
                 'email' => $email
