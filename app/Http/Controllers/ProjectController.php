@@ -42,9 +42,7 @@ class ProjectController extends Controller
     public function index()
     {
         $this->authorize('list', Project::class);
-        $user = auth()->user();
-        $userTeams = array_column(auth()->user()->teams->toArray(), 'id');
-        $projects = $this->projectRepository->findAllByUserOrTeamMember($user->id, $userTeams);
+        $projects = $this->projectRepository->findAllByUserOrTeamMember();
 
         return view('projects.index')
             ->with('projects', $projects);
@@ -157,9 +155,7 @@ class ProjectController extends Controller
     {
         $project = $this->projectRepository->findOneOrFailById($id);
         $this->authorize('delete', $project);
-
-        $project->users()->detach();
-        $this->projectRepository->delete($project);
+        $this->projectRepository->remove($project);
 
         return redirect()->action('ProjectController@index')
             ->with('project', $project);

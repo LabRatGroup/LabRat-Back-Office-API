@@ -41,9 +41,7 @@ class ProjectController extends ApiController
     {
         try {
             $this->authorize('list', Project::class);
-            $user = auth()->user();
-            $userTeams = array_column(auth()->user()->teams->toArray(), 'id');
-            $projects = $this->projectRepository->findAllByUserOrTeamMember($user->id, $userTeams);
+            $projects = $this->projectRepository->findAllByUserOrTeamMember();
 
             return $this->responseOk($projects);
         } catch (AuthorizationException $authorizationException) {
@@ -139,8 +137,7 @@ class ProjectController extends ApiController
         try {
             $project = $this->projectRepository->findOneOrFailById($id);
             $this->authorize('delete', $project);
-            $project->users()->detach();
-            $this->projectRepository->delete($project);
+            $this->projectRepository->remove($project);
 
             return $this->responseDeleted();
         } catch (AuthorizationException $authorizationException) {
