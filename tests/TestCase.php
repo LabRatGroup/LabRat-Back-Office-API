@@ -2,9 +2,7 @@
 
 namespace Tests;
 
-use App\Models\MlModelPredictionData;
 use App\Models\MlModelPredictionScore;
-use App\Models\MlModelStateTrainingData;
 use App\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
@@ -16,6 +14,8 @@ abstract class TestCase extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
+
+        config(['auth.defaults.guard' => 'api']);
 
         Artisan::call('db:seed', [
             '--database' => env('DB_CONNECTION')

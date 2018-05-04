@@ -36,6 +36,14 @@ abstract class ApiController extends Controller
     protected $statusCode;
 
     /**
+     * ApiController constructor.
+     */
+    public function __construct()
+    {
+
+    }
+
+    /**
      * @param $data
      * @param $message
      *

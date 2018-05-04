@@ -29,3 +29,4 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('project/{id}/delete', 'ProjectController@delete')->name('project.delete');
 });
 
+

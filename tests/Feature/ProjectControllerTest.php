@@ -25,7 +25,8 @@ class ProjectControllerTest extends TestCase
         $project = factory(Project::class)->create();
 
         // When
-        $response = $this->actingAs($user)->get(route('project.show', ['id' => $project->id]));
+        $header = $this->getAuthHeader($user);
+        $response = $this->actingAs($user)->get(route('api.project.show', ['id' => $project->id]), $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -51,7 +52,8 @@ class ProjectControllerTest extends TestCase
         $project->teams()->attach($team);
 
         // When
-        $response = $this->actingAs($member)->get(route('project.show', ['id' => $project->id]));
+        $header = $this->getAuthHeader($member);
+        $response = $this->actingAs($member)->get(route('api.project.show', ['id' => $project->id]), $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -71,7 +73,8 @@ class ProjectControllerTest extends TestCase
 
         // When
         $this->be($otherUser);
-        $response = $this->actingAs($otherUser)->get(route('project.show', ['id' => $project->id]));
+        $header = $this->getAuthHeader($otherUser);
+        $response = $this->actingAs($otherUser)->get(route('api.project.show', ['id' => $project->id]), $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -89,7 +92,8 @@ class ProjectControllerTest extends TestCase
         $project2 = factory(Project::class)->create();
 
         // When
-        $response = $this->actingAs($user)->get(route('project.index'));
+        $header = $this->getAuthHeader($user);
+        $response = $this->actingAs($user)->get(route('api.project.index'), $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -119,7 +123,8 @@ class ProjectControllerTest extends TestCase
         $project2 = factory(Project::class)->create();
 
         // When
-        $response = $this->actingAs($member)->get(route('project.index'));
+        $header = $this->getAuthHeader($member);
+        $response = $this->actingAs($member)->get(route('api.project.index'), $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -141,7 +146,8 @@ class ProjectControllerTest extends TestCase
 
 
         // When
-        $response = $this->actingAs($user1)->get(route('project.index'));
+        $header = $this->getAuthHeader($user1);
+        $response = $this->actingAs($user1)->get(route('api.project.index'), $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -160,7 +166,7 @@ class ProjectControllerTest extends TestCase
         $data = ['title' => $title];
 
         // When
-        $response = $this->actingAs($user)->postJson(route('project.create'), $data);
+        $response = $this->actingAs($user)->postJson(route('api.project.create'), $data, $this->getAuthHeader($user));
         $team = DB::table('projects')->where('title', $title)->first();
 
         // Then
@@ -181,7 +187,7 @@ class ProjectControllerTest extends TestCase
     {
         // Given
         $user = factory(User::class)->create();
-        $this->be($user);
+        $header = $this->getAuthHeader($user);
 
         $title1 = 'PROJECT_TITLE_1';
         $project = factory(Project::class)->create(['title' => $title1]);
@@ -193,7 +199,7 @@ class ProjectControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($user)->postJson(route('project.update', ['id' => $project->id]), $data);
+        $response = $this->actingAs($user)->postJson(route('api.project.update', ['id' => $project->id]), $data, $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -227,7 +233,8 @@ class ProjectControllerTest extends TestCase
 
         // When
         $this->be($otherUser);
-        $response = $this->actingAs($otherUser)->postJson(route('project.update', ['id' => $project->id]), $data);
+        $header = $this->getAuthHeader($otherUser);
+        $response = $this->actingAs($otherUser)->postJson(route('api.project.update', ['id' => $project->id]), $data, $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -247,11 +254,12 @@ class ProjectControllerTest extends TestCase
         // Given
         $user = factory(User::class)->create();
         $this->be($user);
+        $header = $this->getAuthHeader($user);
 
         $project = factory(Project::class)->create();
 
         // When
-        $response = $this->actingAs($user)->delete(route('project.delete', ['id' => $project->id]), []);
+        $response = $this->actingAs($user)->delete(route('api.project.delete', ['id' => $project->id]), [], $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -276,7 +284,8 @@ class ProjectControllerTest extends TestCase
 
         // When
         $this->be($otherUser);
-        $response = $this->actingAs($otherUser)->delete(route('project.delete', ['id' => $project->id]), []);
+        $header = $this->getAuthHeader($otherUser);
+        $response = $this->actingAs($otherUser)->delete(route('api.project.delete', ['id' => $project->id]), [], $header);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
