@@ -5,11 +5,11 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">@lang('Create Project')</div>
+                    <div class="card-header">{{ $project->id? __('Edit Project'): __('Create Project') }}</div>
 
                     <div class="card-body">
-                        <form method="POST" action="{{ route('project.save', ['id'=>$project->id]) }}">
-                            <input type="hidden" name="_method" value="PATCH">
+                        <form method="POST" action="{{ $project->id? route('project.save', ['id'=>$project->id]) : route('project.store') }}">
+                            <input type="hidden" name="_method" value="{{ $project->id ? 'PATCH' : 'POST' }}">
                             @csrf
 
                             <div class="form-group row">
@@ -31,12 +31,6 @@
 
                                 <div class="col-md-6">
                                     <textarea id="description" type="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description" >{{ $project->description }}</textarea>
-
-                                    @if ($errors->has('description'))
-                                        <span class="invalid-feedback">
-                                        <strong>{{ $errors->first('description') }}</strong>
-                                    </span>
-                                    @endif
                                 </div>
                             </div>
 
