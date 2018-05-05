@@ -60,7 +60,7 @@
       "@php artisan package:discover",
       "@php artisan migrate:fresh",
       "@php artisan db:seed",
-      "@php artisan passport:install --force"
+      "@php artisan passport:keys --force",
     ]
   },
   "config": {
