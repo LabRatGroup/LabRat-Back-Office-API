@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/secure', 'HomeController@secure')->name('secure');
+Route::get('/', 'Auth\LoginController@login')->name('home');
+Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('projects', 'ProjectController@index')->name('project.index');
