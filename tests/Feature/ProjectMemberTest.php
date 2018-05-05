@@ -5,11 +5,11 @@ namespace Tests\Feature;
 use App\Models\Project;
 use App\Models\Role;
 use App\User;
+use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
-use Tests\ApiTestCase;
 
-class ProjectMemberTest extends ApiTestCase
+class ProjectMemberTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -31,7 +31,7 @@ class ProjectMemberTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.addMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.addMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -58,23 +58,23 @@ class ProjectMemberTest extends ApiTestCase
         $project = factory(Project::class)->create();
 
         $data = [
-            'user_id'    => $member->id,
-            'project_id' => $project->id,
-            'is_owner'   => 1,
+            'user_id'  => $member->id,
+            'project_id'  => $project->id,
+            'is_owner' => 1,
         ];
 
         // When
-        $response = $this->postJson(route('api.project.addMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.addMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $member->id,
-                'project_id' => $project->id,
-                'is_owner'   => 1,
-                'role_id'    => $role->id,
+                'user_id'  => $member->id,
+                'project_id'  => $project->id,
+                'is_owner' => 1,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -96,23 +96,23 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $user->id,
-            'project_id' => $project->id,
-            'is_owner'   => 1,
+            'user_id'  => $user->id,
+            'project_id'  => $project->id,
+            'is_owner' => 1,
         ];
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('api.project.addMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.addMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $member->id,
-                'project_id' => $project->id,
-                'is_owner'   => 0,
-                'role_id'    => $role->id,
+                'user_id'  => $member->id,
+                'project_id'  => $project->id,
+                'is_owner' => 0,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -133,23 +133,23 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $member->id,
-            'project_id' => $project->id,
-            'is_owner'   => 0,
+            'user_id'  => $member->id,
+            'project_id'  => $project->id,
+            'is_owner' => 0,
         ];
 
         // When
-        $response = $this->postJson(route('api.project.addMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.addMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $member->id,
-                'project_id' => $project->id,
-                'is_owner'   => 0,
-                'role_id'    => $role->id,
+                'user_id'  => $member->id,
+                'project_id'  => $project->id,
+                'is_owner' => 0,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -170,23 +170,23 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $member->id,
-            'project_id' => $project->id,
-            'is_owner'   => 1,
+            'user_id'  => $member->id,
+            'project_id'  => $project->id,
+            'is_owner' => 1,
         ];
 
         // When
-        $response = $this->postJson(route('api.project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $member->id,
-                'project_id' => $project->id,
-                'is_owner'   => 1,
-                'role_id'    => $role->id,
+                'user_id'  => $member->id,
+                'project_id'  => $project->id,
+                'is_owner' => 1,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -212,24 +212,24 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $user->id,
-            'project_id' => $project->id,
-            'is_owner'   => 1,
+            'user_id'  => $user->id,
+            'project_id'  => $project->id,
+            'is_owner' => 1,
         ];
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('api.project.updateMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $user->id,
-                'project_id' => $project->id,
-                'is_owner'   => 0,
-                'role_id'    => $role->id,
+                'user_id'  => $user->id,
+                'project_id'  => $project->id,
+                'is_owner' => 0,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -250,23 +250,23 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $member->id,
-            'project_id' => $project->id,
-            'is_owner'   => 1,
+            'user_id'  => $member->id,
+            'project_id'  => $project->id,
+            'is_owner' => 1,
         ];
 
         // When
-        $response = $this->postJson(route('api.project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $member->id,
-                'project_id' => $project->id,
-                'is_owner'   => 1,
-                'role_id'    => $role->id,
+                'user_id'  => $member->id,
+                'project_id'  => $project->id,
+                'is_owner' => 1,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -280,22 +280,22 @@ class ProjectMemberTest extends ApiTestCase
 
         $project = factory(Project::class)->create();
         $data = [
-            'user_id'    => $owner->id,
-            'project_id' => $project->id,
-            'is_owner'   => 1,
+            'user_id'  => $owner->id,
+            'project_id'  => $project->id,
+            'is_owner' => 1,
         ];
 
         // When
-        $response = $this->postJson(route('api.project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $owner->id,
-                'project_id' => $project->id,
-                'is_owner'   => 1,
+                'user_id'  => $owner->id,
+                'project_id'  => $project->id,
+                'is_owner' => 1,
             ]
         );
     }
@@ -316,23 +316,23 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $member->id,
-            'project_id' => $project->id,
-            'is_owner'   => 0,
+            'user_id'  => $member->id,
+            'project_id'  => $project->id,
+            'is_owner' => 0,
         ];
 
         // When
-        $response = $this->postJson(route('api.project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $member->id,
-                'project_id' => $project->id,
-                'is_owner'   => 0,
-                'role_id'    => $role->id,
+                'user_id'  => $member->id,
+                'project_id'  => $project->id,
+                'is_owner' => 0,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -353,23 +353,23 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $member->id,
-            'project_id' => $project->id,
-            'is_owner'   => 0,
+            'user_id'  => $member->id,
+            'project_id'  => $project->id,
+            'is_owner' => 0,
         ];
 
         // When
-        $response = $this->postJson(route('api.project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $member->id,
-                'project_id' => $project->id,
-                'is_owner'   => 0,
-                'role_id'    => $role->id,
+                'user_id'  => $member->id,
+                'project_id'  => $project->id,
+                'is_owner' => 0,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -395,24 +395,24 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $user->id,
-            'project_id' => $project->id,
-            'is_owner'   => 0,
+            'user_id'  => $user->id,
+            'project_id'  => $project->id,
+            'is_owner' => 0,
         ];
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('api.project.updateMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $user->id,
-                'project_id' => $project->id,
-                'is_owner'   => 1,
-                'role_id'    => $role->id,
+                'user_id'  => $user->id,
+                'project_id'  => $project->id,
+                'is_owner' => 1,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -429,23 +429,23 @@ class ProjectMemberTest extends ApiTestCase
 
 
         $data = [
-            'user_id'    => $owner->id,
-            'project_id' => $project->id,
-            'is_owner'   => 0,
+            'user_id'  => $owner->id,
+            'project_id'  => $project->id,
+            'is_owner' => 0,
         ];
 
         // When
-        $response = $this->postJson(route('api.project.updateMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.updateMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $owner->id,
-                'project_id' => $project->id,
-                'is_owner'   => 1,
-                'role_id'    => $role->id,
+                'user_id'  => $owner->id,
+                'project_id'  => $project->id,
+                'is_owner' => 1,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -466,22 +466,22 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $member->id,
+            'user_id' => $member->id,
             'project_id' => $project->id,
         ];
 
         // When
-        $response = $this->postJson(route('api.project.deleteMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.deleteMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
 
         $this->assertDatabaseMissing('project_user',
             [
-                'user_id'    => $member->id,
-                'project_id' => $project->id,
-                'is_owner'   => 0,
-                'role_id'    => $role->id,
+                'user_id'  => $member->id,
+                'project_id'  => $project->id,
+                'is_owner' => 0,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -502,23 +502,23 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $member->id,
+            'user_id' => $member->id,
             'project_id' => $project->id,
         ];
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('api.project.deleteMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.deleteMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
 
         $this->assertDatabaseMissing('project_user',
             [
-                'user_id'    => $member->id,
-                'project_id' => $project->id,
-                'is_owner'   => 0,
-                'role_id'    => $role->id,
+                'user_id'  => $member->id,
+                'project_id'  => $project->id,
+                'is_owner' => 0,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -539,23 +539,23 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $member->id,
+            'user_id' => $member->id,
             'project_id' => $project->id,
         ];
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('api.project.deleteMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.deleteMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
 
         $this->assertDatabaseMissing('project_user',
             [
-                'user_id'    => $member->id,
-                'project_id' => $project->id,
-                'is_owner'   => 1,
-                'role_id'    => $role->id,
+                'user_id'  => $member->id,
+                'project_id'  => $project->id,
+                'is_owner' => 1,
+                'role_id'  => $role->id,
             ]
         );
     }
@@ -576,22 +576,22 @@ class ProjectMemberTest extends ApiTestCase
         ]);
 
         $data = [
-            'user_id'    => $owner->id,
+            'user_id' => $owner->id,
             'project_id' => $project->id,
         ];
 
         // When
         $this->be($member);
-        $response = $this->postJson(route('api.project.deleteMember'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.deleteMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $owner->id,
-                'project_id' => $project->id,
-                'is_owner'   => 1,
+                'user_id'  => $owner->id,
+                'project_id'  => $project->id,
+                'is_owner' => 1,
             ]
         );
     }
@@ -606,21 +606,21 @@ class ProjectMemberTest extends ApiTestCase
         $project = factory(Project::class)->create();
 
         $data = [
-            'user_id'    => $owner->id,
+            'user_id' => $owner->id,
             'project_id' => $project->id,
         ];
 
         // When
-        $response = $this->postJson(route('api.project.deleteMember'), $data, $this->getAuthHeader($owner));
+        $response = $this->actingAs($owner)->postJson(route('api.project.deleteMember'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
 
         $this->assertDatabaseHas('project_user',
             [
-                'user_id'    => $owner->id,
-                'project_id' => $project->id,
-                'is_owner'   => 1,
+                'user_id'  => $owner->id,
+                'project_id'  => $project->id,
+                'is_owner' => 1,
             ]
         );
     }

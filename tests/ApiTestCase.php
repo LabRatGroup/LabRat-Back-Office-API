@@ -15,8 +15,6 @@ abstract class ApiTestCase extends BaseTestCase
     {
         parent::setUp();
 
-        config(['auth.defaults.guard' => 'api']);
-
         Artisan::call('db:seed', [
             '--database' => env('DB_CONNECTION')
         ]);

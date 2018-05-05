@@ -8,6 +8,7 @@ use App\Models\MlModelState;
 use App\Models\MlModelStateScore;
 use App\Models\MlModelStateTrainingData;
 use App\Models\Project;
+use App\Models\Team;
 use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
@@ -31,6 +32,9 @@ class MlGlobalSeeder extends Seeder
         );
 
         Auth::login($user);
+
+        factory(User::class, 10)->create();
+        factory(Team::class, 10)->create();
 
         /** @var Project $project */
         $project = factory(Project::class)->create();

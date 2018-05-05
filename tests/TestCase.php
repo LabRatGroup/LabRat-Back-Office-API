@@ -14,8 +14,6 @@ abstract class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        config(['auth.defaults.guard' => 'web']);
-
         Artisan::call('db:seed', [
             '--database' => env('DB_CONNECTION')
         ]);

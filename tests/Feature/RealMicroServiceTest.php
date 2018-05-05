@@ -10,13 +10,15 @@ use App\Models\MlModelState;
 use App\Models\MlModelStateTrainingData;
 use App\Models\Project;
 use App\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
-use Tests\ApiTestCase;
 
-class RealMicroServiceTest extends ApiTestCase
+class RealMicroServiceTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -110,7 +112,7 @@ class RealMicroServiceTest extends ApiTestCase
     }
 
     /** @test */
-    public function shouldCreateState()
+    public function testExample()
     {
         $data = [
             'ml_model_id'     => $this->model->id,
@@ -120,7 +122,7 @@ class RealMicroServiceTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.state.create'), $data, $this->getAuthHeader($this->user));
+        $response = $this->actingAs($this->user)->postJson(route('api.state.create'), $data);
 //        dd($response->json());
 
         // Then

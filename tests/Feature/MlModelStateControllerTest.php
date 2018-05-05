@@ -16,14 +16,14 @@ use App\Models\Role;
 use App\Models\Team;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
+use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
-use Tests\ApiTestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class MlModelStateControllerTest extends ApiTestCase
+class MlModelStateControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -81,7 +81,7 @@ class MlModelStateControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.state.create'), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('api.state.create'), $data);
 
         /** @var MlModelState $stateDB */
         $stateDB = MlModelState::find($response->json('data')['id']);
@@ -118,7 +118,7 @@ class MlModelStateControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.state.create'), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('api.state.create'), $data);
 
         /** @var MlModelState $stateDB */
         $stateDB = MlModelState::find($response->json('data')['id']);
@@ -187,7 +187,7 @@ class MlModelStateControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.state.create'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.state.create'), $data);
 
         /** @var MlModelState $stateDB */
         $stateDB = MlModelState::find($response->json('data')['id']);
@@ -244,7 +244,7 @@ class MlModelStateControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.state.create'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.state.create'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -295,7 +295,7 @@ class MlModelStateControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.state.create'), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('api.state.create'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_UNPROCESSABLE_ENTITY);
@@ -327,7 +327,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $state->setModel($model);
 
         // When
-        $response = $this->deleteJson(route('api.state.delete', ['id' => $state->id]), [], $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->deleteJson(route('api.state.delete', ['id' => $state->id]), []);
 
         /** @var Collection $trainingDataItems */
         $trainingDataItems = MlModelStateTrainingData::all();
@@ -366,7 +366,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $state->setModel($model);
 
         // When
-        $response = $this->deleteJson(route('api.state.delete', ['id' => $state->id]), [], $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->deleteJson(route('api.state.delete', ['id' => $state->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -404,7 +404,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $state->setModel($model);
 
         // When
-        $response = $this->get(route('api.state.index', ['id' => $model->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.state.index', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -438,7 +438,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $state->setModel($model);
 
         // When
-        $response = $this->get(route('api.state.index', ['id' => $model->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.state.index', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -466,7 +466,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $state->setModel($model);
 
         // When
-        $response = $this->get(route('api.state.index', ['id' => $model->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.state.index', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -495,7 +495,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $state->setModel($model);
 
         // When
-        $response = $this->get(route('api.state.show', ['id' => $model->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.state.show', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -529,7 +529,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $state->setModel($model);
 
         // When
-        $response = $this->get(route('api.state.show', ['id' => $model->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.state.show', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -557,7 +557,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $state->setModel($model);
 
         // When
-        $response = $this->get(route('api.state.show', ['id' => $model->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.state.show', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -616,7 +616,7 @@ class MlModelStateControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->post(route('api.state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->post(route('api.state.update', ['id' => $state->id]), $data);
 
         /** @var Collection $trainingDataItems */
         $trainingDataItems = MlModelStateTrainingData::all();
@@ -664,12 +664,12 @@ class MlModelStateControllerTest extends ApiTestCase
 
 
         $data = [
-            'ml_model_id' => $model->id,
-            'file'        => $this->file,
+            'ml_model_id'     => $model->id,
+            'file'            => $this->file,
         ];
 
         // When
-        $response = $this->post(route('api.state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->post(route('api.state.update', ['id' => $state->id]), $data);
 
         /** @var Collection $trainingDataItems */
         $trainingDataItems = MlModelStateTrainingData::all();
@@ -742,7 +742,7 @@ class MlModelStateControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->post(route('api.state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->post(route('api.state.update', ['id' => $state->id]), $data);
 
         /** @var Collection $trainingDataItems */
         $trainingDataItems = MlModelStateTrainingData::all();
@@ -809,7 +809,7 @@ class MlModelStateControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->post(route('api.state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->post(route('api.state.update', ['id' => $state->id]), $data);
 
         /** @var MlModelState $stateDB */
         $stateDB = MlModelState::find($response->json('data')['id']);
@@ -875,7 +875,7 @@ class MlModelStateControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->post(route('api.state.update', ['id' => $state->id]), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->post(route('api.state.update', ['id' => $state->id]), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -940,7 +940,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $predictionData2->setPrediction($prediction2);
 
         // When
-        $response = $this->post(route('api.state.current', ['id' => $state2->id]), [], $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->post(route('api.state.current', ['id' => $state2->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -986,7 +986,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $state2->setModel($model);
 
         // When
-        $response = $this->post(route('api.state.current', ['id' => $state2->id]), [], $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->post(route('api.state.current', ['id' => $state2->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

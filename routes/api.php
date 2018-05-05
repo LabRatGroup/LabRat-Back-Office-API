@@ -18,6 +18,10 @@ Route::post('register', 'Api\UserController@register')->name('api.user.register'
 Route::post('login', 'Api\UserController@login')->name('api.user.login');
 
 Route::group(['middleware' => ['auth']], function () {
+    Route::post('users/findByEmail', 'Api\UserController@findByEmail')->name('api.user.findByEmail');
+});
+
+Route::group(['middleware' => ['auth']], function () {
     Route::post('logout', 'Api\UserController@logout')->name('api.user.logout');
     Route::post('un-register', 'Api\UserController@unRegister')->name('api.user.un-register');
 });

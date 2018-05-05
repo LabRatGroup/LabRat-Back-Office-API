@@ -7,10 +7,10 @@ use App\Models\Role;
 use App\Models\Team;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Passport\HasApiTokens;
+
 
 /**
  * @property int    $id
@@ -23,9 +23,9 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property mixed  projects
  * @property mixed  teams
  */
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
-    use Notifiable;
+    use HasApiTokens, Notifiable;
 
     const ITEM_TOKEN_LENGTH = 25;
 
@@ -55,8 +55,8 @@ class User extends Authenticatable implements JWTSubject
         'id',
         'name',
         'email',
-        'password',
         'token',
+        'pivot',
         'created_at',
         'updated_at',
     ];
