@@ -18,6 +18,7 @@ Auth::routes();
 
 Route::get('/', 'Auth\LoginController@login')->name('home');
 Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
+Route::get('/home', 'DashboardController@index')->name('home');
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('projects', 'ProjectController@index')->name('project.index');
