@@ -3,11 +3,11 @@
 namespace Tests\Feature;
 
 use App\User;
-use Tests\TestCase;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class MlAlgorithmControllerTest extends TestCase
+class MlAlgorithmControllerTest extends ApiTestCase
 {
     use RefreshDatabase;
 
@@ -19,7 +19,7 @@ class MlAlgorithmControllerTest extends TestCase
         $this->be($user);
 
         // When
-        $response = $this->actingAs($user)->get(route('algorithm.index'));
+        $response = $this->get(route('api.algorithm.index'), $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -34,7 +34,7 @@ class MlAlgorithmControllerTest extends TestCase
         $this->be($user);
 
         // When
-        $response = $this->actingAs($user)->get(route('algorithm.show', ['id' => '5']));
+        $response = $this->get(route('api.algorithm.show', ['id' => '5']), $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);

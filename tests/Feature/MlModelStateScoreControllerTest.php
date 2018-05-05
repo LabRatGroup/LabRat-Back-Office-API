@@ -10,11 +10,11 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
 use App\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class MlModelStateScoreControllerTest extends TestCase
+class MlModelStateScoreControllerTest extends ApiTestCase
 {
     use RefreshDatabase;
 
@@ -48,7 +48,7 @@ class MlModelStateScoreControllerTest extends TestCase
         $score->setState($state);
 
         // When
-        $response = $this->actingAs($member)->get(route('score.show', ['id' => $state->id]));
+        $response = $this->get(route('api.score.show', ['id' => $state->id]), $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -90,7 +90,7 @@ class MlModelStateScoreControllerTest extends TestCase
         $score->setState($state);
 
         // When
-        $response = $this->actingAs($member)->get(route('score.show', ['id' => $state->id]));
+        $response = $this->get(route('api.score.show', ['id' => $state->id]), $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -125,7 +125,7 @@ class MlModelStateScoreControllerTest extends TestCase
         $score->setState($state);
 
         // When
-        $response = $this->actingAs($member)->get(route('score.show', ['id' => $state->id]));
+        $response = $this->get(route('api.score.show', ['id' => $state->id]), $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

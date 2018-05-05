@@ -11,11 +11,11 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
 use App\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class MlModelPredictionScoreControllerTest extends TestCase
+class MlModelPredictionScoreControllerTest extends ApiTestCase
 {
     use RefreshDatabase;
 
@@ -51,7 +51,7 @@ class MlModelPredictionScoreControllerTest extends TestCase
         $predictionScore->setPrediction($prediction);
 
         // When
-        $response = $this->actingAs($user)->get(route('score.prediction.show', ['id' => $prediction->id]));
+        $response = $this->get(route('api.score.prediction.show', ['id' => $prediction->id]), $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -97,7 +97,7 @@ class MlModelPredictionScoreControllerTest extends TestCase
         $predictionScore->setPrediction($prediction);
 
         // When
-        $response = $this->actingAs($member)->get(route('score.prediction.show', ['id' => $prediction->id]));
+        $response = $this->get(route('api.score.prediction.show', ['id' => $prediction->id]), $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -137,7 +137,7 @@ class MlModelPredictionScoreControllerTest extends TestCase
         $predictionScore->setPrediction($prediction);
 
         // When
-        $response = $this->actingAs($member)->get(route('score.prediction.show', ['id' => $prediction->id]));
+        $response = $this->get(route('api.score.prediction.show', ['id' => $prediction->id]), $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -175,7 +175,7 @@ class MlModelPredictionScoreControllerTest extends TestCase
         $predictionScore->setPrediction($prediction);
 
         // When
-        $response = $this->actingAs($user)->delete(route('score.prediction.delete', ['id' => $prediction->id]), []);
+        $response = $this->delete(route('api.score.prediction.delete', ['id' => $prediction->id]), [], $this->getAuthHeader($user));
         $scores = MlModelPredictionScore::all();
 
         // Then
@@ -216,7 +216,7 @@ class MlModelPredictionScoreControllerTest extends TestCase
         $predictionScore->setPrediction($prediction);
 
         // When
-        $response = $this->actingAs($member)->delete(route('score.prediction.delete', ['id' => $prediction->id]), []);
+        $response = $this->delete(route('api.score.prediction.delete', ['id' => $prediction->id]), [], $this->getAuthHeader($member));
         $scores = MlModelPredictionScore::all();
 
         // Then

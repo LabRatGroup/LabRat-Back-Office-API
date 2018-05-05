@@ -17,11 +17,16 @@ class UserServiceProvider extends ServiceProvider
     public function boot()
     {
         User::creating(function (User $user) {
+            if (config('auth.defaults.guard') == 'api') $user->password = Hash::make($user->getAttribute('password'));
             $user->token = str_random(User::ITEM_TOKEN_LENGTH);
         });
 
         User::created(function (User $user) {
             event(new RegisterUserEvent($user));
+        });
+
+        User::updating(function (User $user) {
+            if (config('auth.defaults.guard') == 'api') $user->password = bcrypt($user->getDirty()['password']);
         });
 
         User::deleting(function (User $user) {
