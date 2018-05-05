@@ -5,11 +5,11 @@ namespace Tests\Feature;
 use App\Models\Project;
 use App\Models\Role;
 use App\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class ProjectMemberTest extends TestCase
+class ProjectMemberTest extends ApiTestCase
 {
     use RefreshDatabase;
 

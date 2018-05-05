@@ -6,12 +6,12 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
 use App\User;
-use Illuminate\Support\Facades\DB;
-use Tests\TestCase;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class ProjectControllerTest extends TestCase
+class ProjectControllerTest extends ApiTestCase
 {
     use RefreshDatabase;
 

@@ -13,14 +13,14 @@ use App\Models\Role;
 use App\Models\Team;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\ApiTestCase;
 
-class MlModelPredictionControllerTest extends TestCase
+class MlModelPredictionControllerTest extends ApiTestCase
 {
     use RefreshDatabase;
 

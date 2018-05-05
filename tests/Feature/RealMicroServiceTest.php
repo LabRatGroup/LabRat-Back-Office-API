@@ -10,15 +10,13 @@ use App\Models\MlModelState;
 use App\Models\MlModelStateTrainingData;
 use App\Models\Project;
 use App\User;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class RealMicroServiceTest extends TestCase
+class RealMicroServiceTest extends ApiTestCase
 {
     use RefreshDatabase;
 

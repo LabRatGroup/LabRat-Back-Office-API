@@ -5,12 +5,12 @@ namespace Tests\Feature;
 use App\Models\Role;
 use App\Models\Team;
 use App\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
-use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\ApiTestCase;
 
-class TeamControllerTest extends TestCase
+class TeamControllerTest extends ApiTestCase
 {
     use RefreshDatabase;
 

@@ -6,11 +6,11 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
 use App\User;
-use Tests\TestCase;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class ProjectTeamTest extends TestCase
+class ProjectTeamTest extends ApiTestCase
 {
     use RefreshDatabase;
 

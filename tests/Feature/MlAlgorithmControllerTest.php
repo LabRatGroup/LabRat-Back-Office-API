@@ -3,11 +3,11 @@
 namespace Tests\Feature;
 
 use App\User;
-use Tests\TestCase;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class MlAlgorithmControllerTest extends TestCase
+class MlAlgorithmControllerTest extends ApiTestCase
 {
     use RefreshDatabase;
 

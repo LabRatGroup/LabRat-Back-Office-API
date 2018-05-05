@@ -7,10 +7,10 @@ use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Mail;
-use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class UserControllerTest extends TestCase
+class UserControllerTest extends ApiTestCase
 {
     use RefreshDatabase, WithoutMiddleware;
 
