@@ -13,7 +13,7 @@ use App\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Auth;
 
-class MlGlobalSeeder extends Seeder
+class DevSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -27,7 +27,6 @@ class MlGlobalSeeder extends Seeder
             [
                 'name'     => 'Julio Fernandez',
                 'email'    => 'jfernandez74@gmail.com',
-                'password' => 'decolores',
             ]
         );
 

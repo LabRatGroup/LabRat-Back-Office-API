@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TeamRequest;
 use App\Models\Team;
 use App\Repositories\TeamRepository;
+use App\Repositories\UserRepository;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
@@ -14,14 +15,19 @@ class TeamController extends Controller
     /** @var TeamRepository */
     private $teamRepository;
 
+    /** @var UserRepository */
+    private $userRepository;
+
     /**
      * TeamController constructor.
      *
      * @param TeamRepository $teamRepository
+     * @param UserRepository $userRepository
      */
-    public function __construct(TeamRepository $teamRepository)
+    public function __construct(TeamRepository $teamRepository, UserRepository $userRepository)
     {
         $this->teamRepository = $teamRepository;
+        $this->userRepository = $userRepository;
     }
 
     /**

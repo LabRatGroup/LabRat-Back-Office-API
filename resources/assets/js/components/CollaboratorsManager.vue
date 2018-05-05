@@ -1,32 +1,70 @@
 <template>
-    <div class="form-group row">
+    <div class="row">
         <div class="col-sm-12">
+
+            <div class="form-inline row">
+                <div class="form-group mx-sm-0 mb-2 col-sm-8">
+                    <input type="text" class="form-control col-sm-12" id="collaboratorEmail" v-model="collaboratorEmail" placeholder="Collaborator email address">
+                </div>
+                <div class="col-sm-4 text-sm-right">
+                    <button type="button" @click="invite()" class="btn btn-primary mb-2 col-sm-12">Add new collaborator</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-sm-12">
+
             <div class="list-group collaborator-panel">
-                <div v-for="collaborator in users" class="list-group-item added-collaborators" v-cloak>
+                <div v-for="collaborator in collaborators" class="list-group-item added-collaborators" v-cloak>
                     <div class="row">
                         <div class="col-sm-10">
-                            <span class="name">{{ collaborator.name }}</span></br>
+                            <span class="name">{{ collaborator.name }}</span><br/>
                             <span class="email">{{ collaborator.email }}</span>
                         </div>
-                        <button type="button" class="btn btn-danger" v-if="collaborator.id > 0">Remove</button>
-                        <!--<div class="col-sm-3 text-right">-->
-                            <!--<p class="action"-->
-                               <!--v-if="!collaborator.pivot || (collaborator.pivot && collaborator.pivot.is_owner == 0)">-->
-                                <!--<span v-if="collaborator.pivot && collaborator.pivot.is_valid == 0">@lang('collaborator.form.in-process')</span>-->
-                                <!--{{&#45;&#45;<a href="#" class="s7-close remove_collaborator" @click="remove(collaborator.id)" :id="'remove_collaborator_' + collaborator.pivot.user_id">&nbsp;</a>&#45;&#45;}}-->
-                            <!--</p>-->
-                        <!--</div>-->
+                        <button type="button" class="btn btn-danger" v-if="!collaborator.pivot || (collaborator.pivot && collaborator.pivot.is_owner == 0)">
+                            Remove
+                        </button>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 </template>
 
 <script>
     export default {
-        name: "UserChooser",
-        props: ['users'],
+        name: "CollaboratorsManager",
+        props: ['collaborators'],
+        data() {
+            return {
+                collaboratorEmail: null,
+                howEmailError: false,
+                showEmailExist: false
+            };
+        },
+        methods: {
+            invite: function () {
+                axios.post('/api/users/findByEmail', {
+                    email: this.collaboratorEmail
+                })
+                    .then(response => {
+                        let data = response.data.data;
+                        let jq = jsonQ(this.collaborators);
+                        if (jq.find('id').index(data.id) > -1) {
+                            this.showEmailExist = !this.showEmailExist;
+                        } else {
+                            data.pivot = {'is_owner': false};
+                            this.collaborators.push(data);
+                        }
+
+                        this.collaboratorEmail = null
+                    })
+                    .catch(e => {
+                        this.showEmailError = !this.showEmailError;
+                    });
+            }
+        }
     }
 </script>
 

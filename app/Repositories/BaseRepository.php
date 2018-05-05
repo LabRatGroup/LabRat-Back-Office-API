@@ -11,6 +11,12 @@ abstract class BaseRepository
      */
     protected $model;
 
+    public function findAll()
+    {
+        return $this->getModel()
+            ->get();
+    }
+
     /**
      * @param $id
      *
