@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Models\MlModel;
 use App\Models\Project;
 use App\Models\Team;
 use App\Policies\MlModelPolicy;

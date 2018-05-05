@@ -7,10 +7,10 @@ use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Mail;
-use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class UserControllerTest extends TestCase
+class UserControllerTest extends ApiTestCase
 {
     use RefreshDatabase, WithoutMiddleware;
 
@@ -20,17 +20,18 @@ class UserControllerTest extends TestCase
         // Given
         $data =
             [
-                'name'                  => 'USER_NAME',
-                'email'                 => 'EMAIL@EMAIL.COM',
-                'password'              => 'PASSWORD',
-                'password_confirmation' => 'PASSWORD'
+                'name'     => 'USER_NAME',
+                'email'    => 'EMAIL@EMAIL.COM',
+                'password' => 'PASSWORD',
             ];
 
         // When
-        $response = $this->post(route('register'), $data);
+        $response = $this->postJson(route('api.user.register'), $data, []);
 
         // Then
-        $response->assertStatus(HttpResponse::HTTP_FOUND);
+        $response->assertStatus(HttpResponse::HTTP_OK);
+        $response->assertJsonStructure(['data' => ['token']]);
+
         $this->assertDatabaseHas('users', ['email' => 'EMAIL@EMAIL.COM']);
     }
 
@@ -56,6 +57,7 @@ class UserControllerTest extends TestCase
         ]);
     }
 
+    /** @test */
     public function should_login_user()
     {
         // Given
@@ -77,14 +79,37 @@ class UserControllerTest extends TestCase
             ];
 
         // When
-        $response = $this->post(route('login'), $data);
+        $response = $this->postJson(route('api.user.login'), $data);
 
         // Then
         $this->assertDatabaseHas('users', ['email' => $email,]);
-        $response->assertStatus(HttpResponse::HTTP_FOUND);
+        $response->assertStatus(HttpResponse::HTTP_OK);
         $response->assertJsonStructure(['data' => ['token']]);
     }
 
+    /** @test */
+    public function should_logout_user()
+    {
+        // Given
+        $email = 'EMAIL@EMAIL.COM';
+        $password = 'PASSWORD';
+
+        $user = factory(User::class)->create(
+            [
+                'name'     => 'USER_NAME',
+                'email'    => $email,
+                'password' => $password,
+            ]
+        );
+
+        // When
+        $response = $this->postJson(route('api.user.logout'), [], $this->getAuthHeader($user));
+
+        // Then
+        $response->assertStatus(HttpResponse::HTTP_OK);
+    }
+
+    /** @test */
     public function should_recover_password()
     {
         // Given
@@ -104,13 +129,13 @@ class UserControllerTest extends TestCase
         Mail::fake();
 
         // When
-        $response = $this->postJson(route('user.recover'), $data);
+        $response = $this->postJson(route('api.user.recover'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
     }
 
-
+    /** @test */
     public function should_remove_user()
     {
         // Given
@@ -123,7 +148,7 @@ class UserControllerTest extends TestCase
         );
 
         // When
-        $response = $this->postJson(route('user.un-register'), ['email' => $email], $this->getAuthHeader($user));
+        $response = $this->postJson(route('api.user.un-register'), ['email' => $email], $this->getAuthHeader($user));
 
 
         // Then

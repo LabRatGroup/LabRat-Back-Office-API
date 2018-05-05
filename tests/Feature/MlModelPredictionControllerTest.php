@@ -13,14 +13,14 @@ use App\Models\Role;
 use App\Models\Team;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\ApiTestCase;
 
-class MlModelPredictionControllerTest extends TestCase
+class MlModelPredictionControllerTest extends ApiTestCase
 {
     use RefreshDatabase;
 
@@ -69,7 +69,7 @@ class MlModelPredictionControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($user)->postJson(route('prediction.create'), $data);
+        $response = $this->postJson(route('api.prediction.create'), $data, $this->getAuthHeader($user));
 
         /** @var MlModelPrediction $predictionDB */
         $predictionDB = MlModelPrediction::find($response->json('data')['id']);
@@ -126,7 +126,7 @@ class MlModelPredictionControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($user)->postJson(route('prediction.create'), $data);
+        $response = $this->postJson(route('api.prediction.create'), $data, $this->getAuthHeader($user));
 
         /** @var MlModelPrediction $predictionDB */
         $predictionDB = MlModelPrediction::find($response->json('data')['id']);
@@ -176,7 +176,7 @@ class MlModelPredictionControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($user)->postJson(route('prediction.create'), $data);
+        $response = $this->postJson(route('api.prediction.create'), $data, $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -220,7 +220,7 @@ class MlModelPredictionControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($nonMember)->postJson(route('prediction.create'), $data);
+        $response = $this->postJson(route('api.prediction.create'), $data, $this->getAuthHeader($nonMember));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -269,7 +269,7 @@ class MlModelPredictionControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($user)->postJson(route('prediction.update', ['id' => $prediction->id]), $data);
+        $response = $this->postJson(route('api.prediction.update', ['id' => $prediction->id]), $data, $this->getAuthHeader($user));
 
         /** @var MlModelPrediction $predictionDB */
         $predictionDB = MlModelPrediction::find($response->json('data')['id']);
@@ -339,7 +339,7 @@ class MlModelPredictionControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($member)->postJson(route('prediction.update', ['id' => $prediction->id]), $data);
+        $response = $this->postJson(route('api.prediction.update', ['id' => $prediction->id]), $data, $this->getAuthHeader($member));
 
         /** @var MlModelPrediction $predictionDB */
         $predictionDB = MlModelPrediction::find($response->json('data')['id']);
@@ -400,7 +400,7 @@ class MlModelPredictionControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($user)->postJson(route('prediction.update', ['id' => $prediction->id]), $data);
+        $response = $this->postJson(route('api.prediction.update', ['id' => $prediction->id]), $data, $this->getAuthHeader($user));
 
         /** @var Collection $trainingDataItems */
         $predictionDataItems = MlModelPredictionData::all();
@@ -455,7 +455,7 @@ class MlModelPredictionControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($member)->postJson(route('prediction.update', ['id' => $prediction->id]), $data);
+        $response = $this->postJson(route('api.prediction.update', ['id' => $prediction->id]), $data, $this->getAuthHeader($member));
 
         /** @var Collection $trainingDataItems */
         $predictionDataItems = MlModelPredictionData::all();
@@ -503,7 +503,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($user)->deleteJson(route('prediction.delete', ['id' => $state->id]), []);
+        $response = $this->deleteJson(route('api.prediction.delete', ['id' => $state->id]), [], $this->getAuthHeader($user));
 
         /** @var Collection $predictionDataItems */
         $predictionDataItems = MlModelPredictionData::all();
@@ -554,7 +554,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($member)->deleteJson(route('prediction.delete', ['id' => $state->id]), []);
+        $response = $this->deleteJson(route('api.prediction.delete', ['id' => $state->id]), [], $this->getAuthHeader($member));
 
         /** @var Collection $predictionDataItems */
         $predictionDataItems = MlModelPredictionData::all();
@@ -599,7 +599,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($user)->get(route('prediction.index', ['id' => $model->id]));
+        $response = $this->get(route('api.prediction.index', ['id' => $model->id]), $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -645,7 +645,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($member)->get(route('prediction.index', ['id' => $model->id]));
+        $response = $this->get(route('api.prediction.index', ['id' => $model->id]), $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -685,7 +685,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($member)->get(route('prediction.index', ['id' => $model->id]));
+        $response = $this->get(route('api.prediction.index', ['id' => $model->id]), $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -723,7 +723,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($user)->get(route('prediction.show', ['id' => $prediction->id]));
+        $response = $this->get(route('api.prediction.show', ['id' => $prediction->id]), $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -769,7 +769,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($member)->get(route('prediction.show', ['id' => $prediction->id]));
+        $response = $this->get(route('api.prediction.show', ['id' => $prediction->id]), $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -809,7 +809,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($member)->get(route('prediction.show', ['id' => $prediction->id]));
+        $response = $this->get(route('api.prediction.show', ['id' => $prediction->id]), $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -847,7 +847,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($user)->get(route('prediction.run', ['id' => $prediction->id]));
+        $response = $this->get(route('api.prediction.run', ['id' => $prediction->id]), $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -882,7 +882,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->setModel($model);
 
         // When
-        $response = $this->actingAs($user)->get(route('prediction.run', ['id' => $prediction->id]));
+        $response = $this->get(route('api.prediction.run', ['id' => $prediction->id]), $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -922,7 +922,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($user)->get(route('prediction.run', ['id' => $prediction->id]));
+        $response = $this->get(route('api.prediction.run', ['id' => $prediction->id]), $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -962,7 +962,7 @@ class MlModelPredictionControllerTest extends TestCase
         $prediction->predictionData()->save($predictionData);
 
         // When
-        $response = $this->actingAs($member)->get(route('prediction.run', ['id' => $prediction->id]));
+        $response = $this->get(route('api.prediction.run', ['id' => $prediction->id]), $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

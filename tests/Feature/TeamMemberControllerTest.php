@@ -5,11 +5,11 @@ namespace Tests\Feature;
 use App\Models\Role;
 use App\Models\Team;
 use App\User;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class TeamMemberControllerTest extends TestCase
+class TeamMemberControllerTest extends ApiTestCase
 {
     use RefreshDatabase;
 
@@ -31,7 +31,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.addMember'), $data);
+        $response = $this->postJson(route('api.team.addMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -72,7 +72,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.addMember'), $data);
+        $response = $this->postJson(route('api.team.addMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -111,7 +111,7 @@ class TeamMemberControllerTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->actingAs($member)->postJson(route('team.addMember'), $data);
+        $response = $this->postJson(route('api.team.addMember'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -147,7 +147,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.addMember'), $data);
+        $response = $this->postJson(route('api.team.addMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -184,7 +184,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.updateMember'), $data);
+        $response = $this->postJson(route('api.team.updateMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -227,7 +227,7 @@ class TeamMemberControllerTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->actingAs($member)->postJson(route('team.updateMember'), $data);
+        $response = $this->postJson(route('api.team.updateMember'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -264,7 +264,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.updateMember'), $data);
+        $response = $this->postJson(route('api.team.updateMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -294,7 +294,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.updateMember'), $data);
+        $response = $this->postJson(route('api.team.updateMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -330,7 +330,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.updateMember'), $data);
+        $response = $this->postJson(route('api.team.updateMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -367,7 +367,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.updateMember'), $data);
+        $response = $this->postJson(route('api.team.updateMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -410,7 +410,7 @@ class TeamMemberControllerTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->actingAs($member)->postJson(route('team.updateMember'), $data);
+        $response = $this->postJson(route('api.team.updateMember'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -443,7 +443,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.updateMember'), $data);
+        $response = $this->postJson(route('api.team.updateMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -479,7 +479,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.deleteMember'), $data);
+        $response = $this->postJson(route('api.team.deleteMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -516,7 +516,7 @@ class TeamMemberControllerTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->actingAs($member)->postJson(route('team.deleteMember'), $data);
+        $response = $this->postJson(route('api.team.deleteMember'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -553,7 +553,7 @@ class TeamMemberControllerTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->actingAs($member)->postJson(route('team.deleteMember'), $data);
+        $response = $this->postJson(route('api.team.deleteMember'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -590,7 +590,7 @@ class TeamMemberControllerTest extends TestCase
 
         // When
         $this->be($member);
-        $response = $this->actingAs($member)->postJson(route('team.deleteMember'), $data);
+        $response = $this->postJson(route('api.team.deleteMember'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -619,7 +619,7 @@ class TeamMemberControllerTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($owner)->postJson(route('team.deleteMember'), $data);
+        $response = $this->postJson(route('api.team.deleteMember'), $data, $this->getAuthHeader($owner));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

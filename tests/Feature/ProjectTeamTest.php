@@ -6,11 +6,11 @@ use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
 use App\User;
-use Tests\TestCase;
-use Symfony\Component\HttpFoundation\Response as HttpResponse;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Tests\ApiTestCase;
 
-class ProjectTeamTest extends TestCase
+class ProjectTeamTest extends ApiTestCase
 {
     use RefreshDatabase;
 
@@ -30,7 +30,7 @@ class ProjectTeamTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($user)->postJson(route('project.addTeam'), $data);
+        $response = $this->postJson(route('api.project.addTeam'), $data, $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -70,7 +70,7 @@ class ProjectTeamTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($member)->postJson(route('project.addTeam'), $data);
+        $response = $this->postJson(route('api.project.addTeam'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -104,7 +104,7 @@ class ProjectTeamTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($member)->postJson(route('project.addTeam'), $data);
+        $response = $this->postJson(route('api.project.addTeam'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -143,7 +143,7 @@ class ProjectTeamTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($member)->postJson(route('project.addTeam'), $data);
+        $response = $this->postJson(route('api.project.addTeam'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -177,7 +177,7 @@ class ProjectTeamTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($member)->postJson(route('project.addTeam'), $data);
+        $response = $this->postJson(route('api.project.addTeam'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -205,7 +205,7 @@ class ProjectTeamTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($user)->postJson(route('project.deleteTeam'), $data);
+        $response = $this->postJson(route('api.project.deleteTeam'), $data, $this->getAuthHeader($user));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -247,7 +247,7 @@ class ProjectTeamTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($member)->postJson(route('project.deleteTeam'), $data);
+        $response = $this->postJson(route('api.project.deleteTeam'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -284,7 +284,7 @@ class ProjectTeamTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($member)->postJson(route('project.deleteTeam'), $data);
+        $response = $this->postJson(route('api.project.deleteTeam'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -326,7 +326,7 @@ class ProjectTeamTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($member)->postJson(route('project.deleteTeam'), $data);
+        $response = $this->postJson(route('api.project.deleteTeam'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -363,7 +363,7 @@ class ProjectTeamTest extends TestCase
         ];
 
         // When
-        $response = $this->actingAs($member)->postJson(route('project.deleteTeam'), $data);
+        $response = $this->postJson(route('api.project.deleteTeam'), $data, $this->getAuthHeader($member));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

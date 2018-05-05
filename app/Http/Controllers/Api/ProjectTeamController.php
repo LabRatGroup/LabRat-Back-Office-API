@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\ProjectTeamRequest;
 use App\Repositories\ProjectRepository;
 use App\Repositories\TeamRepository;

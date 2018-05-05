@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Exceptions\DataFileErrorException;
 use App\Exceptions\UnprocessablePredictionException;
-use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\MlModelPredictionRequest;
 use App\Jobs\RunMachineLearningPredictionScript;
 use App\Models\MlModel;

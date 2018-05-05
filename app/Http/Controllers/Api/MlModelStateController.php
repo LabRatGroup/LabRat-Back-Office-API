@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Exceptions\DataFileErrorException;
-use App\Http\Controllers\Api\ApiController;
 use App\Http\Requests\MlModelStateRequest;
 use App\Jobs\RunMachineLearningModelTrainingScript;
 use App\Models\MlAlgorithm;
@@ -17,7 +16,6 @@ use App\Services\MlModelService;
 use App\Services\MlModelStateService;
 use App\Services\MlModelStateTrainingDataService;
 use Exception;
-
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

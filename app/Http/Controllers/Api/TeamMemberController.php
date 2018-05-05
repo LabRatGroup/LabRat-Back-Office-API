@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Api\ApiController;
-use App\Http\Requests\ProjectMemberRemoveRequest;
-use App\Http\Requests\ProjectMemberRequest;
-use App\Models\Project;
-use App\Repositories\ProjectRepository;
+use App\Http\Requests\TeamMemberRemoveRequest;
+use App\Http\Requests\TeamMemberRequest;
+use App\Models\Team;
 use App\Repositories\RoleRepository;
+use App\Repositories\TeamRepository;
 use App\Repositories\UserRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 
-class ProjectMemberController extends ApiController
+class TeamMemberController extends ApiController
 {
-    /** @var ProjectRepository */
-    private $projectRepository;
+
+    /** @var TeamRepository */
+    private $teamRepository;
 
     /** @var UserRepository */
     private $userRepository;
@@ -25,75 +25,76 @@ class ProjectMemberController extends ApiController
     private $roleRepository;
 
     /**
-     * ProjectMemberController constructor.
+     * TeamMemberController constructor.
      *
-     * @param ProjectRepository $projectRepository
-     * @param UserRepository    $userRepository
-     * @param RoleRepository    $roleRepository
+     * @param TeamRepository $teamRepository
+     * @param UserRepository $userRepository
+     * @param RoleRepository $roleRepository
      */
-    public function __construct(ProjectRepository $projectRepository, UserRepository $userRepository, RoleRepository $roleRepository)
+    public function __construct(TeamRepository $teamRepository, UserRepository $userRepository, RoleRepository $roleRepository)
     {
-        $this->projectRepository = $projectRepository;
+        $this->teamRepository = $teamRepository;
         $this->userRepository = $userRepository;
         $this->roleRepository = $roleRepository;
     }
 
     /**
-     * Adds a new member to project.
+     * Adds a user as a team member.
      *
-     * @param ProjectMemberRequest $request
+     * @param TeamMemberRequest $request
      *
      * @return JsonResponse
      */
-    public function addMember(ProjectMemberRequest $request)
+    public function addMember(TeamMemberRequest $request)
     {
         try {
             $params = $request->only([
                 'user_id',
-                'project_id',
+                'team_id',
                 'is_owner'
             ]);
-            $project = $this->projectRepository->findOneOrFailById($params['project_id']);
-            $this->authorize('update', $project);
+            $team = $this->teamRepository->findOneOrFailById($params['team_id']);
+            $this->authorize('update', $team);
 
             $user = $this->userRepository->findOneOrFailById($params['user_id']);
-            $role = $this->roleRepository->findOneRoleOrFailByAlias(Project::PROJECT_DEFAULT_ROLE_ALIAS);
+            $role = $this->roleRepository->findOneRoleOrFailByAlias(Team::TEAM_DEFAULT_ROLE_ALIAS);
 
-            $project->users()->attach($user, [
+            $team->users()->attach($user, [
                 'is_owner' => $params['is_owner'],
                 'role_id'  => $role->id,
             ]);
 
-            return $this->responseUpdated($project);
+            return $this->responseUpdated($team);
 
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
         } catch (Exception $e) {
             return $this->responseInternalError($e->getMessage());
         }
+
     }
 
     /**
-     * Updates member properties from project.
+     * Updates a member-team relation.
      *
-     * @param ProjectMemberRequest $request
+     * @param TeamMemberRequest $request
      *
      * @return JsonResponse
      */
-    public function updateMember(ProjectMemberRequest $request)
+    public function updateMember(TeamMemberRequest $request)
     {
         try {
             $params = $request->only([
                 'user_id',
-                'project_id',
+                'team_id',
                 'is_owner'
             ]);
-            $project = $this->projectRepository->findOneOrFailById($params['project_id']);
-            $this->authorize('update', $project);
+            $team = $this->teamRepository->findOneOrFailById($params['team_id']);
+            $this->authorize('update', $team);
 
             $user = $this->userRepository->findOneOrFailById($params['user_id']);
 
-            if ($project->isOwner($user) == $params['is_owner']) {
+            if ($team->isOwner($user) == $params['is_owner']) {
                 return $this->responseInternalError('User ownership already set.');
             }
 
@@ -101,9 +102,9 @@ class ProjectMemberController extends ApiController
                 return $this->responseInternalError('Can not change ownership on itself.');
             }
 
-            $project->users()->updateExistingPivot($user, ['is_owner' => $params['is_owner']]);
+            $team->users()->updateExistingPivot($user, ['is_owner' => $params['is_owner']]);
 
-            return $this->responseUpdated($project);
+            return $this->responseUpdated($team);
 
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
@@ -113,30 +114,30 @@ class ProjectMemberController extends ApiController
     }
 
     /**
-     * Removes member from project.
+     * Removes member from team.
      *
-     * @param ProjectMemberRemoveRequest $request
+     * @param TeamMemberRemoveRequest $request
      *
      * @return JsonResponse
      */
-    public function deleteMember(ProjectMemberRemoveRequest $request)
+    public function deleteMember(TeamMemberRemoveRequest $request)
     {
         try {
             $params = $request->only([
                 'user_id',
-                'project_id',
+                'team_id',
             ]);
-            $project = $this->projectRepository->findOneOrFailById($params['project_id']);
+            $team = $this->teamRepository->findOneOrFailById($params['team_id']);
             $this->authorize('deleteMember', [
-                $project,
+                $team,
                 $params['user_id']
             ]);
 
             $user = $this->userRepository->findOneOrFailById($params['user_id']);
 
-            $project->users()->detach($user);
+            $team->users()->detach($user);
 
-            return $this->responseUpdated($project);
+            return $this->responseUpdated($team);
 
         } catch (AuthorizationException $authorizationException) {
             return $this->responseForbidden($authorizationException->getMessage());
