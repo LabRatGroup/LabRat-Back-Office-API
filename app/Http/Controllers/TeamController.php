@@ -87,9 +87,10 @@ class TeamController extends Controller
      */
     public function store(TeamRequest $request)
     {
-        $params = $request->only('name');
+        $params = $request->only('name', 'users');
         $this->authorize('create', Team::class);
         $team = $this->teamRepository->create($params);
+        $team->setCollaborators($params);
 
         return redirect()->action('TeamController@index')
             ->with('team', $team);
