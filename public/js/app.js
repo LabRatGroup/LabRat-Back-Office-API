@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 12);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,8 +70,8 @@
 "use strict";
 
 
-var bind = __webpack_require__(5);
-var isBuffer = __webpack_require__(20);
+var bind = __webpack_require__(6);
+var isBuffer = __webpack_require__(21);
 
 /*global toString:true*/
 
@@ -408,7 +408,7 @@ module.exports = g;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(0);
-var normalizeHeaderName = __webpack_require__(22);
+var normalizeHeaderName = __webpack_require__(23);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -424,10 +424,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(7);
+    adapter = __webpack_require__(8);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(7);
+    adapter = __webpack_require__(8);
   }
   return adapter;
 }
@@ -502,7 +502,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
 /* 3 */
@@ -13399,6 +13399,1142 @@ return jQuery;
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
+var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
+ *jsonQ.js v 1.1.0
+ *Author: Sudhanshu Yadav
+ *s-yadav.github.com
+ *Copyright (c) 2013 - 2016 Sudhanshu Yadav.
+ *MIT licenses
+ */
+//initialize jsonQ
+;(function(factory) {
+    /** support UMD ***/
+    var global = Function('return this')() || (42, eval)('this');
+    if (true) {
+        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(5)], __WEBPACK_AMD_DEFINE_RESULT__ = (function($) {
+            return (global.jsonQ = factory());
+        }).apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    } else if (typeof module === "object" && module.exports) {
+        module.exports = factory();
+
+    } else {
+        global.jsonQ = factory();
+    }
+}(function(undefined) {
+
+    var jsonQ = function(json) {
+        //return a jsonQ object
+        return new jsonQ.fn.init(json);
+    },
+        //plugin variable and methods
+        error = function(msg) {
+            throw msg;
+        },
+        stringify = JSON.stringify,
+        parse = JSON.parse;
+
+    //global settings
+    jsonQ.settings = {
+        sort: {
+            "order": "ASC",
+            "logic": function(val) {
+                return val;
+            },
+            "caseIgnore": true,
+            "allLevel": true //to sort all level if true and if false only lowest level
+        }
+    };
+
+    /*****private functions for internal use only*******/
+
+    //to check weather path b is subset of path a
+    function matchPath(a, b) {
+        var regex = new RegExp('^' + a.join('~~'), 'i');
+        return regex.test(b.join('~~'));
+    }
+
+    //function to create new format
+    function newFormat(option) {
+        //parameter change
+        var keyAdded = option.keyAdded || [],
+            json = option.json,
+            path = option.path,
+            newJson = option.newJson;
+        //add to new json
+
+        jsonQ.each(json, function(k, val) {
+            var lvlpath = path ? JSON.parse(JSON.stringify(path)) : [];
+            lvlpath.push(k);
+
+            //to add a new direct access for each key in json so we get the path of that key easily
+            if (objType(json) == 'object') {
+                if (keyAdded.indexOf(k) == -1) {
+                    keyAdded.push(k);
+                    newJson.jsonQ_path[k] = [];
+                }
+
+                newJson.jsonQ_path[k].push({
+                    path: lvlpath
+                });
+            }
+            //if value is json or array go to further level
+            var type = objType(val);
+            if (type == 'object' || type == 'array') {
+                newFormat({
+                    'json': val,
+                    'newJson': newJson,
+                    'path': lvlpath,
+                    'keyAdded': keyAdded
+                });
+            }
+
+
+        });
+
+        return newJson;
+    }
+
+    //traverse functions
+    var tFunc = {
+        //search on top level
+        topLevel: function(option) {
+            var current = this.jsonQ_current,
+                newObj = this.cloneObj(jsonQ()),
+                newCurrent = newObj.jsonQ_current = [],
+                prevPathStr = '',
+                key = option.key,
+                method = option.method;
+
+            for (var i = 0, ln = current.length; i < ln; i++) {
+                var pathC = current[i].path,
+                    pathStr,
+                    outofBound = false,
+                    parPath = pathC.concat([]);
+
+                //to run callback to apply top traverse logic
+                if (method == 'parent') {
+                    if (parPath.length === 0) {
+                        outofBound = true;
+                    } else {
+                        parPath.pop();
+                    }
+                } else {
+                    var keyIndex = parPath.lastIndexOf(key);
+                    if (keyIndex == -1) {
+                        outofBound = true;
+                    } else {
+                        parPath = parPath.slice(0, keyIndex + 1);
+                    }
+                }
+
+                pathStr = JSON.stringify(parPath);
+
+                if (prevPathStr != pathStr && !outofBound) {
+                    newCurrent.push({
+                        path: parPath
+                    });
+                }
+
+                prevPathStr = pathStr;
+            }
+
+            //set other defination variables
+            newObj.length = newCurrent.length;
+            //to add selector
+            newObj.selector.push({
+                method: method,
+                key: key
+            });
+
+            return newObj;
+        },
+        //travese which have qualifiers mainly on bottom and sibling method
+        qualTrv: function(option) {
+            var current = this.jsonQ_current,
+                newObj = this.cloneObj(jsonQ()),
+                newCurrent = newObj.jsonQ_current = [],
+                pathObj = this.jsonQ_path,
+
+                //key element (an array of paths with following key)
+                key = option.key,
+                //dont work with original object clone it and if undefined than make as empty array
+                elm = jsonQ.clone(pathObj[key]) || [],
+                //qualifier
+                qualifier = option.qualifier,
+                qType = objType(qualifier),
+                //travese method
+                method = option.method,
+                find = method == "find" ? true : false;
+
+            for (var i = 0, ln = current.length; i < ln; i++) {
+                var pathC = current[i].path,
+                    pathCTemp = [],
+                    found = false;
+
+
+                if (!find) {
+                    //if it is top level continue the loop. This case comes when we do sibling method called on initial object
+                    if (pathC.length === 0) {
+                        continue;
+                    }
+
+                    pathCTemp = pathC.concat([]);
+                    pathCTemp.pop();
+                }
+
+                //make a loop on element to match the current path and element path
+                for (var j = 0; j < elm.length; j++) {
+                    var pathE = elm[j].path,
+                        condition;
+                    if (find) {
+                        condition = matchPath(pathC, pathE);
+                    } else {
+                        var pathETemp = pathE.concat([]);
+                        //to pop last element
+                        pathETemp.pop();
+                        condition = pathCTemp.join() == pathETemp.join();
+                    }
+
+                    if (condition) {
+                        //code to check qualifier need to be written this on is only when quantifier when it is function in other case it will be applied on last
+
+                        var qTest = tFunc.qTest.call(this, qType, qualifier, pathE, newCurrent);
+
+                        if (qTest) {
+                            //to remove element which is already added
+                            elm.splice(j, 1);
+                            j--;
+                        }
+
+                        //make found flag true
+                        found = true;
+                    }
+                    //break if path doesent match in next sequence and for one element is already there.
+                    else if (found) {
+                        break;
+                    }
+                }
+            }
+
+            //to apply qualifier if it is string . its mainly for array kind of qualifier
+            if (qType == "string") {
+                newObj = this.filter.call(newObj, qualifier);
+            }
+
+            //set other defination variables
+            newObj.length = newObj.jsonQ_current.length;
+
+            //to add selector
+            newObj.selector.push({
+                method: method,
+                key: key,
+                qualifier: qualifier
+            });
+
+
+            return newObj;
+        },
+        qTest: function(qType, qualifier, path, array) {
+            var qTest = qType == 'function' ? qualifier.call(this.pathValue(path)) : qType == 'object' ? jsonQ.checkKeyValue(this.pathValue(path), qualifier) : true;
+
+            //if it is key value pair than also we can check here.
+            if (qTest) {
+                array.push({
+                    path: path
+                });
+            }
+            return qTest;
+        }
+
+    };
+
+    //functions involved on sorting
+    var sortFunc = {
+        baseConv: function(type, val, settings) {
+            if (type == 'string') {
+                if (settings.caseIgnore) {
+                    return val.toLowerCase();
+                }
+            } else if (type == 'array') {
+                return val.join();
+            } else if (type == 'object') {
+                return stringify(jsonQ.order(val));
+            }
+
+            return val;
+        },
+        sortAry: function(array, logic, settings) {
+            array.sort(function(a, b) {
+                var compA = logic(a);
+                var compB = logic(b);
+                return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+            });
+
+            //to display on decending order
+            if (settings.order.toLowerCase() == "desc") {
+                array.reverse();
+            }
+            return array;
+        }
+    };
+
+    jsonQ.fn = jsonQ.prototype = {
+        init: function(json) {
+            var type;
+
+            //to return if no parameter is passed
+
+            if (!json) return this;
+
+            type = objType(json);
+            if (type == 'string') {
+                try {
+                    json = JSON.parse(json);
+                } catch (e) {
+                    error('Not a valid json string.');
+                }
+            } else if (type != 'object' && type != 'array') {
+                error('Not a valid json object.');
+                return json;
+            }
+
+            //to set initial values
+            this.jsonQ_root = json;
+            this.jsonQ_path = {};
+            this.jsonQ_current = [{
+                path: []
+            }];
+
+            //to get other keys
+            newFormat({
+                json: json,
+                newJson: this,
+                refresh: true
+            });
+
+            //set jsonQ defination variables
+            this.length = this.jsonQ_current.length;
+            this.selector = [];
+
+            return this;
+
+        },
+
+        //to get value at specific path from root
+        pathValue: function(path) {
+            return jsonQ.pathValue(this.jsonQ_root, path);
+        },
+        setPathValue: function(path, value) {
+            jsonQ.setPathValue(this.jsonQ_root, path, value);
+            return this;
+        },
+        clone: function() {
+            return parse(stringify(this.jsonQ_current));
+        },
+        cloneObj: function(newObj) {
+            var obj = this;
+
+            newObj = newObj || {};
+
+            jsonQ.each(obj, function(k, v) {
+                newObj[k] = v;
+            });
+
+            //to make a different copy of selector otherwise selector will be same on all object.
+            newObj.selector = jsonQ.merge([], newObj.selector);
+
+            return newObj;
+        },
+        value: function(value, clone) {
+            var json = this.jsonQ_current;
+
+
+            clone = clone === false ? false : true;
+
+            //to return value if called as getter (ie value is undefined)
+            if (!value) {
+                var newArray = [];
+                //create a new set of values
+                this.each(function(idx, path, val) {
+                    newArray.push(val);
+                });
+
+                return newArray;
+            }
+            //value as setter. value can be the exact value which you want to set or can be a callback. In callback pathvalue will be first argument.
+            else {
+                var type = objType(value);
+                for (var i = 0, ln = json.length; i < ln; i++) {
+                    var path = json[i].path,
+                        val;
+                    if (type == 'function') {
+                        var prevVal = this.pathValue(path);
+                        val = clone ? jsonQ.clone(value(prevVal)) : value(prevVal);
+                    } else {
+                        val = clone ? jsonQ.clone(value) : value;
+                    }
+                    //to set value on json
+                    this.setPathValue(path, val);
+                }
+
+                return this;
+            }
+
+        },
+        //clone parameter is for if you want to append any object so append exact object or create clone of object and append
+        //to append in last of values of current
+        append: function(valObj, clone) {
+            return this.appendAt("last", valObj, clone);
+        },
+        //to append in first of values of current
+        prepend: function(valObj, clone) {
+            return this.appendAt("first", valObj, clone);
+        },
+        //to append at specific index of values of current
+        appendAt: function(index, valObj, clone) {
+            var current = this.jsonQ_current;
+            //return if incorrect index is given
+            if (isNaN(index) && index != "first" && index != "last") {
+                error(index + 'is not a valid index.');
+                return this;
+            }
+
+            for (var i = 0, ln = current.length; i < ln; i++) {
+                var pathC = current[i].path.concat([]),
+                    lastKey = pathC.pop(),
+                    parRef = this.pathValue(pathC),
+                    type = objType(parRef[lastKey]),
+                    objLn = parRef[lastKey].length;
+
+
+                //to limit index
+                var idx = index < 0 || index == "first" ? 0 : index > objLn || index == "last" ? objLn : index;
+
+
+                //if array push
+                if (type == 'array') {
+                    valObj = clone ? jsonQ.clone(valObj) : valObj;
+
+                    parRef[lastKey].splice(idx, 0, valObj);
+                }
+
+                //if string concatinate , if number add
+                else if (type == 'string') {
+                    var str = parRef[lastKey];
+                    parRef[lastKey] = str.substring(0, idx) + valObj + str.substring(idx, objLn);
+                }
+
+
+            }
+            return this;
+
+        },
+        filter: function(qualifier) {
+            var current = this.jsonQ_current,
+                newObj = this.cloneObj(jsonQ()),
+                newCurrent = newObj.jsonQ_current = [],
+                qType = objType(qualifier);
+
+            if (!qualifier) return this;
+
+            for (var i = 0, ln = current.length; i < ln; i++) {
+                var pathC = current[i].path;
+
+                //code to check qualifier need to be written this on is only when quantifier when it is function or json in other case it will be applied on last
+                tFunc.qTest.call(this, qType, qualifier, pathC, newCurrent);
+            }
+
+            //to apply qualifier if it is string . its mainly for array kind of qualifier
+            if (qType == 'string') {
+                //to check string for nth and eq
+                var regex = /(nth|eq)\((.+)\)/,
+                    matched = regex.exec(qualifier);
+                if (matched) {
+                    newCurrent = jsonQ.nthElm(current, matched[2], true);
+                } else {
+                    newCurrent = jsonQ.nthElm(current, qualifier, true);
+                }
+                //to store it back on newObj
+                newObj.jsonQ_current = newCurrent;
+            }
+
+            //set other defination variables
+            newObj.length = newCurrent.length;
+
+            //to add selector
+            newObj.selector.push({
+                method: 'filter',
+                qualifier: qualifier
+            });
+
+            return newObj;
+
+        },
+        //first argument is key in which you want to search, second key is qualifier of it.
+        find: function(key, qualifier) {
+            return tFunc.qualTrv.call(this, {
+                method: "find",
+                key: key,
+                qualifier: qualifier
+            });
+        },
+        sibling: function(key, qualifier) {
+            return tFunc.qualTrv.call(this, {
+                method: "sibling",
+                key: key,
+                qualifier: qualifier
+            });
+        },
+        parent: function() {
+            return tFunc.topLevel.call(this, {
+                method: "parent"
+            });
+        },
+        closest: function(key) {
+            return tFunc.topLevel.call(this, {
+                method: "closest",
+                key: key
+            });
+        },
+        //return path of first element found through selector
+        path: function() {
+            return this.jsonQ_current[0].path;
+        },
+        //some time we can only return the value of the first element in current
+        firstElm: function() {
+            return this.pathValue(this.jsonQ_current[0].path);
+        },
+        lastElm: function() {
+            return this.pathValue(this.jsonQ_current[this.length - 1].path);
+        },
+        nthElm: function(pattern, arrayReturn) {
+            return jsonQ.nthElm(this.value(), pattern, arrayReturn);
+        },
+        index: function(elm, isQualifier) {
+            return jsonQ.index(this.value(), elm, isQualifier);
+        },
+        createXML: function() {
+            return jsonQ.createXML(this.value());
+        },
+
+
+        //function to sort array objects
+        sort: function(key, settings) {
+            //merge global setting with local setting
+            settings = jsonQ.merge({}, jsonQ.settings.sort, settings);
+            var jobj = this.find(key),
+                current = jobj.clone(),
+                sortStack = [],
+                i, ln,
+                sortedPath = [],
+                type = objType(jobj.pathValue(current[0].path)),
+                //function to get value which is an array from pathKey traversing from right.
+                getClosestArray = function(key) {
+                    while (key.length !== 0) {
+                        var lastKey = key.pop();
+                        if (!isNaN(lastKey)) {
+                            var val = jobj.pathValue(key);
+                            if (objType(val) == 'array') {
+                                return val;
+                            }
+                        }
+                    }
+                    return null;
+                };
+
+            //initialize sort stack
+            for (i = 0, ln = current.length; i < ln; i++) {
+                sortStack.push({
+                    pathHolder: current[i].path.concat([]),
+                    current: current[i].path.concat([])
+                });
+            }
+
+            //to run the loop untill all ar sorted
+            var alpha = 0,
+
+                // function to remove element if sorting is done for that path
+                spliceElm = function(i) {
+                    sortStack.splice(i, 1);
+                    return --i;
+                };
+            while (sortStack.length !== 0) {
+                alpha++;
+                for (i = 0; i < sortStack.length; i++) {
+                    var cur = sortStack[i].current,
+                        pH = sortStack[i].pathHolder,
+                        //to get the closest array in the current path. This will also change value of current path variable.
+                        ary = getClosestArray(cur),
+                        pathStr = cur.join();
+
+
+
+                    //to remove from sort stack if no array is left on key or if that is already sorted
+                    if (cur.length === 0 || sortedPath.indexOf(pathStr) != -1) {
+                        i = spliceElm(i);
+                    }
+
+                    //to sort if array found
+                    else {
+                        //logic path is path which we add in on condition to find the element value according to which we are sorting
+                        var logicPath = pH.slice(cur.length + 1, pH.length),
+
+                            logic = function(a) {
+                                var val = jsonQ.pathValue(a, logicPath);
+
+                                //to convert val to be compared
+                                val = sortFunc.baseConv(type, val, settings);
+                                return settings.logic(val);
+                            };
+
+                        //to sort the root json
+                        sortFunc.sortAry(ary, logic, settings);
+
+                        //if multilevel sort is true
+                        if (settings.allLevel) {
+                            //to maintain the path which is already sorted and change pathHolder to point first element of sorted array
+                            pH[cur.length] = 0;
+                            sortedPath.push(pathStr);
+                        } else {
+                            //remove sorted path
+                            i = spliceElm(i);
+                        }
+                    }
+
+
+
+                }
+            }
+
+
+            return jsonQ(jobj.jsonQ_root).find(key);
+        },
+        //to make loop on current
+        each: function(callback) {
+            var current = this.jsonQ_current;
+            for (var i = 0, ln = current.length; i < ln; i++) {
+                callback(i, current[i].path, this.pathValue(current[i].path));
+            }
+            return this;
+        },
+        //to return unique value of current
+        unique: function() {
+            return jsonQ.unique(this.value());
+        },
+        refresh: function() {
+            var selector = this.selector;
+
+            var jObj = jsonQ(this.jsonQ_root);
+            for (var i = 0, ln = selector.length; i < ln; i++) {
+                var curSel = selector[i],
+                    args = [];
+
+                if (curSel.key) args.push(curSel.key);
+                if (curSel.qualifier) args.push(curSel.qualifier);
+
+                jObj = jObj[curSel.method].apply(jObj, args);
+            }
+
+            //to store value back on this
+            this.cloneObj.call(jObj, this);
+
+            return this;
+        },
+        prettify: function(htmlReturn) {
+            return jsonQ.prettify(this.value(), htmlReturn);
+        }
+    };
+
+    //super exposed functions
+    //jsonQ each
+    jsonQ.each = function(json, callback) {
+        for (var key in json) {
+            if (json.hasOwnProperty(key)) {
+                callback(key, json[key]);
+            }
+        }
+    };
+
+    //to find object type of any object
+    var objType = jsonQ.objType = (function() {
+        var map = {
+            '[object Array]': 'array',
+            '[object Object]': 'object',
+            '[object String]': 'string',
+            '[object Number]': 'number',
+            '[object Boolean]': 'boolean',
+            '[object Null]': 'null',
+            '[object Function]': 'function'
+        };
+
+        return function(obj) {
+            var type = Object.prototype.toString.call(obj);
+            return map[type];
+        };
+    }());
+
+    //to merge all the objects in argument to the first argument.
+    //idea taken by jquery extend.
+
+    //deep parameter is required if a person want to merge a json in all level recursively
+    jsonQ.merge = function() {
+        var arg = arguments,
+            deepType = objType(arg[0]),
+            i = 1,
+            ln = arg.length,
+            deep = false,
+            target = arg[0];
+        if (ln === 0 || (deepType == "boolean" && ln == 1)) {
+            return;
+        }
+        //to get the target object where all merge will be done
+        if (deepType == "boolean") {
+            target = arg[1];
+            i = 2;
+            deep = arg[0];
+        }
+
+        //callback function to recursiveliy merge
+        var eachCallback = function(k, v) {
+            var type = objType(v),
+                tarType = objType(target[k]);
+
+            if (deep && (type == "array" || type == "object")) {
+                target[k] = type == tarType && (tarType == "array" || tarType == "object") ? target[k] : type == "array" ? [] : {};
+
+                //to merge recursively
+                jsonQ.merge(deep, target[k], v);
+            } else {
+                target[k] = v;
+            }
+        };
+
+        for (; i < ln; i++) {
+
+            jsonQ.each(arg[i], eachCallback);
+        }
+        return target;
+    };
+
+    jsonQ.merge(jsonQ, {
+        sort: function(ary, settings) {
+            settings = jsonQ.merge({}, jsonQ.settings.sort, settings);
+
+            if (objType(ary) != 'array') {
+                error('Only array is allowed to sort');
+                return;
+            }
+
+            var convLogic = function(val) {
+
+                var type = objType(val);
+                val = sortFunc.baseConv(type, val, settings);
+
+                return settings.logic(val);
+            };
+
+            //to return sorted array
+            return sortFunc.sortAry(ary, convLogic, settings);
+        },
+        order: function(json) {
+
+            //to return if json type is not an object type
+            if (typeof json != 'object') {
+                return json;
+            }
+
+            var logic = function(val) {
+                //if a json is an array alike and keys are numbers as string type ("1","2" instad of 1,2) convert them to integer.
+                if (!isNaN(val)) val = parseInt(val);
+                return val;
+            },
+
+                func = function(jsonVal) {
+                    var jsonType = objType(jsonVal),
+                        keys = Object.keys(jsonVal);
+
+                    if (jsonType == 'object') {
+                        keys.sort(function(a, b) {
+                            var compA = logic(a);
+                            var compB = logic(b);
+                            return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+                        });
+                    }
+                    //to order
+                    for (var i = 0, ln = keys.length; i < ln; i++) {
+                        var key = keys[i],
+                            val = jsonVal[key],
+                            type = objType(val);
+
+                        //to go to next level if value is json type
+                        if (type == 'object' || type == "array") {
+                            func(val);
+                        }
+
+                        //to order
+                        if (jsonType == 'object') {
+                            delete jsonVal[key];
+                            jsonVal[key] = val;
+                        }
+                    }
+                };
+
+            //initialize
+            func(json);
+
+            return json;
+        },
+        clone: function(json) {
+            var type = objType(json);
+            return type == 'object' || type == 'array' ? parse(stringify(json)) : json;
+        },
+        //to find index of an element in set of element
+        index: function(list, elm, isQualifier) {
+            var type = objType(elm),
+                ln = list.length,
+                //check that elm is a object or not that is taken by refrence
+                refObj = type == "object" || type == "array" || type == "function" ? true : false;
+
+
+            //if elm is a function consider it as a qualifier
+            if (type == "function") {
+                isQualifier = true;
+            }
+
+            if (refObj && !isQualifier) {
+                //convert object to string so that they can be compared.
+                var jsonStr = stringify(jsonQ.order(elm));
+            }
+
+            for (var i = 0; i < ln; i++) {
+                var cur = list[i];
+                if (refObj) {
+                    var lType = objType(cur);
+                    if (lType != type && !isQualifier) continue;
+
+                    //to compare
+                    if (!isQualifier) {
+                        if (stringify(jsonQ.order(cur)) == jsonStr) {
+                            return i;
+                        }
+
+                        //if element is a qualifier
+                    } else {
+                        var test;
+                        if (type == 'function') {
+                            test = elm.call(cur);
+                        } else if (type == "object" && lType == "object") {
+                            test = jsonQ.checkKeyValue(cur, elm);
+                        } else if (lType == "array") {
+                            if (type == "array") {
+                                for (var j = 0, elmLn = elm.length; j < elmLn; j++) {
+                                    test = jsonQ.index(cur, elm[j]) != -1;
+                                    if (!test) break;
+                                }
+                            } else {
+                                test = jsonQ.index(cur, elm) != -1;
+                            }
+                        }
+
+                        //return index if it passes the test
+                        if (test) return i;
+
+                    }
+
+                } else if (elm == cur) {
+                    return i;
+                }
+            }
+            return -1;
+        },
+        //to check an array contains a specfic element or not . an element can be aaray or json.
+        contains: function(array, elm, isQualifier) {
+            return jsonQ.index(array, elm, isQualifier) != -1;
+        },
+        //function to check an json object contains a set of key value pair or not
+        checkKeyValue: function(json, keyVal) {
+            for (var k in keyVal) {
+                if (keyVal.hasOwnProperty(k))
+                    if (!jsonQ.identical(keyVal[k], json[k])) return false;
+            }
+            return true;
+        },
+
+        nthElm: function(array, arg, aryRetrn) {
+            var result;
+            if (array[arg]) {
+                result = array[arg];
+            } else if (arg == 'last') {
+                result = array[array.length - 1];
+            } else if (arg == 'first') {
+                result = array[0];
+            } else if (arg == 'random') {
+                var rand = Math.floor(Math.random() * array.length);
+                result = array[rand];
+            } else if (arg == 'even') {
+                result = jsonQ.nthElm(array, '2n');
+            } else if (arg == 'odd') {
+                result = jsonQ.nthElm(array, '2n+1');
+            }
+            //to return sequence
+            else {
+                try {
+                    var newArray = [],
+                        ln = array.length;
+
+                    if (!arg.match(/^[0-9n*+-\/]+$/)) throw ('');
+
+                    arg = arg.replace(/([0-9])n/g, function($0, $1) {
+                        return $1 ? $1 + '*n' : $0;
+                    });
+
+
+
+                    for (var n = 0; n < ln; n++) {
+                        var index = eval(arg);
+                        if (index > ln - 1) {
+                            break;
+                        }
+                        newArray.push(array[index]);
+                    }
+                    result = newArray;
+                } catch (error) {
+                    //if no correct option return whole array
+                    result = array;
+                }
+            }
+            result = result || array;
+            return objType(result) != 'array' && aryRetrn ? [result] : result;
+        },
+        prettify: function(obj, htmlReturn) {
+
+            if (typeof obj != 'object') {
+                throw ('Only valid json object is allowed.');
+            }
+
+            //to return prtified. If htmlReturn false add 3 spaces else add &nbsp;
+            if (htmlReturn) {
+                return JSON.stringify(obj, null, '\t').replace(/\n/g, '</br>').replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            }
+            return JSON.stringify(obj, null, 3);
+
+        },
+
+        //need to modify it little bit
+        //By Chris O'Brien, prettycode.org
+        identical: function(a, b) {
+
+            function sort(object) {
+                if (typeof object !== "object" || object === null) {
+                    return object;
+                }
+
+                return Object.keys(object).sort().map(function(key) {
+                    return {
+                        key: key,
+                        value: sort(object[key])
+                    };
+                });
+            }
+
+            return JSON.stringify(sort(a)) === JSON.stringify(sort(b));
+        },
+        //Return the union of arrays in new array
+        union: function() {
+            var arg = arguments,
+                target = [],
+                ln = arg.length;
+
+            for (var i = 0; i < ln; i++) {
+                var aryLn = arg[i].length;
+                for (var j = 0; j < aryLn; j++) {
+                    var itm = arg[i][j];
+                    if (jsonQ.index(target, itm) == -1) {
+                        target.push(itm);
+                    }
+                }
+
+            }
+            return target;
+        },
+        //return intersection of array in new array
+        intersection: function() {
+            var arg = arguments,
+                target = [],
+                flag,
+                ln = arg.length;
+
+            if (ln == 1) {
+                target = arg[0];
+            } else {
+                for (var j = 0, aryLn = arg[0].length; j < aryLn; j++) {
+                    var elm = arg[0][j];
+                    flag = 1;
+                    for (var i = 1; i < ln; i++) {
+                        if (jsonQ.index(arg[i], elm) == -1) {
+                            flag = 0;
+                            break;
+                        }
+                    }
+                    if (flag == 1) {
+                        target.push(elm);
+                    }
+
+                }
+            }
+            return target;
+        },
+        //suffle the order of elements in a array. returns the same array.
+        suffle: function(array) {
+            for (var i = 1, ln = array.length; i < ln; i++) {
+                var j = Math.floor(Math.random() * (i + 1)),
+                    tmp = array[i];
+                array[i] = array[j];
+                array[j] = tmp;
+            }
+
+            return array;
+
+        },
+        //return a new array list of unuiqe(distinct) elements of an array
+        unique: function(array) {
+            var ln = array.length,
+                newAry = [];
+            for (var i = 0; i < ln; i++) {
+                if (jsonQ.index(newAry, array[i]) == -1) {
+                    newAry.push(array[i]);
+                }
+            }
+            return newAry;
+        },
+        //to get value at specific path in a json
+        pathValue: function(json, path) {
+            var i = 0,
+
+                ln = path.length;
+
+            if (json === null) {
+                return null;
+            }
+            while (i < ln) {
+                if (json[path[i]] === null) {
+                    json = null;
+                    return;
+                } else {
+                    json = json[path[i]];
+                }
+                i = i + 1;
+            }
+            return json;
+        },
+        setPathValue: function(json, path, value) {
+            var i = 0,
+                tempJson = json,
+                ln = path.length;
+            if (json === null) {
+                return null;
+            }
+            while (i < ln) {
+                if (typeof tempJson[path[i]] != 'object') {
+                    tempJson[path[i]] = objType(path[i + 1]) == 'number' ? [] : {};
+                }
+                if (i == path.length - 1) {
+                    tempJson[path[i]] = value;
+                }
+                tempJson = tempJson[path[i]];
+                i = i + 1;
+            }
+            return json;
+        },
+        createXML: function(json) {
+            var jsonToXML = function(json, xmlAry) {
+                xmlAry = xmlAry || [];
+                var start = xmlAry.length === 0 ? true : false,
+                    type = objType(json);
+                if (start) {
+                    xmlAry.push('<?xml version="1.0" encoding="ISO-8859-1"?><jsonXML>');
+                }
+
+                //to make loop on array or object;
+                jsonQ.each(json, function(k, val) {
+                    var tag = type == 'array' ? 'arrayItem' : k,
+                        elmType = objType(val);
+                    xmlAry.push('<' + tag + ' type="' + elmType + '">');
+                    if (elmType == 'object' || elmType == 'array') {
+                        jsonToXML(val, xmlAry);
+                    } else {
+                        xmlAry.push('<![CDATA[' + val + ']]>');
+
+                    }
+                    xmlAry.push('</' + tag + '>');
+                });
+
+
+                if (start) {
+                    xmlAry.push('</jsonXML>');
+                    return xmlAry.join('');
+                } else {
+                    return xmlAry;
+                }
+
+            };
+            return jsonToXML(json);
+        },
+        //append functions
+
+        //to append in last of values of array or string
+        append: function(target, val, clone) {
+            return jsonQ.appendAt(target, "last", val, clone);
+        },
+        //to append in first of values of array or string
+        prepend: function(target, val, clone) {
+            return jsonQ.appendAt(target, "first", val, clone);
+        },
+        //to append at specific index of values of array or string
+        appendAt: function(target, index, val, clone) {
+
+            if (isNaN(index) && index != "first" && index != "last") {
+                error(index + 'is not a valid index.');
+                return;
+            }
+
+            var type = objType(target),
+                length = target.length;
+
+            //to limit index
+            var idx = index < 0 || index == "first" ? 0 : index > length || index == "last" ? length : index;
+
+
+            //if array push
+            if (type == 'array') {
+                val = clone ? jsonQ.clone(val) : val;
+                target.splice(idx, 0, val);
+            }
+
+            //if string concatinate , if number add
+            else if (type == 'string') {
+                target = target.substring(0, idx) + val + target.substring(idx, length);
+            }
+
+
+            return target;
+
+        }
+
+    });
+
+    //to assign jsonQ prototypes to init function
+    jsonQ.fn.init.prototype = jsonQ.fn;
+
+    return jsonQ;
+}));
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
 "use strict";
 
 
@@ -13414,7 +14550,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -13604,19 +14740,19 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var settle = __webpack_require__(23);
-var buildURL = __webpack_require__(25);
-var parseHeaders = __webpack_require__(26);
-var isURLSameOrigin = __webpack_require__(27);
-var createError = __webpack_require__(8);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(28);
+var settle = __webpack_require__(24);
+var buildURL = __webpack_require__(26);
+var parseHeaders = __webpack_require__(27);
+var isURLSameOrigin = __webpack_require__(28);
+var createError = __webpack_require__(9);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(29);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -13713,7 +14849,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(29);
+      var cookies = __webpack_require__(30);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -13791,13 +14927,13 @@ module.exports = function xhrAdapter(config) {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(24);
+var enhanceError = __webpack_require__(25);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -13816,7 +14952,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13828,7 +14964,7 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13854,7 +14990,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 /* globals __VUE_SSR_CONTEXT__ */
@@ -13963,15 +15099,15 @@ module.exports = function normalizeComponent (
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(13);
-module.exports = __webpack_require__(51);
+__webpack_require__(14);
+module.exports = __webpack_require__(52);
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -13981,9 +15117,9 @@ module.exports = __webpack_require__(51);
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-__webpack_require__(14);
+__webpack_require__(15);
 
-window.Vue = __webpack_require__(37);
+window.Vue = __webpack_require__(38);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -13991,19 +15127,19 @@ window.Vue = __webpack_require__(37);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-Vue.component('example-component', __webpack_require__(40));
-Vue.component('collaborators-manager', __webpack_require__(43));
+Vue.component('example-component', __webpack_require__(41));
+Vue.component('collaborators-manager', __webpack_require__(44));
 
 var app = new Vue({
   el: '#app'
 });
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-window._ = __webpack_require__(15);
+window._ = __webpack_require__(16);
 window.Popper = __webpack_require__(3).default;
 
 /**
@@ -14015,7 +15151,7 @@ window.Popper = __webpack_require__(3).default;
 try {
   window.$ = window.jQuery = __webpack_require__(4);
 
-  __webpack_require__(17);
+  __webpack_require__(18);
 } catch (e) {}
 
 /**
@@ -14024,7 +15160,9 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = __webpack_require__(18);
+window.jsonq = __webpack_require__(5);
+
+window.axios = __webpack_require__(19);
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -14060,7 +15198,7 @@ if (token) {
 // });
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -31162,10 +32300,10 @@ if (token) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(16)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(17)(module)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -31193,7 +32331,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -35093,21 +36231,21 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(19);
+module.exports = __webpack_require__(20);
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var bind = __webpack_require__(5);
-var Axios = __webpack_require__(21);
+var bind = __webpack_require__(6);
+var Axios = __webpack_require__(22);
 var defaults = __webpack_require__(2);
 
 /**
@@ -35141,15 +36279,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(10);
-axios.CancelToken = __webpack_require__(35);
-axios.isCancel = __webpack_require__(9);
+axios.Cancel = __webpack_require__(11);
+axios.CancelToken = __webpack_require__(36);
+axios.isCancel = __webpack_require__(10);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(36);
+axios.spread = __webpack_require__(37);
 
 module.exports = axios;
 
@@ -35158,7 +36296,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 /*!
@@ -35185,7 +36323,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35193,8 +36331,8 @@ function isSlowBuffer (obj) {
 
 var defaults = __webpack_require__(2);
 var utils = __webpack_require__(0);
-var InterceptorManager = __webpack_require__(30);
-var dispatchRequest = __webpack_require__(31);
+var InterceptorManager = __webpack_require__(31);
+var dispatchRequest = __webpack_require__(32);
 
 /**
  * Create a new instance of Axios
@@ -35271,7 +36409,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35290,13 +36428,13 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(8);
+var createError = __webpack_require__(9);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -35323,7 +36461,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35351,7 +36489,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35424,7 +36562,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35484,7 +36622,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35559,7 +36697,7 @@ module.exports = (
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35602,7 +36740,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35662,7 +36800,7 @@ module.exports = (
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35721,18 +36859,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(0);
-var transformData = __webpack_require__(32);
-var isCancel = __webpack_require__(9);
+var transformData = __webpack_require__(33);
+var isCancel = __webpack_require__(10);
 var defaults = __webpack_require__(2);
-var isAbsoluteURL = __webpack_require__(33);
-var combineURLs = __webpack_require__(34);
+var isAbsoluteURL = __webpack_require__(34);
+var combineURLs = __webpack_require__(35);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -35814,7 +36952,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35841,7 +36979,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35862,7 +37000,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35883,13 +37021,13 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(10);
+var Cancel = __webpack_require__(11);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -35947,7 +37085,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35981,7 +37119,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46937,10 +48075,10 @@ Vue.compile = compileToFunctions;
 
 module.exports = Vue;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(38).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(39).setImmediate))
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var apply = Function.prototype.apply;
@@ -46993,7 +48131,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(39);
+__webpack_require__(40);
 // On some exotic environments, it's not clear which object `setimmeidate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -47007,7 +48145,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -47197,18 +48335,18 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(6)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(7)))
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
-var normalizeComponent = __webpack_require__(11)
+var normalizeComponent = __webpack_require__(12)
 /* script */
-var __vue_script__ = __webpack_require__(41)
+var __vue_script__ = __webpack_require__(42)
 /* template */
-var __vue_template__ = __webpack_require__(42)
+var __vue_template__ = __webpack_require__(43)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -47247,7 +48385,7 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -47276,7 +48414,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
@@ -47319,19 +48457,19 @@ if (false) {
 }
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var disposed = false
 function injectStyle (ssrContext) {
   if (disposed) return
-  __webpack_require__(44)
+  __webpack_require__(45)
 }
-var normalizeComponent = __webpack_require__(11)
+var normalizeComponent = __webpack_require__(12)
 /* script */
-var __vue_script__ = __webpack_require__(49)
+var __vue_script__ = __webpack_require__(50)
 /* template */
-var __vue_template__ = __webpack_require__(50)
+var __vue_template__ = __webpack_require__(51)
 /* template functional */
 var __vue_template_functional__ = false
 /* styles */
@@ -47370,17 +48508,17 @@ module.exports = Component.exports
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(45);
+var content = __webpack_require__(46);
 if(typeof content === 'string') content = [[module.i, content, '']];
 if(content.locals) module.exports = content.locals;
 // add the styles to the DOM
-var update = __webpack_require__(47)("9251d16a", content, false, {});
+var update = __webpack_require__(48)("9251d16a", content, false, {});
 // Hot Module Replacement
 if(false) {
  // When the styles change, update the <style> tags
@@ -47396,21 +48534,21 @@ if(false) {
 }
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(46)(false);
+exports = module.exports = __webpack_require__(47)(false);
 // imports
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports) {
 
 /*
@@ -47492,7 +48630,7 @@ function toComment(sourceMap) {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*
@@ -47511,7 +48649,7 @@ if (typeof DEBUG !== 'undefined' && DEBUG) {
   ) }
 }
 
-var listToStyles = __webpack_require__(48)
+var listToStyles = __webpack_require__(49)
 
 /*
 type StyleObject = {
@@ -47720,7 +48858,7 @@ function applyToTag (styleElement, obj) {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports) {
 
 /**
@@ -47753,7 +48891,7 @@ module.exports = function listToStyles (parentId, list) {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -47792,31 +48930,61 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     name: "CollaboratorsManager",
-    props: ['collaborators'],
+    props: ['items', 'model'],
     data: function data() {
         return {
+            collaborators: [],
+            defaultRole: null,
             collaboratorEmail: null,
-            howEmailError: false,
+            showEmailError: false,
             showEmailExist: false
         };
     },
 
+    mounted: function mounted() {
+        this.collaborators = this.items;
+        this.setDefaultRole();
+    },
     methods: {
         invite: function invite() {
             var _this = this;
 
-            axios.post('/api/users/findByEmail', {
+            this.showEmailError = false;
+            this.showEmailExist = false;
+
+            window.axios.post('/api/users/findByEmail', {
                 email: this.collaboratorEmail
             }).then(function (response) {
                 var data = response.data.data;
-                var jq = jsonQ(_this.collaborators);
+                var jq = window.jsonQ(_this.collaborators);
                 if (jq.find('id').index(data.id) > -1) {
                     _this.showEmailExist = !_this.showEmailExist;
                 } else {
-                    data.pivot = { 'is_owner': false };
+                    data.pivot = { 'role_id': _this.defaultRole, 'is_owner': false };
                     _this.collaborators.push(data);
                 }
 
@@ -47824,108 +48992,245 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }).catch(function (e) {
                 _this.showEmailError = !_this.showEmailError;
             });
+        },
+        setDefaultRole: function setDefaultRole() {
+            var _this2 = this;
+
+            window.axios.get('/api/' + this.model + '/getDefaultCollaboratorRole').then(function (response) {
+                var data = response.data.data;
+                _this2.defaultRole = data.id;
+            }).catch(function (e) {
+                console.error('Can not retrieve default role for model.');
+            });
+        },
+        remove: function remove(id) {
+            var jq = window.jsonQ(this.collaborators);
+            var items = jq.find('id');
+            var index = items.index(id);
+            this.collaborators.splice(index, 1);
+        },
+        closeEmailError: function closeEmailError() {
+            this.showEmailError = !this.showEmailError;
+        },
+        closeEmailExist: function closeEmailExist() {
+            this.showEmailExist = !this.showEmailExist;
+        }
+    },
+    computed: {
+        users: function users() {
+            return JSON.stringify(this.collaborators);
         }
     }
 });
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
-    _c("div", { staticClass: "col-sm-12" }, [
-      _c("div", { staticClass: "form-inline row" }, [
-        _c("div", { staticClass: "form-group mx-sm-0 mb-2 col-sm-8" }, [
+  return _c("div", { staticClass: "card  mb-2" }, [
+    _c("div", { staticClass: "card-header" }, [_vm._v("Manage Collaborators")]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card-body" }, [
+      _c("div", { staticClass: "form-group row" }, [
+        _c("div", { staticClass: "col-sm-12" }, [
           _c("input", {
             directives: [
               {
                 name: "model",
                 rawName: "v-model",
-                value: _vm.collaboratorEmail,
-                expression: "collaboratorEmail"
+                value: _vm.users,
+                expression: "users"
               }
             ],
-            staticClass: "form-control col-sm-12",
-            attrs: {
-              type: "text",
-              id: "collaboratorEmail",
-              placeholder: "Collaborator email address"
-            },
-            domProps: { value: _vm.collaboratorEmail },
+            attrs: { type: "hidden", id: "users", name: "users" },
+            domProps: { value: _vm.users },
             on: {
               input: function($event) {
                 if ($event.target.composing) {
                   return
                 }
-                _vm.collaboratorEmail = $event.target.value
+                _vm.users = $event.target.value
               }
             }
-          })
+          }),
+          _vm._v(" "),
+          _vm.showEmailExist
+            ? _c(
+                "div",
+                {
+                  staticClass:
+                    "alert alert-danger alert-dismissible fade show col-md-12",
+                  attrs: { role: "alert" }
+                },
+                [
+                  _vm._v(
+                    "\n                    Collaborator already added\n                    "
+                  ),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "close",
+                      attrs: {
+                        type: "button",
+                        "data-dismiss": "alert",
+                        "aria-label": "Close"
+                      },
+                      on: {
+                        click: function($event) {
+                          _vm.closeEmailExist()
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { attrs: { "aria-hidden": "true" } }, [
+                        _vm._v("×")
+                      ])
+                    ]
+                  )
+                ]
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.showEmailError
+            ? _c(
+                "div",
+                {
+                  staticClass:
+                    "alert alert-danger alert-dismissible fade show  col-md-12",
+                  attrs: { role: "alert" }
+                },
+                [
+                  _vm._v(
+                    "\n                    Invalid collaborator email\n                    "
+                  ),
+                  _c(
+                    "button",
+                    {
+                      staticClass: "close",
+                      attrs: {
+                        type: "button",
+                        "data-dismiss": "alert",
+                        "aria-label": "Close"
+                      },
+                      on: {
+                        click: function($event) {
+                          _vm.closeEmailError()
+                        }
+                      }
+                    },
+                    [
+                      _c("span", { attrs: { "aria-hidden": "true" } }, [
+                        _vm._v("×")
+                      ])
+                    ]
+                  )
+                ]
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _c("div", { staticClass: "form-inline row" }, [
+            _c("div", { staticClass: "form-group mx-sm-0 mb-2 col-sm-8" }, [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.collaboratorEmail,
+                    expression: "collaboratorEmail"
+                  }
+                ],
+                staticClass: "form-control col-sm-12",
+                attrs: {
+                  type: "text",
+                  id: "collaboratorEmail",
+                  placeholder: "Collaborator email address"
+                },
+                domProps: { value: _vm.collaboratorEmail },
+                on: {
+                  input: function($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.collaboratorEmail = $event.target.value
+                  }
+                }
+              })
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "col-sm-4 text-sm-right" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary mb-2 col-sm-12",
+                  attrs: { type: "button" },
+                  on: {
+                    click: function($event) {
+                      _vm.invite()
+                    }
+                  }
+                },
+                [
+                  _vm._v(
+                    "Add new\n                            collaborator\n                        "
+                  )
+                ]
+              )
+            ])
+          ])
         ]),
         _vm._v(" "),
-        _c("div", { staticClass: "col-sm-4 text-sm-right" }, [
+        _c("div", { staticClass: "col-sm-12" }, [
           _c(
-            "button",
-            {
-              staticClass: "btn btn-primary mb-2 col-sm-12",
-              attrs: { type: "button" },
-              on: {
-                click: function($event) {
-                  _vm.invite()
-                }
-              }
-            },
-            [_vm._v("Add new collaborator")]
+            "div",
+            { staticClass: "list-group collaborator-panel" },
+            _vm._l(_vm.collaborators, function(collaborator) {
+              return _c(
+                "div",
+                { staticClass: "list-group-item added-collaborators" },
+                [
+                  _c("div", { staticClass: "row" }, [
+                    _c("div", { staticClass: "col-sm-10" }, [
+                      _c("span", { staticClass: "name" }, [
+                        _vm._v(_vm._s(collaborator.name))
+                      ]),
+                      _c("br"),
+                      _vm._v(" "),
+                      _c("span", { staticClass: "email" }, [
+                        _vm._v(_vm._s(collaborator.email))
+                      ])
+                    ]),
+                    _vm._v(" "),
+                    !collaborator.pivot ||
+                    (collaborator.pivot && collaborator.pivot.is_owner == 0)
+                      ? _c(
+                          "button",
+                          {
+                            staticClass: "btn btn-danger",
+                            attrs: { type: "button" },
+                            on: {
+                              click: function($event) {
+                                _vm.remove(collaborator.id)
+                              }
+                            }
+                          },
+                          [
+                            _vm._v(
+                              "\n                                Remove\n                            "
+                            )
+                          ]
+                        )
+                      : _vm._e()
+                  ])
+                ]
+              )
+            })
           )
         ])
       ])
-    ]),
-    _vm._v(" "),
-    _c("div", { staticClass: "col-sm-12" }, [
-      _c(
-        "div",
-        { staticClass: "list-group collaborator-panel" },
-        _vm._l(_vm.collaborators, function(collaborator) {
-          return _c(
-            "div",
-            { staticClass: "list-group-item added-collaborators" },
-            [
-              _c("div", { staticClass: "row" }, [
-                _c("div", { staticClass: "col-sm-10" }, [
-                  _c("span", { staticClass: "name" }, [
-                    _vm._v(_vm._s(collaborator.name))
-                  ]),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "email" }, [
-                    _vm._v(_vm._s(collaborator.email))
-                  ])
-                ]),
-                _vm._v(" "),
-                !collaborator.pivot ||
-                (collaborator.pivot && collaborator.pivot.is_owner == 0)
-                  ? _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-danger",
-                        attrs: { type: "button" }
-                      },
-                      [
-                        _vm._v(
-                          "\n                        Remove\n                    "
-                        )
-                      ]
-                    )
-                  : _vm._e()
-              ])
-            ]
-          )
-        })
-      )
     ])
   ])
 }
@@ -47940,7 +49245,7 @@ if (false) {
 }
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

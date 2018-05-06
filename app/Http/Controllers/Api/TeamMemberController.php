@@ -145,4 +145,18 @@ class TeamMemberController extends ApiController
             return $this->responseInternalError($e->getMessage());
         }
     }
+
+    /**
+     * @return JsonResponse
+     */
+    public function getDefaultCollaboratorRole()
+    {
+        try {
+            $role = $this->roleRepository->findOneRoleOrFailByAlias(Team::TEAM_DEFAULT_ROLE_ALIAS);
+
+            return $this->responseOk($role);
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
+        }
+    }
 }

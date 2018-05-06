@@ -67,12 +67,12 @@ trait Collaboration
                     $invitationToken = str_random(self::ITEM_TOKEN_LENGTH);
                     $_collaborators[$collaborator->id]['validation_token'] = $invitationToken;
 
-                    $this->createAddCollaboratorEvent([
-                        'model'            => $this,
-                        'user_id'          => $collaborator->id,
-                        'role_id'          => $collaborator->pivot->role_id,
-                        'invitation_token' => $invitationToken,
-                    ]);
+//                    $this->createAddCollaboratorEvent([
+//                        'model'            => $this,
+//                        'user_id'          => $collaborator->id,
+//                        'role_id'          => $collaborator->pivot->role_id,
+//                        'invitation_token' => $invitationToken,
+//                    ]);
                 }
             }
 

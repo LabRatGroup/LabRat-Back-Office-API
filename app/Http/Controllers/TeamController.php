@@ -123,10 +123,11 @@ class TeamController extends Controller
      */
     public function save($id, TeamRequest $request)
     {
-        $params = $request->only('name');
+        $params = $request->only('name', 'users');
         $team = $this->teamRepository->findOneOrFailById($id);
         $this->authorize('update', $team);
         $team = $this->teamRepository->update($team, $params);
+        $team->setCollaborators($params);
 
         return redirect()->action('TeamController@index')
             ->with('team', $team);

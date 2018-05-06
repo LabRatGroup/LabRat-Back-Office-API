@@ -38,6 +38,9 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('team/addMember', 'Api\TeamMemberController@addMember')->name('api.team.addMember');
     Route::post('team/updateMember', 'Api\TeamMemberController@updateMember')->name('api.team.updateMember');
     Route::post('team/deleteMember', 'Api\TeamMemberController@deleteMember')->name('api.team.deleteMember');
+    Route::get('team/getDefaultCollaboratorRole', 'Api\TeamMemberController@getDefaultCollaboratorRole')->name('api.team.getDefaultCollaboratorRole');
+
+
 });
 
 Route::group(['middleware' => ['auth:api']], function () {
