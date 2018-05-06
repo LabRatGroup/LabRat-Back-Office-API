@@ -22,6 +22,7 @@
         "vue": "^2.5.7"
     },
     "dependencies": {
+        "bootstrap-select": "^1.13.1",
         "jsonq": "^1.1.0"
     }
 }

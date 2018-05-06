@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Repositories\ProjectRepository;
+use App\Repositories\TeamRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\RedirectResponse;
@@ -22,14 +23,19 @@ class ProjectController extends Controller
     /** @var ProjectRepository */
     private $projectRepository;
 
+    /** @var TeamRepository */
+    private $teamRepository;
+
     /**
      * ProjectController constructor.
      *
      * @param ProjectRepository $projectRepository
+     * @param TeamRepository    $teamRepository
      */
-    public function __construct(ProjectRepository $projectRepository)
+    public function __construct(ProjectRepository $projectRepository, TeamRepository $teamRepository)
     {
         $this->projectRepository = $projectRepository;
+        $this->teamRepository = $teamRepository;
     }
 
     /**
@@ -75,9 +81,11 @@ class ProjectController extends Controller
     {
         $this->authorize('create', Project::class);
         $project = $this->projectRepository->getModel();
+        $teams = $this->teamRepository->findAllByUserMember();
 
         return view('projects.form')
-            ->with('project', $project);
+            ->with('project', $project)
+            ->with('teams', $teams);
     }
 
     /**
@@ -94,10 +102,14 @@ class ProjectController extends Controller
             'title',
             'description',
             'users',
+            'teams',
         ]);
         $this->authorize('create', Project::class);
+
+        /** @var Project $project */
         $project = $this->projectRepository->create($params);
         $project->setCollaborators($params);
+        $project->setTeams($params);
 
         return redirect()->action('ProjectController@index')
             ->with('project', $project);
@@ -115,9 +127,11 @@ class ProjectController extends Controller
     {
         $project = $this->projectRepository->findOneOrFailById($id);
         $this->authorize('update', $project);
+        $teams = $this->teamRepository->findAllByUserMember();
 
         return view('projects.form')
-            ->with('project', $project);
+            ->with('project', $project)
+            ->with('teams', $teams);
     }
 
     /**
@@ -135,12 +149,15 @@ class ProjectController extends Controller
             'title',
             'description',
             'users',
+            'teams',
         ]);
         $project = $this->projectRepository->findOneOrFailById($id);
         $this->authorize('update', $project);
 
+        /** @var Project $project */
         $project = $this->projectRepository->update($project, $params);
         $project->setCollaborators($params);
+        $project->setTeams($params);
 
         return redirect()->action('ProjectController@index')
             ->with('project', $project);

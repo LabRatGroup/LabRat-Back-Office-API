@@ -28,6 +28,18 @@
                             </div>
 
                             <div class="form-group row">
+                                <label for="email" class="col-sm-4 col-form-label text-md-right">{{ __('Team access') }}</label>
+                                <div class="col-md-6">
+                                    <select class="selectpicker  show-menu-arrow form-control" multiple name="teams[]" id="teams" title="{{ __('Select team access for this project') }}">
+                                        @foreach($teams as $team)
+                                            <option value="{{ $team->id }}" {{ $team->projects->contains($project->id)  ? 'selected=""' : '' }}>{{ $team->name }}</option>
+                                        @endforeach
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
                                 <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Project description') }}</label>
 
                                 <div class="col-md-6">
