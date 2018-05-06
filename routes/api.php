@@ -55,6 +55,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('project/addMember', 'Api\ProjectMemberController@addMember')->name('api.project.addMember');
     Route::post('project/updateMember', 'Api\ProjectMemberController@updateMember')->name('api.project.updateMember');
     Route::post('project/deleteMember', 'Api\ProjectMemberController@deleteMember')->name('api.project.deleteMember');
+    Route::get('project/getDefaultCollaboratorRole', 'Api\ProjectMemberController@getDefaultCollaboratorRole')->name('api.project.getDefaultCollaboratorRole');
+
 });
 
 Route::group(['middleware' => ['auth:api']], function () {

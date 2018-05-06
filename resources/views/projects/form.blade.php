@@ -4,19 +4,20 @@
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card">
-                    <div class="card-header">{{ $project->id? __('Edit Project'): __('Create Project') }}</div>
 
-                    <div class="card-body">
-                        <form method="POST" action="{{ $project->id? route('project.save', ['id'=>$project->id]) : route('project.store') }}">
-                            <input type="hidden" name="_method" value="{{ $project->id ? 'PATCH' : 'POST' }}">
-                            @csrf
+                <form method="POST" action="{{ $project->id? route('project.save', ['id'=>$project->id]) : route('project.store') }}">
+                    <input type="hidden" name="_method" value="{{ $project->id ? 'PATCH' : 'POST' }}">
+                    @csrf
+
+                    <div class="card mb-2">
+                        <div class="card-header">{{ $project->id? __('Edit Project'): __('Create Project') }}</div>
+                        <div class="card-body">
 
                             <div class="form-group row">
                                 <label for="email" class="col-sm-4 col-form-label text-md-right">{{ __('Project title') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="title" type="title" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="title" value="{{ $project->title }}"  autofocus>
+                                    <input id="title" type="title" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="title" value="{{ $project->title }}" autofocus>
 
                                     @if ($errors->has('title'))
                                         <span class="invalid-feedback">
@@ -30,7 +31,7 @@
                                 <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Project description') }}</label>
 
                                 <div class="col-md-6">
-                                    <textarea id="description" type="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description" >{{ $project->description }}</textarea>
+                                    <textarea id="description" type="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description">{{ $project->description }}</textarea>
                                 </div>
                             </div>
 
@@ -42,9 +43,11 @@
                                     </button>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                </div>
+
+                    <collaborators-manager :items="{{ $project->users }}" model="project"></collaborators-manager>
+                </form>
             </div>
         </div>
     </div>

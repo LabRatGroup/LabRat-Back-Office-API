@@ -92,10 +92,12 @@ class ProjectController extends Controller
     {
         $params = $request->only([
             'title',
-            'description'
+            'description',
+            'users',
         ]);
         $this->authorize('create', Project::class);
         $project = $this->projectRepository->create($params);
+        $project->setCollaborators($params);
 
         return redirect()->action('ProjectController@index')
             ->with('project', $project);
@@ -131,12 +133,14 @@ class ProjectController extends Controller
     {
         $params = $request->only([
             'title',
-            'description'
+            'description',
+            'users',
         ]);
         $project = $this->projectRepository->findOneOrFailById($id);
         $this->authorize('update', $project);
 
         $project = $this->projectRepository->update($project, $params);
+        $project->setCollaborators($params);
 
         return redirect()->action('ProjectController@index')
             ->with('project', $project);
