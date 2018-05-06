@@ -41,3 +41,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('teams/{id}/delete', 'TeamController@delete')->name('team.delete');
 });
 
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('models', 'MlModelController@index')->name('model.index');
+    Route::get('models/{id}/show', 'MlModelController@show')->name('model.show');
+    Route::get('models/{id}/create', 'MlModelController@create')->name('model.create');
+    Route::post('models/store', 'MlModelController@store')->name('model.store');
+    Route::get('models/{id}/update', 'MlModelController@update')->name('model.update');
+    Route::patch('models/{id}/save', 'MlModelController@save')->name('model.save');
+    Route::delete('models/{id}/delete', 'MlModelController@delete')->name('model.delete');
+});
+

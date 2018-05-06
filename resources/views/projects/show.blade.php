@@ -5,10 +5,10 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">@lang('Project Details')</div>
+                    <div class="card-header">{{ $project->title }}</div>
 
                     <div class="card-body">
-                           show
+                        <p>{{$project->description}}</p>
                     </div>
                 </div>
             </div>
