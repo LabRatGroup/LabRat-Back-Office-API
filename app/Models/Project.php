@@ -91,4 +91,14 @@ class Project extends BaseEntity
 
         return array_search($user->id, $userMembers) > -1;
     }
+
+    public function setTeams($params)
+    {
+        if (isset($params['teams'])) {
+            $this->teams()->sync($params['teams']);
+            $this->load('teams');
+        }
+
+        return $this;
+    }
 }

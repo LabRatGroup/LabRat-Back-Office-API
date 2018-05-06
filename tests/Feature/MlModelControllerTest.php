@@ -31,7 +31,7 @@ class MlModelControllerTest extends ApiTestCase
         $model->setProject($project);
 
         // When
-        $response = $this->get(route('api.model.show', ['id' => $model->id]), $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->get(route('api.model.show', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -62,7 +62,7 @@ class MlModelControllerTest extends ApiTestCase
         $project->teams()->attach($team);
 
         // When
-        $response = $this->get(route('api.model.show', ['id' => $model->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.model.show', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -86,7 +86,7 @@ class MlModelControllerTest extends ApiTestCase
         $model->setProject($project);
 
         // When
-        $response = $this->get(route('api.model.show', ['id' => $model->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.model.show', ['id' => $model->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -108,7 +108,7 @@ class MlModelControllerTest extends ApiTestCase
         $model->setProject($project);
 
         // When
-        $response = $this->get(route('api.model.index', ['id' => $project->id]), $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->get(route('api.model.index', ['id' => $project->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -139,7 +139,7 @@ class MlModelControllerTest extends ApiTestCase
         $project->teams()->attach($team);
 
         // When
-        $response = $this->get(route('api.model.index', ['id' => $project->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.model.index', ['id' => $project->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -163,7 +163,7 @@ class MlModelControllerTest extends ApiTestCase
         $model->setProject($project);
 
         // When
-        $response = $this->get(route('api.model.index', ['id' => $project->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.model.index', ['id' => $project->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -187,7 +187,7 @@ class MlModelControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.model.create'), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('api.model.create'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_CREATED);
@@ -216,11 +216,11 @@ class MlModelControllerTest extends ApiTestCase
         $data = [
             'title'      => $modelTitle,
             'project_id' => $project->id,
-            'positive'   => $modelPositiveField,
+            'positive'    => $modelPositiveField,
         ];
 
         // When
-        $response = $this->postJson(route('api.model.create'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.model.create'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -249,7 +249,7 @@ class MlModelControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.model.update', ['id' => $model->id]), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('api.model.update', ['id' => $model->id]), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -279,7 +279,7 @@ class MlModelControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.model.update', ['id' => $model->id]), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.model.update', ['id' => $model->id]), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -302,7 +302,7 @@ class MlModelControllerTest extends ApiTestCase
         $model = factory(MlModel::class)->create(['project_id' => $project->id]);
 
         // When
-        $response = $this->deleteJson(route('api.model.delete', ['id' => $model->id]), [], $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->deleteJson(route('api.model.delete', ['id' => $model->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -327,7 +327,7 @@ class MlModelControllerTest extends ApiTestCase
         $model = factory(MlModel::class)->create(['project_id' => $project->id]);
 
         // When
-        $response = $this->deleteJson(route('api.model.delete', ['id' => $model->id]), [], $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->deleteJson(route('api.model.delete', ['id' => $model->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

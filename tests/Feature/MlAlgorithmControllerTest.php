@@ -19,7 +19,7 @@ class MlAlgorithmControllerTest extends ApiTestCase
         $this->be($user);
 
         // When
-        $response = $this->get(route('api.algorithm.index'), $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->get(route('api.algorithm.index'));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -34,7 +34,7 @@ class MlAlgorithmControllerTest extends ApiTestCase
         $this->be($user);
 
         // When
-        $response = $this->get(route('api.algorithm.show', ['id' => '5']), $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->get(route('api.algorithm.show', ['id' => '5']));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);

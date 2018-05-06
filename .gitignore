@@ -13,4 +13,5 @@ yarn-error.log
 .env
 .env.testing
 *.vpp.*
+.DS_Store
 

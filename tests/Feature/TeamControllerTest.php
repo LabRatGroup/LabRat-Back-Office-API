@@ -24,8 +24,7 @@ class TeamControllerTest extends ApiTestCase
         $team = factory(Team::class)->create();
 
         // When
-        $header = $this->getAuthHeader($user);
-        $response = $this->get(route('api.team.show', ['id' => $team->id]), $header);
+        $response = $this->actingAs($user)->get(route('api.team.show', ['id' => $team->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -45,8 +44,7 @@ class TeamControllerTest extends ApiTestCase
 
         // When
         $this->be($otherUser);
-        $header = $this->getAuthHeader($otherUser);
-        $response = $this->get(route('api.team.show', ['id' => $team->id]), $header);
+        $response = $this->actingAs($otherUser)->get(route('api.team.show', ['id' => $team->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -64,8 +62,7 @@ class TeamControllerTest extends ApiTestCase
         $team2 = factory(Team::class)->create();
 
         // When
-        $header = $this->getAuthHeader($user);
-        $response = $this->get(route('api.team.index'), $header);
+        $response = $this->actingAs($user)->get(route('api.team.index'));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -86,8 +83,7 @@ class TeamControllerTest extends ApiTestCase
         $team2 = factory(Team::class)->create();
 
         // When
-        $header = $this->getAuthHeader($user1);
-        $response = $this->get(route('api.team.index'), $header);
+        $response = $this->actingAs($user1)->get(route('api.team.index'));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -106,7 +102,7 @@ class TeamControllerTest extends ApiTestCase
         $data = ['name' => $name];
 
         // When
-        $response = $this->postJson(route('api.team.create'), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('api.team.create'), $data);
         $team = DB::table('teams')->where('name', $name)->first();
 
         // Then
@@ -127,8 +123,8 @@ class TeamControllerTest extends ApiTestCase
     {
         // Given
         $user = factory(User::class)->create();
-        $header = $this->getAuthHeader($user);
-
+        $this->be($user);
+        
         $teamName1 = 'TEAM_NAME_1';
         $team = factory(Team::class)->create(['name' => $teamName1]);
 
@@ -139,7 +135,7 @@ class TeamControllerTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.team.update', ['id' => $team->id]), $data, $header);
+        $response = $this->actingAs($user)->postJson(route('api.team.update', ['id' => $team->id]), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -173,8 +169,7 @@ class TeamControllerTest extends ApiTestCase
 
         // When
         $this->be($otherUser);
-        $header = $this->getAuthHeader($otherUser);
-        $response = $this->postJson(route('api.team.update', ['id' => $team->id]), $data, $header);
+        $response = $this->actingAs($otherUser)->postJson(route('api.team.update', ['id' => $team->id]), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -194,12 +189,11 @@ class TeamControllerTest extends ApiTestCase
         // Given
         $user = factory(User::class)->create();
         $this->be($user);
-        $header = $this->getAuthHeader($user);
 
         $team = factory(Team::class)->create();
 
         // When
-        $response = $this->delete(route('api.team.delete', ['id' => $team->id]), [], $header);
+        $response = $this->actingAs($user)->delete(route('api.team.delete', ['id' => $team->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -224,8 +218,7 @@ class TeamControllerTest extends ApiTestCase
 
         // When
         $this->be($otherUser);
-        $header = $this->getAuthHeader($otherUser);
-        $response = $this->delete(route('api.team.delete', ['id' => $team->id]), [], $header);
+        $response = $this->actingAs($otherUser)->delete(route('api.team.delete', ['id' => $team->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

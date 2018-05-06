@@ -30,7 +30,7 @@ class ProjectTeamTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.addTeam'), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('api.project.addTeam'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -70,7 +70,7 @@ class ProjectTeamTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.addTeam'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.addTeam'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -104,7 +104,7 @@ class ProjectTeamTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.addTeam'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.addTeam'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -143,7 +143,7 @@ class ProjectTeamTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.addTeam'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.addTeam'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -177,7 +177,7 @@ class ProjectTeamTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.addTeam'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.addTeam'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -205,7 +205,7 @@ class ProjectTeamTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.deleteTeam'), $data, $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('api.project.deleteTeam'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -247,7 +247,7 @@ class ProjectTeamTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.deleteTeam'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.deleteTeam'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -284,7 +284,7 @@ class ProjectTeamTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.deleteTeam'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.deleteTeam'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -326,7 +326,7 @@ class ProjectTeamTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.deleteTeam'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.deleteTeam'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -363,7 +363,7 @@ class ProjectTeamTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.project.deleteTeam'), $data, $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->postJson(route('api.project.deleteTeam'), $data);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

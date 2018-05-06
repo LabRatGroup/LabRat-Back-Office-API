@@ -27,6 +27,4 @@ class UserRepository extends BaseRepository
     {
         return $this->getModel()->newQuery()->count();
     }
-
-
 }

@@ -3,8 +3,10 @@
 namespace Tests;
 
 use App\Models\MlModelPredictionScore;
+use App\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Artisan;
+use Laravel\Passport\Passport;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -13,8 +15,6 @@ abstract class TestCase extends BaseTestCase
     public function setUp()
     {
         parent::setUp();
-
-        config(['auth.defaults.guard' => 'web']);
 
         Artisan::call('db:seed', [
             '--database' => env('DB_CONNECTION')

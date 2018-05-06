@@ -33,8 +33,7 @@ class TeamController extends ApiController
     {
         try {
             $this->authorize('list', Team::class);
-            $userId = auth()->user()->id;
-            $teams = $this->teamRepository->findAllByUserMember($userId);
+            $teams = $this->teamRepository->findAllByUserMember();
 
             return $this->responseOk($teams);
         } catch (AuthorizationException $authorizationException) {
@@ -121,10 +120,10 @@ class TeamController extends ApiController
     public function delete($id)
     {
         try {
+            /** @var Team $team */
             $team = $this->teamRepository->findOneOrFailById($id);
             $this->authorize('delete', $team);
-            $team->users()->detach();
-            $this->teamRepository->delete($team);
+            $this->teamRepository->remove($team);
 
             return $this->responseDeleted();
         } catch (AuthorizationException $authorizationException) {

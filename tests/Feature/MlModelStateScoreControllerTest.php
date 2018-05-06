@@ -48,7 +48,7 @@ class MlModelStateScoreControllerTest extends ApiTestCase
         $score->setState($state);
 
         // When
-        $response = $this->get(route('api.score.show', ['id' => $state->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.score.show', ['id' => $state->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -90,7 +90,7 @@ class MlModelStateScoreControllerTest extends ApiTestCase
         $score->setState($state);
 
         // When
-        $response = $this->get(route('api.score.show', ['id' => $state->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.score.show', ['id' => $state->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -125,7 +125,7 @@ class MlModelStateScoreControllerTest extends ApiTestCase
         $score->setState($state);
 
         // When
-        $response = $this->get(route('api.score.show', ['id' => $state->id]), $this->getAuthHeader($member));
+        $response = $this->actingAs($member)->get(route('api.score.show', ['id' => $state->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

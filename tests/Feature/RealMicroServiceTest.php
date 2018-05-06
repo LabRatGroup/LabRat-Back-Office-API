@@ -110,7 +110,7 @@ class RealMicroServiceTest extends ApiTestCase
     }
 
     /** @test */
-    public function shouldCreateState()
+    public function testExample()
     {
         $data = [
             'ml_model_id'     => $this->model->id,
@@ -120,7 +120,7 @@ class RealMicroServiceTest extends ApiTestCase
         ];
 
         // When
-        $response = $this->postJson(route('api.state.create'), $data, $this->getAuthHeader($this->user));
+        $response = $this->actingAs($this->user)->postJson(route('api.state.create'), $data);
 //        dd($response->json());
 
         // Then

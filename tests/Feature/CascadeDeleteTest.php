@@ -40,7 +40,7 @@ class CascadeDeleteTest extends ApiTestCase
         $state->setModel($model);
 
         // When
-        $response = $this->deleteJson(route('api.project.delete', ['id' => $project->id]), [], $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->deleteJson(route('api.project.delete', ['id' => $project->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -86,7 +86,7 @@ class CascadeDeleteTest extends ApiTestCase
 
 
         // When
-        $response = $this->deleteJson(route('api.team.delete', ['id' => $team->id]), [], $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->deleteJson(route('api.team.delete', ['id' => $team->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -143,7 +143,7 @@ class CascadeDeleteTest extends ApiTestCase
 
 
         // When
-        $response = $this->deleteJson(route('api.project.delete', ['id' => $project->id]), [], $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->deleteJson(route('api.project.delete', ['id' => $project->id]), []);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -179,7 +179,6 @@ class CascadeDeleteTest extends ApiTestCase
         ]);
     }
 
-    /** @test */
     public function should_remove_user_team_and_project_relations_when_not_unique_owner()
     {
         // Given
@@ -215,7 +214,7 @@ class CascadeDeleteTest extends ApiTestCase
 
 
         // When
-        $response = $this->postJson(route('api.user.un-register'), ['email' => $user->email], $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('api.user.un-register'), ['email' => $user->email]);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -233,7 +232,6 @@ class CascadeDeleteTest extends ApiTestCase
         ]);
     }
 
-    /** @test */
     public function should_not_remove_user_team_and_project_relations_when_unique_owner()
     {
         // Given
@@ -269,7 +267,7 @@ class CascadeDeleteTest extends ApiTestCase
 
 
         // When
-        $response = $this->postJson(route('api.user.un-register'), ['email' => $user->email], $this->getAuthHeader($user));
+        $response = $this->actingAs($user)->postJson(route('api.user.un-register'), ['email' => $user->email]);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);

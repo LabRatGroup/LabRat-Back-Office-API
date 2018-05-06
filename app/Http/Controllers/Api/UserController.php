@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Password;
-use Tymon\JWTAuth\Exceptions\JWTException;
 
 class UserController extends ApiController
 {
@@ -43,7 +42,7 @@ class UserController extends ApiController
             }
 
             return $this->responseOk(['token' => $token]);
-        } catch (JWTException $e) {
+        } catch (Exception $e) {
 
             return $this->responseInternalError('could_not_create_token');
         }
@@ -60,7 +59,7 @@ class UserController extends ApiController
             auth()->logout();
 
             return $this->responseOk(null, 'You have successfully logged out.');
-        } catch (JWTException $e) {
+        } catch (Exception $e) {
 
             return $this->responseInternalError('Failed to logout, please try again.');
         }
@@ -143,6 +142,25 @@ class UserController extends ApiController
             return $this->responseForbidden($authorizationException->getMessage());
         } catch (Exception $e) {
             return $this->responseAccessDenied($e->getMessage());
+        }
+    }
+
+    /**
+     * Finds single user by email.
+     *
+     * @param Request $request
+     *
+     * @return JsonResponse
+     */
+    public function findByEmail(Request $request)
+    {
+        try {
+            $params = $request->only(['email']);
+            $user = $this->userRepository->findOneOrFailByEmail($params['email']);
+
+            return $this->responseOk($user);
+        } catch (Exception $e) {
+            return $this->responseInternalError($e->getMessage());
         }
     }
 }
