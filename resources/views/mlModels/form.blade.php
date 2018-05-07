@@ -17,11 +17,25 @@
                                 <label for="title" class="col-sm-4 col-form-label text-md-right">{{ __('Model title') }}</label>
 
                                 <div class="col-md-6">
-                                    <input id="title" type="text" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="name" value="{{ $model->title }}" autofocus>
+                                    <input id="title" type="text" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="title" value="{{ $model->title }}" autofocus>
 
                                     @if ($errors->has('title'))
                                         <span class="invalid-feedback">
                                         <strong>{{ $errors->first('title') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="title" class="col-sm-4 col-form-label text-md-right">{{ __('Model positive class') }}</label>
+
+                                <div class="col-md-6">
+                                    <input id="positive" type="text" class="form-control{{ $errors->has('positive') ? ' is-invalid' : '' }}" name="positive" value="{{ $model->positive }}" autofocus>
+
+                                    @if ($errors->has('positive'))
+                                        <span class="invalid-feedback">
+                                        <strong>{{ $errors->first('positive') }}</strong>
                                     </span>
                                     @endif
                                 </div>
@@ -33,6 +47,11 @@
                                 <div class="col-md-6">
                                     <textarea id="description" type="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description">{{ $model->description }}</textarea>
                                 </div>
+                                @if ($errors->has('description'))
+                                    <span class="invalid-feedback">
+                                        <strong>{{ $errors->first('description') }}</strong>
+                                    </span>
+                                @endif
                             </div>
 
                             <input type="hidden" name="project_id" id="project_id" value="{{ $model->id ? $model->project->id : $project->id }}"/>
