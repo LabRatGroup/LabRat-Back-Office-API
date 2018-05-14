@@ -25,8 +25,8 @@ class DevSeeder extends Seeder
         /** @var User $user */
         $user = factory(User::class)->create(
             [
-                'name'     => 'Julio Fernandez',
-                'email'    => 'jfernandez74@gmail.com',
+                'name'  => 'Julio Fernandez',
+                'email' => 'jfernandez74@gmail.com',
             ]
         );
 
@@ -46,40 +46,21 @@ class DevSeeder extends Seeder
         $algorithm = MlAlgorithm::where('alias', 'knn')->first();
         $algorithmParams = json_encode(
             [
-                [
-                    'method'        => 'knn',
-                    'preprocessing' => 'center',
-                    'metric'        => 'Accuracy',
-                    'positive'      => 'Cleaved',
-                    'control'       => [
-                        'trainControlMethodRounds' => 3,
-                        'trainControlMethod'       => 'cv',
-                    ],
-                    'tune'          => [
-                        'k' => [
-                            'min'  => 2,
-                            'max'  => 3,
-                            'step' => 1,
-                        ],
+                'method'        => 'knn',
+                'preprocessing' => 'center',
+                'metric'        => 'Accuracy',
+                'positive'      => 'Cleaved',
+                'control'       => [
+                    'trainControlMethodRounds' => 3,
+                    'trainControlMethod'       => 'cv',
+                ],
+                'tune'          => [
+                    'k' => [
+                        'min'  => 2,
+                        'max'  => 3,
+                        'step' => 1,
                     ],
                 ],
-                [
-                    'method'        => 'svmLinear',
-                    'preprocessing' => 'center',
-                    'metric'        => 'Accuracy',
-                    'positive'      => 'Cleaved',
-                    'control'       => [
-                        'trainControlMethodRounds' => 3,
-                        'trainControlMethod'       => 'cv',
-                    ],
-                    'tune'          => [
-                        'C'        => [
-                            'min'  => 2,
-                            'max'  => 3,
-                            'step' => 1,
-                        ]
-                    ],
-                ]
             ]
         );
 

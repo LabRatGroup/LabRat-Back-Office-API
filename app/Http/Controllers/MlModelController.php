@@ -69,7 +69,8 @@ class MlModelController extends Controller
         $this->authorize('view', $model->project);
 
         return view('mlModels.show')
-            ->with('model', $model);
+            ->with('model', $model)
+            ->with('currentState', $model->getCurrentState());
     }
 
     /**

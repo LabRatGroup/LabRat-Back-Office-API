@@ -51,3 +51,13 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('models/{id}/delete', 'MlModelController@delete')->name('model.delete');
 });
 
+Route::group(['middleware' => ['auth']], function () {
+//    Route::get('state/model/{id}', 'Api\MlModelStateController@index')->name('api.state.index');
+    Route::get('state/show/{id}', 'MlModelStateController@show')->name('state.show');
+    Route::post('state/{id}/create', 'MlModelStateController@create')->name('state.create');
+//    Route::post('state/{id}/update', 'Api\MlModelStateController@update')->name('api.state.update');
+//    Route::delete('state/{id}/delete', 'Api\MlModelStateController@delete')->name('api.state.delete');
+//    Route::post('state/{id}/current', 'Api\MlModelStateController@current')->name('api.state.current');
+});
+
+

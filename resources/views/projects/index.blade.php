@@ -25,7 +25,8 @@
                                     <p>{{ str_limit($project->description, 100, ' [...]') }}</p>
                                     <p>
                                         @foreach($project->users as $member)
-                                            <a href="#" class="{{ $member->pivot->is_owner ? 'text-info':'text-secondary' }}">{{ $member->name }}</a>&nbsp;
+                                            <a href="#" class="{{ $member->pivot->is_owner ? 'text-info':'text-secondary' }}">{{ $member->name }}</a>
+                                            &nbsp;
                                         @endforeach
                                     </p>
                                     <a href="{{ route('model.create', ['id'=>$project->id]) }}" class="btn btn-success">@lang('Create model')</a>

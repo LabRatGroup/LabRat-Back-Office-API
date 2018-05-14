@@ -97,8 +97,9 @@ class MlModelStateController extends Controller
         $state = $this->mlModelStateRepository->findOneOrFailById($id);
         $this->authorize('view', $state->model->project);
 
-        return view('mlState.show')
-            ->with('state', $state);
+        return view('mlModelStates.show')
+            ->with('state', $state)
+            ->with('params', json_decode($state->params));
     }
 
     /**
