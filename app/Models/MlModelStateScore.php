@@ -8,14 +8,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @property int    $id
- * @property MlModelState  $state
- * @property Carbon $created_at
- * @property Carbon $updated_at
- * @property Carbon $deleted_at
- * @property mixed  kappa
- * @property string token
- * @property int    ml_model_state_id
+ * @property int          $id
+ * @property MlModelState $state
+ * @property Carbon       $created_at
+ * @property Carbon       $updated_at
+ * @property Carbon       $deleted_at
+ * @property mixed        kappa
+ * @property string       token
+ * @property int          ml_model_state_id
+ * @property mixed        params
  */
 class MlModelStateScore extends Model
 {

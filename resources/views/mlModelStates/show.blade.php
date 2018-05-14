@@ -21,12 +21,16 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card mb-3">
-                    <div class="card-header">{{ $state->algorithm->name }} - {{ $state->updated_at }}</div>
+                    <div class="card-header">
+                        {{ $state->algorithm->name }} - {{ $state->updated_at }}
+                        <a href="#" class="btn btn-success">Create prediction from data</a>
+                    </div>
 
                     <div class="card-body">
                         <div class="row">
 
                             <div class="col-md-6">
+                                <strong>{{ __('Model Performance:') }}</strong>
                                 <ul>
                                     <li>
                                         <span>{{ __('frontend.accuracy', ['accuracy' =>$state->score->accuracy*100]) }}</span>
@@ -44,31 +48,44 @@
                                     <li><span>{{ __('frontend.recall', ['recall' =>$state->score->recall]) }}</span>
                                     </li>
                                 </ul>
+
                             </div>
                             <div class="col-md-6">
+
+                                <strong>{{ __('Training Parameters') }}</strong>
                                 <ul>
-                                    <li><span>{{ $params->method}}</span></li>
-                                    <li><span>{{ $params->preprocessing}}</span></li>
-                                    <li><span>{{ $params->metric}}</span></li>
-                                    <li><span>{{ $params->positive}}</span></li>
+                                    <li><span>{{ __('frontend.method', ['method'=> $params->method]) }}</span></li>
                                     <li>
-                                        <ul>
-                                            <li><span>{{ $params->control->trainControlMethodRounds}}</span></li>
-                                            <li><span>{{ $params->control->trainControlMethod}}</span></li>
-                                        </ul>
+                                        <span>{{ __('frontend.preprocessing', ['preprocessing'=> $params->preprocessing]) }}</span>
+                                    </li>
+                                    <li><span>{{ __('frontend.metric', ['metric'=> $params->metric]) }}</span></li>
+                                    <li><span>{{ __('frontend.positive', ['positive'=> $params->positive]) }}</span>
+                                    </li>
+                                </ul>
+
+                                <strong>{{ __('Control Method') }}</strong>
+                                <ul>
+                                    <li>
+                                        <span>{{ __('frontend.trainControlMethod', ['trainControlMethod'=> $params->control->trainControlMethod]) }}</span>
                                     </li>
                                     <li>
-                                        <ul>
-                                            @foreach($params->tune as $key=>$value)
-                                                <li><span>{{ $key }}</span></li>
-                                                <ul>
-                                                    @foreach($value as $k=>$v)
-                                                        <li><span>{{ $k }}: {{ $v }}</span></li>
-                                                    @endforeach
-                                                </ul>
-                                            @endforeach
-                                        </ul>
+                                        <span>{{ __('frontend.trainControlMethodRounds', ['trainControlMethodRounds'=> $params->control->trainControlMethodRounds]) }}</span>
                                     </li>
+                                </ul>
+
+                                <strong>{{ __('Algorithm parameters:') }}</strong>
+                                <ul>
+                                    @foreach($params->tune as $key=>$value)
+                                        <li><span>{{ $key }}
+                                                (
+                                                @foreach($value as $k=>$v)
+                                                    {{ $k }}: {{ $v }},
+                                                @endforeach
+                                            )
+                                            </span></li>
+                                    @endforeach
+                                </ul>
+
                                 </ul>
                             </div>
                         </div>

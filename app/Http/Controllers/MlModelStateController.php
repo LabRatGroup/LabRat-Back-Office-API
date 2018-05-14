@@ -99,7 +99,7 @@ class MlModelStateController extends Controller
 
         return view('mlModelStates.show')
             ->with('state', $state)
-            ->with('params', json_decode($state->params));
+            ->with('params', json_decode($state->score->params));
     }
 
     /**
