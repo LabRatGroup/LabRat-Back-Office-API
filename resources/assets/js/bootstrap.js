@@ -13,6 +13,7 @@ try {
 
     require('bootstrap');
     require('bootstrap-select');
+
 } catch (e) {}
 
 /**
@@ -24,6 +25,7 @@ try {
 window.jsonq = require('jsonq');
 
 window.axios = require('axios');
+
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 

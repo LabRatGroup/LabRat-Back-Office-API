@@ -52,12 +52,14 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::group(['middleware' => ['auth']], function () {
-//    Route::get('state/model/{id}', 'Api\MlModelStateController@index')->name('api.state.index');
+    Route::get('state/model/{id}', 'MlModelStateController@index')->name('state.index');
     Route::get('state/show/{id}', 'MlModelStateController@show')->name('state.show');
-    Route::post('state/{id}/create', 'MlModelStateController@create')->name('state.create');
-//    Route::post('state/{id}/update', 'Api\MlModelStateController@update')->name('api.state.update');
-//    Route::delete('state/{id}/delete', 'Api\MlModelStateController@delete')->name('api.state.delete');
-//    Route::post('state/{id}/current', 'Api\MlModelStateController@current')->name('api.state.current');
+    Route::get('state/{id}/create', 'MlModelStateController@create')->name('state.create');
+    Route::post('state/store', 'MlModelStateController@store')->name('state.store');
+    Route::get('state/{id}/update', 'MlModelStateController@update')->name('state.update');
+    Route::patch('state/{id}/save', 'MlModelStateController@save')->name('state.save');
+    Route::delete('state/{id}/delete', 'MlModelStateController@delete')->name('state.delete');
+    Route::post('state/{id}/current', 'MlModelStateController@current')->name('state.current');
 });
 
 

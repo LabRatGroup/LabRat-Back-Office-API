@@ -21,7 +21,7 @@
 
                     <div class="card-body">
                         <p>{{$model->description}}</p>
-                        <a href="{{ route('state.create', ['id'=>$model->id]) }}" class="btn btn-success">@lang('Train model')</a>
+                        <a href="{{ $currentState ? route('state.update', ['id'=>$currentState->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success">@lang('Train model')</a>
                     </div>
                 </div>
 

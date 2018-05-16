@@ -116,8 +116,8 @@ class MlModelStateController extends Controller
 
         $state = $this->mlModelStateRepository->getModel();
 
-        return view('mlModels.form')
-            ->with('model', $model)
+        return view('mlModelStates.form')
+            ->with('state', $state)
             ->with('model', $model);
     }
 

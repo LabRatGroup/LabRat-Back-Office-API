@@ -15129,6 +15129,7 @@ window.Vue = __webpack_require__(39);
 
 Vue.component('example-component', __webpack_require__(42));
 Vue.component('collaborators-manager', __webpack_require__(45));
+Vue.component('ml-state-form', __webpack_require__(57));
 
 var app = new Vue({
   el: '#app'
@@ -51914,6 +51915,301 @@ if (false) {
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 54 */,
+/* 55 */,
+/* 56 */,
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var disposed = false
+function injectStyle (ssrContext) {
+  if (disposed) return
+  __webpack_require__(58)
+}
+var normalizeComponent = __webpack_require__(12)
+/* script */
+var __vue_script__ = __webpack_require__(60)
+/* template */
+var __vue_template__ = __webpack_require__(61)
+/* template functional */
+var __vue_template_functional__ = false
+/* styles */
+var __vue_styles__ = injectStyle
+/* scopeId */
+var __vue_scopeId__ = "data-v-b6fffaa2"
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __vue_script__,
+  __vue_template__,
+  __vue_template_functional__,
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "resources/assets/js/components/MlStateForm.vue"
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-b6fffaa2", Component.options)
+  } else {
+    hotAPI.reload("data-v-b6fffaa2", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+module.exports = Component.exports
+
+
+/***/ }),
+/* 58 */
+/***/ (function(module, exports, __webpack_require__) {
+
+// style-loader: Adds some css to the DOM by adding a <style> tag
+
+// load the styles
+var content = __webpack_require__(59);
+if(typeof content === 'string') content = [[module.i, content, '']];
+if(content.locals) module.exports = content.locals;
+// add the styles to the DOM
+var update = __webpack_require__(49)("727551d4", content, false, {});
+// Hot Module Replacement
+if(false) {
+ // When the styles change, update the <style> tags
+ if(!content.locals) {
+   module.hot.accept("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-b6fffaa2\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./MlStateForm.vue", function() {
+     var newContent = require("!!../../../../node_modules/css-loader/index.js!../../../../node_modules/vue-loader/lib/style-compiler/index.js?{\"vue\":true,\"id\":\"data-v-b6fffaa2\",\"scoped\":true,\"hasInlineConfig\":true}!../../../../node_modules/vue-loader/lib/selector.js?type=styles&index=0!./MlStateForm.vue");
+     if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+     update(newContent);
+   });
+ }
+ // When the module is disposed, remove the <style> tags
+ module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+/* 59 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(48)(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+/* 60 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+    name: "MlStateForm",
+    data: function data() {
+        return {
+            algorithms: [],
+            preprocessing: [],
+            resampling: [],
+            tune: []
+        };
+    },
+
+    mounted: function mounted() {
+        this.populateAlgorithms();
+        this.populateResampling();
+    },
+    methods: {
+        populateAlgorithms: function populateAlgorithms() {
+            var _this = this;
+
+            window.axios.get('/api/algorithm').then(function (response) {
+                var data = response.data.data;
+                _this.algorithms = data;
+            }).catch(function (e) {
+                console.error('Can not retrieve algorithm list.');
+            });
+        },
+        popularePreprocessing: function popularePreprocessing() {
+            var _this2 = this;
+
+            window.axios.get('/api/algorithm/preprocessing').then(function (response) {
+                var data = response.data.data;
+                _this2.preprocessing = data;
+            }).catch(function (e) {
+                console.error('Can not retrieve algorithm preprocessing option list.');
+            });
+        },
+        populateResampling: function populateResampling() {
+            var _this3 = this;
+
+            window.axios.get('/api/algorithm/getResamplingMethods').then(function (response) {
+                var data = response.data.data;
+                _this3.resampling = data;
+                _this3.tune = data[0]['tune'];
+            }).catch(function (e) {
+                console.error('Can not retrieve algorithm resampling option list.');
+            });
+        },
+        catchAlgorithmOptions: function catchAlgorithmOptions() {}
+    }
+});
+
+/***/ }),
+/* 61 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("div", { staticClass: "form-group row" }, [
+      _c("div", { staticClass: "offset-1 col-md-10" }, [
+        _c("label", { attrs: { for: "ml_algorithm_id" } }, [
+          _vm._v("Please select the desired training algorithm")
+        ]),
+        _vm._v(" "),
+        _c(
+          "select",
+          {
+            staticClass: "form-control",
+            attrs: { id: "ml_algorithm_id", name: "ml_algorithm_id" }
+          },
+          [
+            _c("option", { attrs: { value: "" } }, [
+              _vm._v("Use the best fitted method")
+            ]),
+            _vm._v(" "),
+            _vm._l(_vm.algorithms, function(option) {
+              return _c("option", { domProps: { value: option.id } }, [
+                _vm._v(
+                  "\n                    " +
+                    _vm._s(option.name) +
+                    "\n                "
+                )
+              ])
+            })
+          ],
+          2
+        )
+      ])
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "form-group row" }, [
+      _c("div", { staticClass: "col-md-6" }, [
+        _c("label", { attrs: { for: "ml_algorithm_resampling_id" } }, [
+          _vm._v("Please select the desired re-sampling method")
+        ]),
+        _vm._v(" "),
+        _c(
+          "select",
+          {
+            staticClass: "form-control",
+            attrs: {
+              id: "ml_algorithm_resampling_id",
+              name: "ml_algorithm_resampling_id"
+            }
+          },
+          _vm._l(_vm.resampling, function(option) {
+            return _c("option", { domProps: { value: option.alias } }, [
+              _vm._v(
+                "\n                    " +
+                  _vm._s(option.name) +
+                  "\n                "
+              )
+            ])
+          })
+        )
+      ]),
+      _vm._v(" "),
+      _c(
+        "div",
+        { staticClass: "col-md-6" },
+        _vm._l(_vm.tune, function(range) {
+          return _c("div", { staticClass: "slidecontainer" }, [
+            _c("strong", [_vm._v(_vm._s(range.description) + " (10)")]),
+            _c("br"),
+            _vm._v(" "),
+            _c("span", [_vm._v(_vm._s(range.low) + " ")]),
+            _vm._v(" "),
+            _c("input", {
+              staticClass: "slider",
+              attrs: {
+                type: "range",
+                min: range.low,
+                max: range.high,
+                id: "myRange",
+                step: range.step
+              },
+              domProps: { value: range.default }
+            }),
+            _vm._v(" "),
+            _c("span", [_vm._v(" " + _vm._s(range.high))])
+          ])
+        })
+      )
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+module.exports = { render: render, staticRenderFns: staticRenderFns }
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+    require("vue-hot-reload-api")      .rerender("data-v-b6fffaa2", module.exports)
+  }
+}
 
 /***/ })
 /******/ ]);
