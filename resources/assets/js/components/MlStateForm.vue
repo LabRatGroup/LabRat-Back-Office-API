@@ -1,36 +1,62 @@
 <template>
     <div>
+        <div class="card mb-2">
+            <div class="card-header">Training algorithm selection</div>
+            <div class="card-body">
+                <div class="form-group row">
 
-        <div class="form-group row">
-            <div class="offset-1 col-md-10">
-                <label for="ml_algorithm_id">Please select the desired training algorithm</label>
-                <select class="form-control" id="ml_algorithm_id" name="ml_algorithm_id">
-                    <option value="">Use the best fitted method</option>
-                    <option v-for="option in algorithms" v-bind:value="option.id">
-                        {{ option.name }}
-                    </option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group row">
-            <div class="col-md-6">
-                <label for="ml_algorithm_resampling_id">Please select the desired re-sampling method</label>
-                <select class="form-control" id="ml_algorithm_resampling_id" name="ml_algorithm_resampling_id">
-                    <option v-for="option in resampling" v-bind:value="option.alias">
-                        {{ option.name }}
-                    </option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <div class="slidecontainer" v-for="range in tune">
-                    <strong>{{ range.description }} (10)</strong><br/>
-                    <span>{{ range.low }}&nbsp;</span>
-                    <input type="range" :min="range.low" :max="range.high" :value="range.default" class="slider" id="myRange" :step="range.step">
-                    <span>&nbsp;{{ range.high }}</span>
+                    <div class="offset-1 col-md-10 mb-3">
+                        <label for="ml_algorithm_id">Please select the desired training algorithm</label>
+                        <select class="form-control" id="ml_algorithm_id" name="ml_algorithm_id" v-model="algorithm" :onchange="setAlgorithmParams()">
+                            <option :value="null">Use the best fitted method</option>
+                            <option v-for="option in algorithms" v-bind:value="option.alias">
+                                {{ option.name }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="offset-1 col-md-10 col-md-pull-1">
+                        <div class="row mb-2" v-for="item in params">
+                            <div class="col-md-12">
+                                <strong>{{ item.name }}</strong>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon-from">From</span>
+                                    </div>
+                                    <input type="text" :value="item.default_value[item.key].min" class="form-control" :id="item.key" aria-describedby="basic-addon-from" required="required">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 ">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon-to">To</span>
+                                    </div>
+                                    <input type="text" :value="item.default_value[item.key].max" class="form-control" :id="item.key" aria-describedby="basic-addon-to" required="required">
+                                </div>
+                            </div>
+
+                            <div class="col-md-4 ">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon-step">Steps</span>
+                                    </div>
+                                    <input type="text" :value="item.default_value[item.key].step" class="form-control" :id="item.key" aria-describedby="basic-addon-step" required="required">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <small>min: {{ item.low_range }}, max: {{ item.high_range }}, steps: {{ item.step }} </small>
+                            </div>
+
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
         </div>
-
     </div>
 </template>
 
@@ -39,15 +65,13 @@
         name: "MlStateForm",
         data() {
             return {
+                algorithm: null,
                 algorithms: [],
-                preprocessing: [],
-                resampling: [],
-                tune:[],
+                params: [],
             }
         },
         mounted: function () {
             this.populateAlgorithms();
-            this.populateResampling();
         },
         methods: {
             populateAlgorithms: function () {
@@ -60,29 +84,15 @@
                         console.error('Can not retrieve algorithm list.')
                     })
             },
-            popularePreprocessing: function () {
-                window.axios.get('/api/algorithm/preprocessing')
-                    .then(response => {
-                        let data = response.data.data;
-                        this.preprocessing = data;
-                    })
-                    .catch(e => {
-                        console.error('Can not retrieve algorithm preprocessing option list.')
-                    })
-            },
-            populateResampling: function () {
-                window.axios.get('/api/algorithm/getResamplingMethods')
-                    .then(response => {
-                        let data = response.data.data;
-                        this.resampling = data;
-                        this.tune = data[0]['tune'];
-                    })
-                    .catch(e => {
-                        console.error('Can not retrieve algorithm resampling option list.')
-                    })
-            },
-            catchAlgorithmOptions: function () {
-
+            setAlgorithmParams: function () {
+                if (this.algorithm !== null) {
+                    let jq = window.jsonQ(this.algorithms);
+                    let items = jq.find('alias');
+                    let index = items.index(this.algorithm);
+                    this.params = this.algorithms[index]['params'];
+                } else {
+                    this.params = [];
+                }
             }
         }
     }

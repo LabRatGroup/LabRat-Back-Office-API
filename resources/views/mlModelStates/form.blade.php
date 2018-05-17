@@ -9,13 +9,9 @@
                     <input type="hidden" name="_method" value="{{ $state->id ? 'PATCH' : 'POST' }}">
                     @csrf
 
-                    <div class="card mb-2">
-                        <div class="card-header">{{ __('Train Model: :model', ['model'=>$model->title]) }}</div>
-                        <div class="card-body">
-                            <ml-state-form></ml-state-form>
+                    <ml-state-form></ml-state-form>
 
-                        </div>
-                    </div>
+
                 </form>
             </div>
         </div>

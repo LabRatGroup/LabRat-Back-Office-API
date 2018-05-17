@@ -45,6 +45,8 @@ class RunMachineLearningModelTrainingScript implements ShouldQueue
         Log::info('Status for training job ' . $token . ': ' . $res->getStatusCode());
 
         $this->state->setStatus($res->getStatusCode());
+
+        // TODO Set as current if highest score
     }
 
     /**

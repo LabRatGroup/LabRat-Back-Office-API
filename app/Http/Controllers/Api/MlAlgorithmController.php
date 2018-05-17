@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\MlAlgorithm;
 use App\Models\MlAlgorithmParam;
 use App\Repositories\MlAlgorithmRepository;
 use Exception;
@@ -32,9 +33,14 @@ class MlAlgorithmController extends ApiController
         try {
             $algorithms = $this->mlAlgorithmRepository->findAll();
 
-            /** @var MlAlgorithmParam $algorithm */
+            /** @var MlAlgorithm $algorithm */
             foreach ($algorithms as $algorithm) {
                 $algorithm->default_value = json_decode($algorithm->default_value);
+
+                /** @var MlAlgorithmParam $param */
+                foreach ($algorithm->params as $param) {
+                    $param->default_value = json_decode($param->default_value);
+                }
             }
 
             return $this->responseOk($algorithms);
@@ -84,10 +90,10 @@ class MlAlgorithmController extends ApiController
                     'tune'  => [
                         'p' => [
                             'description' => 'p',
-                            'low'     => 0.1,
-                            'high'    => 1,
-                            'step'    => 0.1,
-                            'default' => 0.75
+                            'low'         => 0.1,
+                            'high'        => 1,
+                            'step'        => 0.1,
+                            'default'     => 0.75
                         ],
                     ],
                 ],
@@ -97,17 +103,17 @@ class MlAlgorithmController extends ApiController
                     'tune'  => [
                         'number'  => [
                             'description' => 'Number',
-                            'low'     => 1,
-                            'high'    => 20,
-                            'step'    => 1,
-                            'default' => 10,
+                            'low'         => 1,
+                            'high'        => 20,
+                            'step'        => 1,
+                            'default'     => 10,
                         ],
                         'repeats' => [
                             'description' => 'Repeats',
-                            'low'     => 1,
-                            'high'    => 20,
-                            'step'    => 1,
-                            'default' => 10,
+                            'low'         => 1,
+                            'high'        => 20,
+                            'step'        => 1,
+                            'default'     => 10,
                         ],
                     ],
                 ],
@@ -117,10 +123,10 @@ class MlAlgorithmController extends ApiController
                     'tune'  => [
                         'number' => [
                             'description' => 'Number',
-                            'low'     => 1,
-                            'high'    => 50,
-                            'step'    => 1,
-                            'default' => 25,
+                            'low'         => 1,
+                            'high'        => 50,
+                            'step'        => 1,
+                            'default'     => 25,
                         ],
                     ],
                 ],
@@ -130,10 +136,10 @@ class MlAlgorithmController extends ApiController
                     'tune'  => [
                         'number' => [
                             'description' => 'Number',
-                            'low'     => 1,
-                            'high'    => 50,
-                            'step'    => 1,
-                            'default' => 25,
+                            'low'         => 1,
+                            'high'        => 50,
+                            'step'        => 1,
+                            'default'     => 25,
                         ],
                     ],
                 ],
