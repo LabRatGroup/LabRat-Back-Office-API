@@ -76,15 +76,15 @@ class MlAlgorithmParamSeeder extends Seeder
 
 
         MlAlgorithmParam::create([
-            'name'          => 'Bandwidth Adjustment',
-            'description'   => '',
-            'key'           => 'adjust',
-            'low_range'     => 1,
-            'high_range'    => 10,
-            'step'          => 0.5,
-            'classType'     => 'numeric',
-            'options'       => null,
-            'default_value' => json_encode([
+            'name'            => 'Bandwidth Adjustment',
+            'description'     => '',
+            'key'             => 'adjust',
+            'low_range'       => 1,
+            'high_range'      => 10,
+            'step'            => 0.5,
+            'classType'       => 'numeric',
+            'options'         => null,
+            'default_value'   => json_encode([
                 'adjust' => [
                     'min'  => 2,
                     'max'  => 5,
@@ -117,15 +117,15 @@ class MlAlgorithmParamSeeder extends Seeder
         ]);
 
         MlAlgorithmParam::create([
-            'name'          => 'Weight Decay',
-            'description'   => '',
-            'key'           => 'decay',
-            'low_range'     => 1,
-            'high_range'    => 10,
-            'step'          => 1,
-            'classType'     => 'numeric',
-            'options'       => null,
-            'default_value' => json_encode([
+            'name'            => 'Weight Decay',
+            'description'     => '',
+            'key'             => 'decay',
+            'low_range'       => 1,
+            'high_range'      => 10,
+            'step'            => 1,
+            'classType'       => 'numeric',
+            'options'         => null,
+            'default_value'   => json_encode([
                 'decay' => [
                     'min'  => 2,
                     'max'  => 5,
@@ -209,7 +209,20 @@ class MlAlgorithmParamSeeder extends Seeder
             'high_range'      => null,
             'step'            => null,
             'classType'       => 'character',
-            'options'         => '[A,B,C]',
+            'options'         => json_encode([
+                [
+                    'key'   => 'Model type A',
+                    'value' => 'A',
+                ],
+                [
+                    'key'   => 'Model type B',
+                    'value' => 'B',
+                ],
+                [
+                    'key'   => 'Model type C',
+                    'value' => 'C',
+                ],
+            ]),
             'default_value'   => json_encode([
                 'model' => [
                     'value' => 'A',

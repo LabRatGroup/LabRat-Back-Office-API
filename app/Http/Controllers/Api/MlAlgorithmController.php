@@ -76,6 +76,7 @@ class MlAlgorithmController extends ApiController
                     'alias' => 'cv',
                     'tune'  => [
                         'number' => [
+                            'key'         => 'number',
                             'description' => 'Number',
                             'low'         => 1,
                             'high'        => 20,
@@ -89,39 +90,42 @@ class MlAlgorithmController extends ApiController
                     'alias' => 'LGOCV',
                     'tune'  => [
                         'p' => [
+                            'key'         => 'p',
                             'description' => 'p',
                             'low'         => 0.1,
                             'high'        => 1,
-                            'step'        => 0.1,
+                            'step'        => 0.05,
                             'default'     => 0.75
                         ],
                     ],
                 ],
-                [
-                    'name'  => 'Repeated k-fold cross- validation',
-                    'alias' => 'repeatedcv',
-                    'tune'  => [
-                        'number'  => [
-                            'description' => 'Number',
-                            'low'         => 1,
-                            'high'        => 20,
-                            'step'        => 1,
-                            'default'     => 10,
-                        ],
-                        'repeats' => [
-                            'description' => 'Repeats',
-                            'low'         => 1,
-                            'high'        => 20,
-                            'step'        => 1,
-                            'default'     => 10,
-                        ],
-                    ],
-                ],
+//                [
+//                    'name'  => 'Repeated k-fold cross- validation',
+//                    'alias' => 'repeatedcv',
+//                    'tune'  => [
+//                        'number'  => [
+//                            'key'         => 'number',
+//                            'description' => 'Number',
+//                            'low'         => 1,
+//                            'high'        => 20,
+//                            'step'        => 1,
+//                            'default'     => 10,
+//                        ],
+//                        'repeats' => [
+//                            'description' => 'Repeats',
+//                            'low'         => 1,
+//                            'high'        => 20,
+//                            'step'        => 1,
+//                            'default'     => 10,
+//                        ],
+//                    ],
+//                ],
                 [
                     'name'  => 'Bootstrap sampling',
                     'alias' => 'boot',
                     'tune'  => [
                         'number' => [
+                            'key'=>'number',
                             'description' => 'Number',
                             'low'         => 1,
                             'high'        => 50,
@@ -135,6 +139,7 @@ class MlAlgorithmController extends ApiController
                     'alias' => 'boot632',
                     'tune'  => [
                         'number' => [
+                            'key'=>'number',
                             'description' => 'Number',
                             'low'         => 1,
                             'high'        => 50,
@@ -143,11 +148,11 @@ class MlAlgorithmController extends ApiController
                         ],
                     ],
                 ],
-                [
-                    'name'  => 'Leave-one-out cross-validation',
-                    'alias' => 'LOOCV',
-                    'tune'  => [],
-                ],
+//                [
+//                    'name'  => 'Leave-one-out cross-validation',
+//                    'alias' => 'LOOCV',
+//                    'tune'  => [],
+//                ],
             ]
         );
     }

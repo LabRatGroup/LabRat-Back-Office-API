@@ -9,8 +9,8 @@
                     <input type="hidden" name="_method" value="{{ $state->id ? 'PATCH' : 'POST' }}">
                     @csrf
 
-                    <ml-state-form></ml-state-form>
-
+                    <ml-algorithm-form></ml-algorithm-form>
+                    <ml-resampling-form></ml-resampling-form>
 
                 </form>
             </div>
