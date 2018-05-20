@@ -23,7 +23,7 @@
                             <p class="mb-1">{{ $model->description }}</p>
                             <small>{{ trans_choice('frontend.states_count', $model->states->count(), ['states' =>$model->states->count()]) }}
                             </small>
-                            @if($model->states->count() > 0)
+                            @if($model->states->count() > 0 && $model->getCurrentstate())
                                 <small> / {{ $model->getCurrentstate()->updated_at }}
                                     ({{ $model->getCurrentstate()->code }})
                                 </small>

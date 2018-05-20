@@ -76,6 +76,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('algorithm', 'Api\MlAlgorithmController@index')->name('api.algorithm.index');
     Route::get('algorithm/show/{id}', 'Api\MlAlgorithmController@show')->name('api.algorithm.show');
     Route::get('algorithm/getResamplingMethods', 'Api\MlAlgorithmController@getResamplingMethods')->name('api.algorithm.resampling');
+    Route::get('algorithm/getPreprocessingMethods', 'Api\MlAlgorithmController@getPreprocessingMethods')->name('api.algorithm.preprocessing');
+    Route::get('algorithm/getMetricMethods', 'Api\MlAlgorithmController@getMetricMethods')->name('api.algorithm.metric');
 
 });
 

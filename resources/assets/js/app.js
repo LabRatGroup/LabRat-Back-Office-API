@@ -17,8 +17,11 @@ window.Vue = require('vue');
 
 Vue.component('example-component', require('./components/ExampleComponent.vue'));
 Vue.component('collaborators-manager', require('./components/CollaboratorsManager.vue'));
+Vue.component('ml-state-form', require('./components/MlStateForm.vue'));
 Vue.component('ml-algorithm-form', require('./components/MlAlgorithmForm.vue'));
 Vue.component('ml-resampling-form', require('./components/MlReSamplingForm.vue'));
+Vue.component('ml-preprocessing-form', require('./components/MlPreprocessingForm.vue'));
+Vue.component('ml-metric-form', require('./components/MlMetricForm.vue'));
 
 const app = new Vue({
     el: '#app'

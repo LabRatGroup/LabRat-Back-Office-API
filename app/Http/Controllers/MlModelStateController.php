@@ -21,10 +21,18 @@ use Illuminate\Http\Request;
 
 class MlModelStateController extends Controller
 {
-    private const MODEL_STATE_PARAMS_PARAMETER = 'params';
     private const MODEL_ID_PARAMETER = 'ml_model_id';
     private const ALGORITHM_ID_PARAMETER = 'ml_algorithm_id';
     private const TRAINING_DATA_FILE_PARAMETER = 'file';
+    private const ALGORITHM_METHOD_ALIAS = 'method';
+    private const DATA_RE_PROCESSING_METHOD = 'preprocessing';
+    private const MODEL_EVALUATION_METRIC_FACTOR = 'metric';
+    private const MODEL_POSITIVE_CLASS = 'positive';
+    private const MODEL_RESAMPLING_METHOD = 'control';
+    private const ALGORITHM_METHOD_PARAMS = 'tune';
+    private const ML_STATE_PARAMS = 'params';
+    private const MODEL_STATE_PARAMS_PARAMETER = 'params';
+
 
     /** @var MlModelStateRepository */
     private $mlModelStateRepository;
@@ -96,10 +104,9 @@ class MlModelStateController extends Controller
         /** @var MlModelState $state */
         $state = $this->mlModelStateRepository->findOneOrFailById($id);
         $this->authorize('view', $state->model->project);
-
         return view('mlModelStates.show')
             ->with('state', $state)
-            ->with('params', json_decode($state->score->params));
+            ->with('params', json_decode($state->score->params)[0]);
     }
 
     /**
@@ -133,7 +140,21 @@ class MlModelStateController extends Controller
     public function store(MlModelStateRequest $request)
     {
         $params = $this->getParams($request);
+        $tmp[self::ALGORITHM_METHOD_ALIAS] = $params[self::ALGORITHM_METHOD_ALIAS];
+        $tmp[self::DATA_RE_PROCESSING_METHOD] = $params[self::DATA_RE_PROCESSING_METHOD];
+        $tmp[self::MODEL_EVALUATION_METRIC_FACTOR] = $params[self::MODEL_EVALUATION_METRIC_FACTOR];
+        $tmp[self::MODEL_POSITIVE_CLASS] = $params[self::MODEL_POSITIVE_CLASS];
 
+        $tmp[self::MODEL_RESAMPLING_METHOD] = json_decode($params[self::MODEL_RESAMPLING_METHOD]);
+        $tmp[self::ALGORITHM_METHOD_PARAMS] = json_decode($params[self::ALGORITHM_METHOD_PARAMS]);
+        $params[self::ML_STATE_PARAMS][] = $tmp;
+
+        $args = [];
+        $args[self::MODEL_ID_PARAMETER] =  $params[self::MODEL_ID_PARAMETER];
+        $args[self::ALGORITHM_ID_PARAMETER] =  $params[self::ALGORITHM_ID_PARAMETER];
+        $args[self::ML_STATE_PARAMS] =  json_encode($params[self::ML_STATE_PARAMS]);
+
+//        dd($args);
         /** @var MlModel $model */
         $model = $this->mlModelRepository->findOneOrFailById($params[self::MODEL_ID_PARAMETER]);
         $this->authorize('view', $model->project);
@@ -150,11 +171,11 @@ class MlModelStateController extends Controller
             /** @var MlAlgorithm $algorithm */
             $algorithm = $this->mlAlgorithmRepository->findOneOrFailById($params[self::ALGORITHM_ID_PARAMETER]);
         } else {
-            $params[self::MODEL_STATE_PARAMS_PARAMETER] = $this->mlModelStateService->generateGlobalPredictionParams($model);
+            $args[self::MODEL_STATE_PARAMS_PARAMETER] = $this->mlModelStateService->generateGlobalPredictionParams($model);
         }
 
         /** @var MlModelState $state */
-        $state = $this->mlModelStateRepository->create($params);
+        $state = $this->mlModelStateRepository->create($args);
         $state->setModel($model);
         if (isset($algorithm)) $state->setAlgorithm($algorithm);
 
@@ -162,10 +183,9 @@ class MlModelStateController extends Controller
         $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $mime, $state);
         $state->trainingData()->save($modelStateTrainingData);
 
-        RunMachineLearningModelTrainingScript::dispatch($state);
+        RunMachineLearningModelTrainingScript::dispatch($state, $this->mlModelService);
 
-        return redirect()->action('MlModelStateController@index')
-            ->with('state', $state);
+        return redirect()->action('ProjectController@index');
 
     }
 
@@ -235,10 +255,9 @@ class MlModelStateController extends Controller
 
         $state->trainingData()->save($modelStateTrainingData);
 
-        RunMachineLearningModelTrainingScript::dispatch($state);
+        RunMachineLearningModelTrainingScript::dispatch($state, $this->mlModelService);
 
-        return redirect()->action('MlModelStateController@index')
-            ->with('state', $state);
+        return redirect()->action('ProjectController@show@index');
 
     }
 
@@ -295,9 +314,15 @@ class MlModelStateController extends Controller
     private function getParams(Request $request)
     {
         return $request->only([
-            self::MODEL_STATE_PARAMS_PARAMETER,
             self::MODEL_ID_PARAMETER,
-            self::ALGORITHM_ID_PARAMETER
+            self::ALGORITHM_ID_PARAMETER,
+            self::TRAINING_DATA_FILE_PARAMETER,
+            self::ALGORITHM_METHOD_ALIAS,
+            self::DATA_RE_PROCESSING_METHOD,
+            self::MODEL_EVALUATION_METRIC_FACTOR,
+            self::MODEL_POSITIVE_CLASS,
+            self::MODEL_RESAMPLING_METHOD,
+            self::ALGORITHM_METHOD_PARAMS,
         ]);
     }
 }

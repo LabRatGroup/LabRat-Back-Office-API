@@ -120,9 +120,9 @@ class MlAlgorithmParamSeeder extends Seeder
             'name'            => 'Weight Decay',
             'description'     => '',
             'key'             => 'decay',
-            'low_range'       => 1,
-            'high_range'      => 10,
-            'step'            => 1,
+            'low_range'       => 0.1,
+            'high_range'      => 1,
+            'step'            => 0.1,
             'classType'       => 'numeric',
             'options'         => null,
             'default_value'   => json_encode([
@@ -211,16 +211,12 @@ class MlAlgorithmParamSeeder extends Seeder
             'classType'       => 'character',
             'options'         => json_encode([
                 [
-                    'key'   => 'Model type A',
-                    'value' => 'A',
+                    'key'   => 'Rules',
+                    'value' => 'rules',
                 ],
                 [
-                    'key'   => 'Model type B',
-                    'value' => 'B',
-                ],
-                [
-                    'key'   => 'Model type C',
-                    'value' => 'C',
+                    'key'   => 'Tree',
+                    'value' => 'trees',
                 ],
             ]),
             'default_value'   => json_encode([

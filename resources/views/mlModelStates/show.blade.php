@@ -75,7 +75,7 @@
 
                                 <strong>{{ __('Algorithm parameters:') }}</strong>
                                 <ul>
-                                    @foreach($params->tune as $key=>$value)
+                                    @foreach($params->tune[0] as $key=>$value)
                                         <li><span>{{ $key }}
                                                 (
                                                 @foreach($value as $k=>$v)

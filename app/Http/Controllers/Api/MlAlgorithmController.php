@@ -67,6 +67,36 @@ class MlAlgorithmController extends ApiController
         }
     }
 
+    public function getPreprocessingMethods()
+    {
+        return $this->responseOk([
+//            'bagImpute',
+//            'BoxCox',
+            'center',
+//            'corr',
+//            'conditionalX',
+//            'expoTrans',
+//            'ica',
+//            'knnImpute',
+//            'medianImpute',
+//            'nzv',
+//            'pca',
+            'range',
+            'scale',
+//            'spatialSign',
+//            'YeoJohnson',
+//            'zv',
+        ]);
+    }
+
+    public function getMetricMethods()
+    {
+        return $this->responseOk([
+            'Accuracy',
+            'Kappa',
+        ]);
+    }
+
     public function getResamplingMethods()
     {
         return $this->responseOk(
@@ -99,33 +129,33 @@ class MlAlgorithmController extends ApiController
                         ],
                     ],
                 ],
-//                [
-//                    'name'  => 'Repeated k-fold cross- validation',
-//                    'alias' => 'repeatedcv',
-//                    'tune'  => [
-//                        'number'  => [
-//                            'key'         => 'number',
-//                            'description' => 'Number',
-//                            'low'         => 1,
-//                            'high'        => 20,
-//                            'step'        => 1,
-//                            'default'     => 10,
-//                        ],
-//                        'repeats' => [
-//                            'description' => 'Repeats',
-//                            'low'         => 1,
-//                            'high'        => 20,
-//                            'step'        => 1,
-//                            'default'     => 10,
-//                        ],
-//                    ],
-//                ],
+                //                [
+                //                    'name'  => 'Repeated k-fold cross- validation',
+                //                    'alias' => 'repeatedcv',
+                //                    'tune'  => [
+                //                        'number'  => [
+                //                            'key'         => 'number',
+                //                            'description' => 'Number',
+                //                            'low'         => 1,
+                //                            'high'        => 20,
+                //                            'step'        => 1,
+                //                            'default'     => 10,
+                //                        ],
+                //                        'repeats' => [
+                //                            'description' => 'Repeats',
+                //                            'low'         => 1,
+                //                            'high'        => 20,
+                //                            'step'        => 1,
+                //                            'default'     => 10,
+                //                        ],
+                //                    ],
+                //                ],
                 [
                     'name'  => 'Bootstrap sampling',
                     'alias' => 'boot',
                     'tune'  => [
                         'number' => [
-                            'key'=>'number',
+                            'key'         => 'number',
                             'description' => 'Number',
                             'low'         => 1,
                             'high'        => 50,
@@ -139,7 +169,7 @@ class MlAlgorithmController extends ApiController
                     'alias' => 'boot632',
                     'tune'  => [
                         'number' => [
-                            'key'=>'number',
+                            'key'         => 'number',
                             'description' => 'Number',
                             'low'         => 1,
                             'high'        => 50,
@@ -148,11 +178,11 @@ class MlAlgorithmController extends ApiController
                         ],
                     ],
                 ],
-//                [
-//                    'name'  => 'Leave-one-out cross-validation',
-//                    'alias' => 'LOOCV',
-//                    'tune'  => [],
-//                ],
+                //                [
+                //                    'name'  => 'Leave-one-out cross-validation',
+                //                    'alias' => 'LOOCV',
+                //                    'tune'  => [],
+                //                ],
             ]
         );
     }

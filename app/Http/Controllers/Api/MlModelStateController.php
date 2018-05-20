@@ -150,7 +150,7 @@ class MlModelStateController extends ApiController
             $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $mime, $state);
             $state->trainingData()->save($modelStateTrainingData);
 
-            RunMachineLearningModelTrainingScript::dispatch($state);
+            RunMachineLearningModelTrainingScript::dispatch($state,$this->mlModelService);
 
             return $this->responseCreated($state);
 
@@ -210,7 +210,7 @@ class MlModelStateController extends ApiController
 
             $state->trainingData()->save($modelStateTrainingData);
 
-            RunMachineLearningModelTrainingScript::dispatch($state);
+            RunMachineLearningModelTrainingScript::dispatch($state, $this->mlModelService);
 
             return $this->responseOk($state);
 

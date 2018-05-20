@@ -6,7 +6,7 @@
                 <div class="form-group row">
                     <div class="offset-1 col-md-10 mb-3">
                         <label for="ml_algorithm_methods_id">Please select the desired re-sampling method</label>
-                        <select class="form-control" id="ml_algorithm_methods_id" name="ml_algorithm_methods_id" v-model="trainControlMethod" :onchange="setResamplingParams()">
+                        <select class="form-control" id="ml_algorithm_methods_id" v-model="trainControlMethod" :onchange="setResamplingParams()">
                             <option v-for="option in methods" v-bind:value="option.alias">
                                 {{ option.name }}
                             </option>
@@ -45,7 +45,6 @@
         },
         mounted: function () {
             this.populateResampling();
-            this.buildResponse();
         },
         methods: {
             populateResampling: function () {
@@ -68,9 +67,6 @@
                 } else {
                     this.tune = [];
                 }
-            },
-            buildResponse: function () {
-
             }
         },
         computed: {
@@ -82,10 +78,8 @@
                 }
                 return JSON.stringify(
                     {
-                        'control': {
-                            'trainControlMethod': this.trainControlMethod,
-                            'trainControlMethodRounds': trainControlMethodRounds
-                        }
+                        'trainControlMethod': this.trainControlMethod,
+                        'trainControlMethodRounds': trainControlMethodRounds
                     });
             }
         }

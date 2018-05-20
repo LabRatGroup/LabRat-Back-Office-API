@@ -21,7 +21,7 @@ class CreateMlModelStateScoresTable extends Migration
             $table->longText('results')->nullable(false);
             $table->float('kappa')->nullable(false);
             $table->float('accuracy')->nullable(false);
-            $table->string('confusion_matrix')->nullable(false);
+            $table->longText('confusion_matrix')->nullable(false);
             $table->float('sensitivity')->nullable(false);
             $table->float('specificity')->nullable(false);
             $table->float('precision')->nullable(false);

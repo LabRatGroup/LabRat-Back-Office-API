@@ -7,7 +7,7 @@
 
                     <div class="offset-1 col-md-10 mb-3">
                         <label for="ml_algorithm_id">Please select the desired training algorithm</label>
-                        <select class="form-control" id="ml_algorithm_id" name="ml_algorithm_id" v-model="algorithm" :onchange="setAlgorithmParams()">
+                        <select class="form-control" id="ml_algorithm_id" v-model="method" :onchange="setAlgorithmParams()">
                             <option :value="null">Use the best fitted method</option>
                             <option v-for="option in algorithms" v-bind:value="option.alias">
                                 {{ option.name }}
@@ -58,17 +58,19 @@
 
                             <div class="row" v-if="item.classType == 'logical'">
                                 <div class="offset-4 col-md-12">
-                                   <select class="form-control" :id="item.key" :name="item.key">
-                                       <option value="1">True</option>
-                                       <option value="0">False</option>
-                                   </select>
+                                    <select class="form-control" :id="item.key" :name="item.key">
+                                        <option value="1">True</option>
+                                        <option value="0">False</option>
+                                    </select>
                                 </div>
                             </div>
 
                             <div class="row" v-if="item.classType == 'character'">
                                 <div class="offset-4 col-md-12">
                                     <select class="form-control" :id="item.key" :name="item.key">
-                                        <option :value="opt.value" v-for="opt in JSON.parse(item.options)">{{ opt.key }}</option>
+                                        <option :value="opt.value" v-for="opt in JSON.parse(item.options)">{{ opt.key
+                                            }}
+                                        </option>
                                     </select>
                                 </div>
                             </div>
@@ -81,18 +83,22 @@
             </div>
         </div>
 
+        <input type="hidden" id="ml_algorithm_id" name="ml_algorithm_id" v-model="ml_algorithm_id"/>
+        <input type="hidden" id="method" name="method" v-model="method"/>
+        <input type="hidden" id="tune" name="tune" v-model="tune"/>
 
     </div>
 </template>
 
 <script>
     export default {
-        name: "MlStateForm",
+        name: "MlALgorithmForm",
         data() {
             return {
-                algorithm: null,
                 algorithms: [],
                 params: [],
+                method: null,
+                ml_algorithm_id:null
             }
         },
         mounted: function () {
@@ -104,20 +110,32 @@
                     .then(response => {
                         let data = response.data.data;
                         this.algorithms = data;
+                        this.method = this.algorithms[0].alias;
                     })
                     .catch(e => {
                         console.error('Can not retrieve algorithm list.')
                     })
             },
             setAlgorithmParams: function () {
-                if (this.algorithm !== null) {
+                if (this.method !== null) {
                     let jq = window.jsonQ(this.algorithms);
                     let items = jq.find('alias');
-                    let index = items.index(this.algorithm);
+                    let index = items.index(this.method);
                     this.params = this.algorithms[index]['params'];
+                    this.ml_algorithm_id = this.algorithms[index]['id'];
                 } else {
                     this.params = [];
                 }
+            }
+        },
+        computed: {
+            tune: function () {
+                let items = []
+
+                for (var item in this.params) {
+                    items.push(this.params[item].default_value);
+                }
+                return JSON.stringify(items);
             }
         }
     }
