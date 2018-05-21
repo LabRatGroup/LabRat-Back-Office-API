@@ -150,7 +150,7 @@ class MlModelStateController extends ApiController
             $modelStateTrainingData = $this->mlModelStateTrainingDataService->create($file, $mime, $state);
             $state->trainingData()->save($modelStateTrainingData);
 
-            RunMachineLearningModelTrainingScript::dispatch($state);
+            RunMachineLearningModelTrainingScript::dispatch($state,$this->mlModelService);
 
             return $this->responseCreated($state);
 
@@ -210,7 +210,7 @@ class MlModelStateController extends ApiController
 
             $state->trainingData()->save($modelStateTrainingData);
 
-            RunMachineLearningModelTrainingScript::dispatch($state);
+            RunMachineLearningModelTrainingScript::dispatch($state, $this->mlModelService);
 
             return $this->responseOk($state);
 
@@ -261,7 +261,7 @@ class MlModelStateController extends ApiController
             $this->authorize('update', $state->model->project);
             $state->setAsCurrent();
 
-            $this->mlModelService->reviewModelPerformance($state->model->token);
+            $this->mlModelService->updateModelPredictions($state->model);
 
             return $this->responseOk($state->refresh());
         } catch (AuthorizationException $authorizationException) {

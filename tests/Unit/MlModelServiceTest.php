@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Jobs\RunMachineLearningPredictionScript;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
@@ -13,6 +14,7 @@ use App\Repositories\MlModelRepository;
 use App\Repositories\MlModelStateScoreRepository;
 use App\Services\MlModelPredictionDataService;
 use App\Services\MlModelService;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -23,6 +25,9 @@ class MlModelServiceTest extends TestCase
     /** @test */
     public function should_reschedule_predictions_on_better_performance_model()
     {
+
+        Queue::fake();
+
         // Given
         /** @var MlModel $model */
         $model = factory(MlModel::class)->create();
@@ -131,5 +136,7 @@ class MlModelServiceTest extends TestCase
 
         $this->assertTrue($predictionDataDB1->params == $state2->params);
         $this->assertTrue($predictionDataDB2->params == $state2->params);
+        Queue::assertPushed(RunMachineLearningPredictionScript::class, 2);
     }
+
 }

@@ -58,7 +58,7 @@ class MlModelService
         }
     }
 
-    private function updateModelPredictions(MlModel $model)
+    public function updateModelPredictions(MlModel $model)
     {
         /** @var MlModelPrediction $prediction */
         foreach ($model->predictions as $prediction) {

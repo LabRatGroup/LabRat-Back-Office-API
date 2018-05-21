@@ -25,10 +25,13 @@
                                     <p>{{ str_limit($project->description, 100, ' [...]') }}</p>
                                     <p>
                                         @foreach($project->users as $member)
-                                            <a href="#" class="{{ $member->pivot->is_owner ? 'text-info':'text-secondary' }}">{{ $member->name }}</a>&nbsp;
+                                            <a href="#" class="{{ $member->pivot->is_owner ? 'text-info':'text-secondary' }}">{{ $member->name }}</a>
+                                            &nbsp;
                                         @endforeach
                                     </p>
+                                    <a href="{{ route('model.create', ['id'=>$project->id]) }}" class="btn btn-success">@lang('Create model')</a>
                                     <a href="{{ route('project.update', ['id'=>$project->id]) }}" class="btn btn-primary">@lang('Edit')</a>
+
                                     <button type="button" class="btn btn-danger" onclick="$('#delete-form-{{ $project->id }}').submit();">@lang('Delete')</button>
                                     <form id="delete-form-{{ $project->id }}" action="{{ route('project.delete', ['id' => $project->id]) }}" method="POST">
                                         {{ csrf_field() }}

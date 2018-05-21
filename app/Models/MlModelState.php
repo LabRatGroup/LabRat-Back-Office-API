@@ -122,4 +122,8 @@ class MlModelState extends BaseEntity
         $this->code = $code;
         $this->save();
     }
+
+    public function setCurrentState()
+    {
+    }
 }

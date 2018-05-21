@@ -41,3 +41,25 @@ Route::group(['middleware' => ['auth']], function () {
     Route::delete('teams/{id}/delete', 'TeamController@delete')->name('team.delete');
 });
 
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('models', 'MlModelController@index')->name('model.index');
+    Route::get('models/{id}/show', 'MlModelController@show')->name('model.show');
+    Route::get('models/{id}/create', 'MlModelController@create')->name('model.create');
+    Route::post('models/store', 'MlModelController@store')->name('model.store');
+    Route::get('models/{id}/update', 'MlModelController@update')->name('model.update');
+    Route::patch('models/{id}/save', 'MlModelController@save')->name('model.save');
+    Route::delete('models/{id}/delete', 'MlModelController@delete')->name('model.delete');
+});
+
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('state/model/{id}', 'MlModelStateController@index')->name('state.index');
+    Route::get('state/show/{id}', 'MlModelStateController@show')->name('state.show');
+    Route::get('state/{id}/create', 'MlModelStateController@create')->name('state.create');
+    Route::post('state/store', 'MlModelStateController@store')->name('state.store');
+    Route::get('state/{id}/update', 'MlModelStateController@update')->name('state.update');
+    Route::patch('state/{id}/save', 'MlModelStateController@save')->name('state.save');
+    Route::delete('state/{id}/delete', 'MlModelStateController@delete')->name('state.delete');
+    Route::get('state/{id}/current', 'MlModelStateController@current')->name('state.current');
+});
+
+

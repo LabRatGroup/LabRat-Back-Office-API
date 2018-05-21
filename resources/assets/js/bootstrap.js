@@ -13,6 +13,7 @@ try {
 
     require('bootstrap');
     require('bootstrap-select');
+
 } catch (e) {}
 
 /**

@@ -883,6 +883,7 @@ class MlModelStateControllerTest extends ApiTestCase
         Bus::assertNotDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
+    /** @test */
     public function project_user_should_set_model_state_as_active()
     {
         // Given
