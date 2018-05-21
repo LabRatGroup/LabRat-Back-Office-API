@@ -26,15 +26,49 @@
                 </div>
 
                 <div class="list-group">
-                    @foreach($model->states as $state)
-                        <a href="{{ route('state.show', ['id'=>$state->id]) }}" class="list-group-item list-group-item-action flex-column align-items-start {{ $state->id == $currentState->id ? 'active' : '' }}">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">{{ $model->updated_at }}</h5>
-                                <small>{{ __('frontend.accuracy', ['accuracy' =>$state->score->accuracy*100]) }}</small>
-                                <small>{{ __('frontend.kappa', ['kappa' =>$state->score->kappa]) }}</small>
-                            </div>
-                        </a>
-                    @endforeach
+                    @if($model->states()->count() > 0)
+                        <ul class="list-group">
+                            @foreach($model->states as $state)
+                                @php
+                                    $prefix = "list-group-item-";
+                                    if(is_null($state->code)) $color = $prefix.'warning';
+                                    if($state->code == '500') $color =  $prefix.'danger';
+                                    if($state->code == '200') $color = '';
+                                    if($currentState && $state->id == $currentState->id) $color =  $prefix.'success';
+                                @endphp
+                                <li class="list-group-item {{$color}} ">
+                                    <div class="row mb-3">
+                                        <strong class="col-md-4">{{ $state->created_at }}</strong>
+                                        <span class="col-md-4">{{ $state->algorithm->name }}</span>
+                                        @if($state->score)
+                                            <div class="col-md-3">
+                                                <span>
+                                                    {{ __('frontend.accuracy', ['accuracy' =>$state->score->accuracy*100]) }}
+                                                    <br/>
+                                                    {{ __('frontend.kappa', ['kappa' =>$state->score->kappa]) }}
+                                                </span>
+                                            </div>
+                                        @else
+                                            <span>@lang("frontend.status_pending")</span>
+                                        @endif
+                                    </div>
+                                    <div class="col-md-12 align-content-lg-end">
+                                        @if($state->code == '200')
+                                            <a href="{{ route('state.show', ['id'=>$state->id]) }}" class="btn btn-primary btn-sm">@lang('Details')</a>
+                                            @if($currentState && $state->id != $currentState->id)
+                                                <a href="{{ route('state.current', ['id'=>$state->id]) }}" class="btn btn-warning btn-sm">@lang('Set as current')</a>
+                                                <button type="button" class="btn btn-danger btn-sm" onclick="$('#delete-form-{{ $state->id }}').submit();">@lang('Delete')</button>
+                                                <form id="delete-form-{{ $state->id }}" action="{{ route('state.delete', ['id' => $state->id]) }}" method="POST">
+                                                    {{ csrf_field() }}
+                                                    <input type="hidden" name="_method" value="DELETE">
+                                                </form>
+                                            @endif
+                                        @endif
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @endif
                 </div>
 
             </div>

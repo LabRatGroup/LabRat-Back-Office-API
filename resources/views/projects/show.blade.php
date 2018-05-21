@@ -17,6 +17,7 @@
                     @foreach($project->models as $model)
                         @php
                             $currentState = $model->getCurrentState();
+                            if(!$currentState) $currentState = $model->states()->first();
                             $stateCount = $model->states->count();
                             $predictionCount = $model->predictions->count();
                         @endphp
@@ -30,7 +31,7 @@
                                 <div class="col-md-4 mb-3">
                                     <button type="button" class="btn btn-danger btn-sm" onclick="$('#delete-form-{{ $project->id }}').submit();">@lang('Delete')</button>
                                     <a href="{{ route('model.update', ['id'=>$model->id]) }}" class="btn btn-primary btn-sm">@lang('Edit')</a>
-                                    <a href="{{ $stateCount > 0 ? route('state.update', ['id'=>$model->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success btn-sm">@lang('Train')</a>
+                                    <a href="{{ $stateCount > 0 ? route('state.update', ['id'=>$currentState->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success btn-sm">@lang('Train')</a>
                                     <form id="delete-form-{{ $model->id }}" action="{{ route('model.delete', ['id' => $model->id]) }}" method="POST">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="_method" value="DELETE">

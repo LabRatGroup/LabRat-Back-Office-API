@@ -261,7 +261,7 @@ class MlModelStateController extends ApiController
             $this->authorize('update', $state->model->project);
             $state->setAsCurrent();
 
-            $this->mlModelService->reviewModelPerformance($state->model->token);
+            $this->mlModelService->updateModelPredictions($state->model);
 
             return $this->responseOk($state->refresh());
         } catch (AuthorizationException $authorizationException) {

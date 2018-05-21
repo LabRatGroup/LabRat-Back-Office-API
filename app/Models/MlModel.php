@@ -56,7 +56,7 @@ class MlModel extends BaseEntity
      */
     public function states()
     {
-        return $this->hasMany(MlModelState::class);
+        return $this->hasMany(MlModelState::class)->orderBy('created_at', 'desc');
     }
 
     /**
@@ -80,9 +80,8 @@ class MlModel extends BaseEntity
      */
     public function getCurrentState()
     {
-        $count = $this->states->count();
         foreach ($this->states as $state) {
-            if ($state->is_current || $count == 1) {
+            if ($state->is_current) {
                 return $state;
             }
         }

@@ -59,7 +59,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('state/{id}/update', 'MlModelStateController@update')->name('state.update');
     Route::patch('state/{id}/save', 'MlModelStateController@save')->name('state.save');
     Route::delete('state/{id}/delete', 'MlModelStateController@delete')->name('state.delete');
-    Route::post('state/{id}/current', 'MlModelStateController@current')->name('state.current');
+    Route::get('state/{id}/current', 'MlModelStateController@current')->name('state.current');
 });
 
 
