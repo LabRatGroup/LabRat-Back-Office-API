@@ -127,9 +127,9 @@ class MlAlgorithmParamSeeder extends Seeder
             'options'         => null,
             'default_value'   => json_encode([
                 'decay' => [
-                    'min'  => 2,
-                    'max'  => 5,
-                    'step' => 1,
+                    'min'  => 0.2,
+                    'max'  => 0.5,
+                    'step' => 0.1,
                 ],
             ]),
             'ml_algorithm_id' => $model->id,

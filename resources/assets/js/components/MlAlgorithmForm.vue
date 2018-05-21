@@ -6,8 +6,8 @@
                 <div class="form-group row">
 
                     <div class="offset-1 col-md-10 mb-3">
-                        <label for="ml_algorithm_id">Please select the desired training algorithm</label>
-                        <select class="form-control" id="ml_algorithm_id" v-model="method" :onchange="setAlgorithmParams()">
+                        <label for="algorithm_id">Please select the desired training algorithm</label>
+                        <select class="form-control" id="algorithm_id" v-model="method" :onchange="setAlgorithmParams()">
                             <option :value="null">Use the best fitted method</option>
                             <option v-for="option in algorithms" v-bind:value="option.alias">
                                 {{ option.name }}
@@ -28,7 +28,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon-from">From</span>
                                         </div>
-                                        <input type="text" :value="item.default_value[item.key].min" class="form-control" :id="item.key" aria-describedby="basic-addon-from" required="required">
+                                        <input type="text" v-model="item.default_value[item.key].min" class="form-control" :id="item.key" aria-describedby="basic-addon-from" required="required">
                                     </div>
                                 </div>
 
@@ -37,7 +37,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon-to">To</span>
                                         </div>
-                                        <input type="text" :value="item.default_value[item.key].max" class="form-control" :id="item.key" aria-describedby="basic-addon-to" required="required">
+                                        <input type="text" v-model="item.default_value[item.key].max" class="form-control" :id="item.key" aria-describedby="basic-addon-to" required="required">
                                     </div>
                                 </div>
 
@@ -46,7 +46,7 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text" id="basic-addon-step">Steps</span>
                                         </div>
-                                        <input type="text" :value="item.default_value[item.key].step" class="form-control" :id="item.key" aria-describedby="basic-addon-step" required="required">
+                                        <input type="text" v-model="item.default_value[item.key].step" class="form-control" :id="item.key" aria-describedby="basic-addon-step" required="required">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -98,7 +98,7 @@
                 algorithms: [],
                 params: [],
                 method: null,
-                ml_algorithm_id:null
+                ml_algorithm_id: null
             }
         },
         mounted: function () {

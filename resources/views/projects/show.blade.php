@@ -15,20 +15,53 @@
 
                 <div class="list-group">
                     @foreach($project->models as $model)
-                        <a href="{{ route('model.show', ['id'=>$model->id]) }}" class="list-group-item list-group-item-action flex-column align-items-start">
-                            <div class="d-flex w-100 justify-content-between">
-                                <h5 class="mb-1">{{ $model->title }}</h5>
-                                <small>{{ trans_choice('frontend.predictions_count', $model->predictions->count(), ['predictions' =>$model->predictions->count()]) }}</small>
+                        @php
+                            $currentState = $model->getCurrentState();
+                            $stateCount = $model->states->count();
+                            $predictionCount = $model->predictions->count();
+                        @endphp
+
+                        <li class="list-group-item">
+                            <div class="row">
+
+                                <div class="col-md-8 mb-3">
+                                    <a href="{{ route('model.show', ['id'=>$model->id]) }}">{{ $model->title }}</a>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <button type="button" class="btn btn-danger btn-sm" onclick="$('#delete-form-{{ $project->id }}').submit();">@lang('Delete')</button>
+                                    <a href="{{ route('model.update', ['id'=>$model->id]) }}" class="btn btn-primary btn-sm">@lang('Edit')</a>
+                                    <a href="{{ $stateCount > 0 ? route('state.update', ['id'=>$model->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success btn-sm">@lang('Train')</a>
+                                    <form id="delete-form-{{ $model->id }}" action="{{ route('model.delete', ['id' => $model->id]) }}" method="POST">
+                                        {{ csrf_field() }}
+                                        <input type="hidden" name="_method" value="DELETE">
+                                    </form>
+                                </div>
+
+                                <div class="col-md-12 left-content-around mb-3">
+                                    <p class="mb-1">{{ $model->description }}</p>
+                                </div>
+
+                                <div class="col-md-12 mb-3">
+                                    <small>{{ trans_choice('frontend.states_count', $stateCount, ['states' =>$stateCount]) }}</small>
+                                    @if($model->states->count() > 0 && $currentState)
+                                        <small>&nbsp;({{ $currentState->updated_at }})</small>
+                                        @if(isset($currentState->code))
+                                            <small class="text-{{ $currentState->code =='200' ?'success':'danger'  }}">
+                                                &nbsp;/&nbsp;{{ __('frontend.status_code', ['status' => $currentState->code]) }}
+                                            </small>
+                                        @else
+                                            <small class="text-warning">
+                                                &nbsp;/&nbsp;{{ __('frontend.status_pending') }}
+                                            </small>
+                                        @endif
+                                    @endif
+                                    <small>
+                                        &nbsp;/&nbsp;{{ trans_choice('frontend.predictions_count', $predictionCount, ['predictions' =>$predictionCount]) }}</small>
+                                </div>
+
                             </div>
-                            <p class="mb-1">{{ $model->description }}</p>
-                            <small>{{ trans_choice('frontend.states_count', $model->states->count(), ['states' =>$model->states->count()]) }}
-                            </small>
-                            @if($model->states->count() > 0 && $model->getCurrentstate())
-                                <small> / {{ $model->getCurrentstate()->updated_at }}
-                                    ({{ $model->getCurrentstate()->code }})
-                                </small>
-                            @endif
-                        </a>
+                        </li>
+
                     @endforeach
                 </div>
 

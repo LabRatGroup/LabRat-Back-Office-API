@@ -13,8 +13,10 @@ return [
     |
     */
 
-    'predictions_count'        => '{0} No predictions yet|{1} :predictions available prediction|[2,*] :predictions available predictions',
-    'states_count'             => '{0} no states defined yet|{1} :states available state|[2,*] :states available states',
+    'predictions_count'        => '{0} No predictions yet |{1} :predictions available prediction|[2,*] :predictions available predictions ',
+    'states_count'             => '{0} No states defined yet |{1} :states available state|[2,*] :states available states ',
+    'status_code'              => 'Status code: :status',
+    'status_pending'           => 'In progress...',
     'accuracy'                 => 'Accuracy: :accuracy%',
     'kappa'                    => 'Kappa: :kappa ',
     'sensitivity'              => 'Sensitivity: :sensitivity',

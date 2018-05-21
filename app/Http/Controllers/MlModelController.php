@@ -152,7 +152,8 @@ class MlModelController extends Controller
         $params = $request->only([
             'title',
             'description',
-            'project_id'
+            'project_id',
+            'positive',
         ]);
         /** @var MlModel $model */
         $model = $this->mlModelRepository->findOneOrFailById($id);

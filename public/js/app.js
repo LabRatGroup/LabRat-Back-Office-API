@@ -52425,7 +52425,7 @@ var render = function() {
       _c("div", { staticClass: "card-body" }, [
         _c("div", { staticClass: "form-group row" }, [
           _c("div", { staticClass: "offset-1 col-md-10 mb-3" }, [
-            _c("label", { attrs: { for: "ml_algorithm_id" } }, [
+            _c("label", { attrs: { for: "algorithm_id" } }, [
               _vm._v("Please select the desired training algorithm")
             ]),
             _vm._v(" "),
@@ -52442,7 +52442,7 @@ var render = function() {
                 ],
                 staticClass: "form-control",
                 attrs: {
-                  id: "ml_algorithm_id",
+                  id: "algorithm_id",
                   onchange: _vm.setAlgorithmParams()
                 },
                 on: {
@@ -52498,6 +52498,14 @@ var render = function() {
                           _vm._m(0, true),
                           _vm._v(" "),
                           _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: item.default_value[item.key].min,
+                                expression: "item.default_value[item.key].min"
+                              }
+                            ],
                             staticClass: "form-control",
                             attrs: {
                               type: "text",
@@ -52507,6 +52515,18 @@ var render = function() {
                             },
                             domProps: {
                               value: item.default_value[item.key].min
+                            },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  item.default_value[item.key],
+                                  "min",
+                                  $event.target.value
+                                )
+                              }
                             }
                           })
                         ])
@@ -52517,6 +52537,14 @@ var render = function() {
                           _vm._m(1, true),
                           _vm._v(" "),
                           _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: item.default_value[item.key].max,
+                                expression: "item.default_value[item.key].max"
+                              }
+                            ],
                             staticClass: "form-control",
                             attrs: {
                               type: "text",
@@ -52526,6 +52554,18 @@ var render = function() {
                             },
                             domProps: {
                               value: item.default_value[item.key].max
+                            },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  item.default_value[item.key],
+                                  "max",
+                                  $event.target.value
+                                )
+                              }
                             }
                           })
                         ])
@@ -52536,6 +52576,14 @@ var render = function() {
                           _vm._m(2, true),
                           _vm._v(" "),
                           _c("input", {
+                            directives: [
+                              {
+                                name: "model",
+                                rawName: "v-model",
+                                value: item.default_value[item.key].step,
+                                expression: "item.default_value[item.key].step"
+                              }
+                            ],
                             staticClass: "form-control",
                             attrs: {
                               type: "text",
@@ -52545,6 +52593,18 @@ var render = function() {
                             },
                             domProps: {
                               value: item.default_value[item.key].step
+                            },
+                            on: {
+                              input: function($event) {
+                                if ($event.target.composing) {
+                                  return
+                                }
+                                _vm.$set(
+                                  item.default_value[item.key],
+                                  "step",
+                                  $event.target.value
+                                )
+                              }
                             }
                           })
                         ])

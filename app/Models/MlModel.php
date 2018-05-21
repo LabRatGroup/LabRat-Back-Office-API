@@ -80,8 +80,9 @@ class MlModel extends BaseEntity
      */
     public function getCurrentState()
     {
+        $count = $this->states->count();
         foreach ($this->states as $state) {
-            if ($state->is_current) {
+            if ($state->is_current || $count == 1) {
                 return $state;
             }
         }
