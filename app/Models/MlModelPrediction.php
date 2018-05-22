@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Jenssegers\Mongodb\Eloquent\HybridRelations;
+use Jenssegers\Mongodb\Relations\HasMany;
 
 /**
  * @property MlModel model
@@ -67,11 +68,11 @@ class MlModelPrediction extends BaseEntity
     }
 
     /**
-     * @return HasOne
+     * @return  HasMany
      */
     public function score()
     {
-        return $this->hasOne(MlModelPredictionScore::class);
+        return $this->hasMany(MlModelPredictionScore::class, 'ml_model_prediction_data_id');
     }
 
     public function setStatus($code)

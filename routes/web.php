@@ -62,4 +62,17 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('state/{id}/current', 'MlModelStateController@current')->name('state.current');
 });
 
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('predictions/{id}/model', 'MlModelPredictionController@index')->name('prediction.index');
+    Route::get('predictions/{id}/show', 'MlModelPredictionController@show')->name('prediction.show');
+    Route::get('predictions/{id}/create', 'MlModelPredictionController@create')->name('prediction.create');
+    Route::post('predictions/store', 'MlModelPredictionController@store')->name('prediction.store');
+    Route::get('predictions/{id}/update', 'MlModelPredictionController@update')->name('prediction.update');
+    Route::patch('predictions/{id}/save', 'MlModelPredictionController@save')->name('prediction.save');
+    Route::delete('predictions/{id}/delete', 'MlModelPredictionController@delete')->name('prediction.delete');
+    Route::get('predictions/{id}/run', 'MlModelPredictionController@run')->name('prediction.run');
+
+});
+
+
 

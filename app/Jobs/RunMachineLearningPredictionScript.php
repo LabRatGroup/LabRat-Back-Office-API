@@ -16,6 +16,9 @@ class RunMachineLearningPredictionScript implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $tries = 1;
+    public $timeout = 500;
+
     /** @var MlModelPrediction */
     protected $prediction;
 
@@ -40,11 +43,8 @@ class RunMachineLearningPredictionScript implements ShouldQueue
         Log::info('Launching prediction job for data ' . $token);
 
         $client = new Client();
-        $res = $client->get('http://' . env('ML_HOST') . ':' . env('ML_PORT') . '/predict/' . $token);
-
-        Log::info('Status for prediction job ' . $token . ': ' . $res->getStatusCode());
-
-        $this->prediction->setStatus($res->getStatusCode());
+        $client->get('http://' . env('ML_HOST') . ':' . env('ML_PORT') . '/predict/' . $token);
+        $this->runHappyPath();
     }
 
     /**
@@ -52,6 +52,17 @@ class RunMachineLearningPredictionScript implements ShouldQueue
      */
     public function failed(Exception $exception)
     {
-        $this->prediction->setStatus($exception->getCode());
+        $this->prediction->load('score');
+        if ($this->prediction->score->count() > 0) {
+            $this->runHappyPath();
+        } else {
+            $this->prediction->setStatus("500");
+        }
+    }
+
+    private function runHappyPath()
+    {
+        Log::info('Status for prediction job  ' . $this->prediction->title . ': 200 Ok');
+        $this->prediction->setStatus("200");
     }
 }

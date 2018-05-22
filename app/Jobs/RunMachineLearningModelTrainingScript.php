@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\MlModelState;
+use App\Models\MlModelStateScore;
 use App\Services\MlModelService;
 use Exception;
 use GuzzleHttp\Client;
@@ -18,7 +19,7 @@ class RunMachineLearningModelTrainingScript implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 1;
-    public $timeout = 300;
+    public $timeout = 500;
 
     /** @var MlModelState */
     protected $state;
@@ -49,17 +50,8 @@ class RunMachineLearningModelTrainingScript implements ShouldQueue
         Log::info('Launching model training job for data ' . $token);
 
         $client = new Client();
-        $res = $client->get('http://' . env('ML_HOST') . ':' . env('ML_PORT') . '/train/' . $token);
-
-        Log::info('Status for training job ' . $token . ': ' . $res->getStatusCode());
-
-        $this->state->setStatus($res->getStatusCode());
-
-        if ($this->state->model->states->count() > 1) {
-            $this->mlModelService->reviewModelPerformance($this->state->model->token);
-        } else {
-            $this->state->setIsCurrent(true);
-        }
+        $client->get('http://' . env('ML_HOST') . ':' . env('ML_PORT') . '/train/' . $token);
+        $this->runHappyPath();
     }
 
     /**
@@ -67,6 +59,21 @@ class RunMachineLearningModelTrainingScript implements ShouldQueue
      */
     public function failed(Exception $exception)
     {
-        $this->state->setStatus($exception->getCode());
+        $this->state->load('score');
+        if ($this->state->score()) {
+            $this->runHappyPath();
+        } else {
+            $this->state->setStatus("500");
+        }
+    }
+
+    private function runHappyPath()
+    {
+        $this->state->setStatus("200");
+        if ($this->state->model->states->count() > 1) {
+            $this->mlModelService->reviewModelPerformance($this->state->model->token);
+        } else {
+            $this->state->setIsCurrent(true);
+        }
     }
 }

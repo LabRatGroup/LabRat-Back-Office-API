@@ -23,7 +23,6 @@
                 <div class="card mb-3">
                     <div class="card-header">
                         {{ $state->algorithm->name }} - {{ $state->updated_at }}
-                        <a href="#" class="btn btn-success">Create prediction from data</a>
                     </div>
 
                     <div class="card-body">

@@ -25,13 +25,15 @@
                         <li class="list-group-item">
                             <div class="row">
 
-                                <div class="col-md-8 mb-3">
+                                <div class="col-md-7 mb-3">
                                     <a href="{{ route('model.show', ['id'=>$model->id]) }}">{{ $model->title }}</a>
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-5 mb-3">
                                     <button type="button" class="btn btn-danger btn-sm" onclick="$('#delete-form-{{ $project->id }}').submit();">@lang('Delete')</button>
                                     <a href="{{ route('model.update', ['id'=>$model->id]) }}" class="btn btn-primary btn-sm">@lang('Edit')</a>
                                     <a href="{{ $stateCount > 0 ? route('state.update', ['id'=>$currentState->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success btn-sm">@lang('Train')</a>
+                                    <a href="{{ route('prediction.create', ['id'=>$model->id]) }}" class="btn btn-warning btn-sm">@lang('Predict')</a>
+
                                     <form id="delete-form-{{ $model->id }}" action="{{ route('model.delete', ['id' => $model->id]) }}" method="POST">
                                         {{ csrf_field() }}
                                         <input type="hidden" name="_method" value="DELETE">
@@ -57,7 +59,7 @@
                                         @endif
                                     @endif
                                     <small>
-                                        &nbsp;/&nbsp;{{ trans_choice('frontend.predictions_count', $predictionCount, ['predictions' =>$predictionCount]) }}</small>
+                                        &nbsp;/&nbsp;<a href="{{route('prediction.index', ['id'=>$model->id])}}">{{ trans_choice('frontend.predictions_count', $predictionCount, ['predictions' =>$predictionCount]) }}</a></small>
                                 </div>
 
                             </div>
