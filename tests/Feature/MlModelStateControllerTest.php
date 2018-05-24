@@ -7,10 +7,8 @@ use App\Jobs\RunMachineLearningPredictionScript;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
-use App\Models\MlModelPredictionData;
 use App\Models\MlModelState;
 use App\Models\MlModelStateScore;
-use App\Models\MlModelStateTrainingData;
 use App\Models\Project;
 use App\Models\Role;
 use App\Models\Team;
@@ -88,13 +86,13 @@ class MlModelStateControllerTest extends ApiTestCase
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_CREATED);
-        $this->assertInstanceOf(MlModelStateTrainingData::class, $stateDB->trainingData);
+        $this->assertInstanceOf(MlModelState::class, $stateDB);
         $this->assertDatabaseHas('ml_model_states', [
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
         ]);
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->file_path);
         Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
@@ -127,12 +125,12 @@ class MlModelStateControllerTest extends ApiTestCase
         $response->assertStatus(HttpResponse::HTTP_CREATED);
         $response->assertJsonStructure(['data' => ['params']]);
         $this->assertTrue(sizeof(json_decode($response->json('data')['params']), true) > 0);
-        $this->assertInstanceOf(MlModelStateTrainingData::class, $stateDB->trainingData);
+        $this->assertInstanceOf(MlModelState::class, $stateDB);
         $this->assertDatabaseHas('ml_model_states', [
             'ml_model_id' => $model->id,
 
         ]);
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->file_path);
         Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
@@ -183,7 +181,7 @@ class MlModelStateControllerTest extends ApiTestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
             'params'          => json_encode($params),
-            'file'            => $this->file
+            'file'            => $this->file,
         ];
 
         // When
@@ -198,7 +196,7 @@ class MlModelStateControllerTest extends ApiTestCase
             'ml_model_id'     => $model->id,
             'ml_algorithm_id' => $algorithm->id,
         ]);
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->file_path);
         Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
@@ -330,7 +328,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $response = $this->actingAs($user)->deleteJson(route('api.state.delete', ['id' => $state->id]), []);
 
         /** @var Collection $trainingDataItems */
-        $trainingDataItems = MlModelStateTrainingData::all();
+        $trainingDataItems = MlModelState::all();
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -582,12 +580,8 @@ class MlModelStateControllerTest extends ApiTestCase
         /** @var MlModelState $state */
         $state = factory(MlModelState::class)->create();
 
-        /** @var MlModelStateTrainingData $trainingData */
-        $trainingData = factory(MlModelStateTrainingData::class)->create();
-
         $model->setProject($project);
         $state->setModel($model);
-        $state->trainingData()->save($trainingData);
 
         $algorithm = MlAlgorithm::where('alias', 'knn')->first();
 
@@ -619,7 +613,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $response = $this->actingAs($member)->post(route('api.state.update', ['id' => $state->id]), $data);
 
         /** @var Collection $trainingDataItems */
-        $trainingDataItems = MlModelStateTrainingData::all();
+        $trainingDataItems = MlModelState::all();
 
         /** @var MlModelState $stateDB */
         $stateDB = MlModelState::find($response->json('data')['id']);
@@ -632,7 +626,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $this->assertCount(2, $trainingDataItems);
 
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->file_path);
         Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
@@ -655,24 +649,19 @@ class MlModelStateControllerTest extends ApiTestCase
         /** @var MlModelState $state */
         $state = factory(MlModelState::class)->create();
 
-        /** @var MlModelStateTrainingData $trainingData */
-        $trainingData = factory(MlModelStateTrainingData::class)->create();
-
         $model->setProject($project);
         $state->setModel($model);
-        $state->trainingData()->save($trainingData);
-
 
         $data = [
-            'ml_model_id'     => $model->id,
-            'file'            => $this->file,
+            'ml_model_id' => $model->id,
+            'file'        => $this->file,
         ];
 
         // When
         $response = $this->actingAs($member)->post(route('api.state.update', ['id' => $state->id]), $data);
 
         /** @var Collection $trainingDataItems */
-        $trainingDataItems = MlModelStateTrainingData::all();
+        $trainingDataItems = MlModelState::all();
 
         /** @var MlModelState $stateDB */
         $stateDB = MlModelState::find($response->json('data')['id']);
@@ -686,7 +675,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $this->assertCount(2, $trainingDataItems);
 
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->file_path);
         Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
@@ -709,12 +698,8 @@ class MlModelStateControllerTest extends ApiTestCase
         /** @var MlModelState $state */
         $state = factory(MlModelState::class)->create();
 
-        /** @var MlModelStateTrainingData $trainingData */
-        $trainingData = factory(MlModelStateTrainingData::class)->create();
-
         $model->setProject($project);
         $state->setModel($model);
-        $state->trainingData()->save($trainingData);
 
         $algorithm = MlAlgorithm::where('alias', 'knn')->first();
 
@@ -745,7 +730,7 @@ class MlModelStateControllerTest extends ApiTestCase
         $response = $this->actingAs($member)->post(route('api.state.update', ['id' => $state->id]), $data);
 
         /** @var Collection $trainingDataItems */
-        $trainingDataItems = MlModelStateTrainingData::all();
+        $trainingDataItems = MlModelState::all();
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -820,7 +805,7 @@ class MlModelStateControllerTest extends ApiTestCase
 
         $this->assertCount(2, $model->states);
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->trainingData->file_path);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($stateDB->file_path);
         Bus::assertDispatched(RunMachineLearningModelTrainingScript::Class);
     }
 
@@ -917,11 +902,6 @@ class MlModelStateControllerTest extends ApiTestCase
         /** @var MlModelPrediction $prediction2 */
         $prediction2 = factory(MlModelPrediction::class)->create();
 
-        /** @var MlModelPredictionData $predictionData1 */
-        $predictionData1 = factory(MlModelPredictionData::class)->create();
-
-        /** @var MlModelPredictionData $predictionData2 */
-        $predictionData2 = factory(MlModelPredictionData::class)->create();
 
         $model->setProject($project);
 
@@ -936,9 +916,6 @@ class MlModelStateControllerTest extends ApiTestCase
 
         $prediction1->setModel($model);
         $prediction2->setModel($model);
-
-        $predictionData1->setPrediction($prediction1);
-        $predictionData2->setPrediction($prediction2);
 
         // When
         $response = $this->actingAs($user)->post(route('api.state.current', ['id' => $state2->id]), []);

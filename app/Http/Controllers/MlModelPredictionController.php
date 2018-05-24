@@ -8,11 +8,9 @@ use App\Http\Requests\MlModelPredictionRequest;
 use App\Jobs\RunMachineLearningPredictionScript;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
-use App\Models\MlModelPredictionData;
 use App\Repositories\MlModelPredictionRepository;
 use App\Repositories\MlModelRepository;
-use App\Services\MlModelPredictionDataService;
-use Exception;
+use App\Services\MlModelPredictionService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,9 +23,9 @@ class MlModelPredictionController extends Controller
     private const PREDICTION_DATA_FILE_PARAMETER = 'file';
 
     /** @var MlModelPredictionRepository */
-    private $mlModelPredicionRepository;
+    private $mlModelPredictionRepository;
 
-    /** @var MlModelPredictionDataService */
+    /** @var MlModelPredictionService */
     private $mlModelPredictionDataService;
 
     /** @var MlModelRepository */
@@ -36,13 +34,13 @@ class MlModelPredictionController extends Controller
     /**
      * MlModelPredictionController constructor.
      *
-     * @param MlModelPredictionRepository  $mlModelPredicionRepository
-     * @param MlModelPredictionDataService $mlModelPredictionDataService
-     * @param MlModelRepository            $mlModelRepository
+     * @param MlModelPredictionRepository $mlModelPredicionRepository
+     * @param MlModelPredictionService    $mlModelPredictionDataService
+     * @param MlModelRepository           $mlModelRepository
      */
-    public function __construct(MlModelPredictionRepository $mlModelPredicionRepository, MlModelPredictionDataService $mlModelPredictionDataService, MlModelRepository $mlModelRepository)
+    public function __construct(MlModelPredictionRepository $mlModelPredicionRepository, MlModelPredictionService $mlModelPredictionDataService, MlModelRepository $mlModelRepository)
     {
-        $this->mlModelPredicionRepository = $mlModelPredicionRepository;
+        $this->mlModelPredictionRepository = $mlModelPredicionRepository;
         $this->mlModelPredictionDataService = $mlModelPredictionDataService;
         $this->mlModelRepository = $mlModelRepository;
     }
@@ -62,7 +60,7 @@ class MlModelPredictionController extends Controller
         $this->authorize('view', $model->project);
 
         return view('predictions.index')
-        ->with('predictions', $model->predictions);
+            ->with('predictions', $model->predictions);
     }
 
     /**
@@ -76,7 +74,7 @@ class MlModelPredictionController extends Controller
     public function show($id)
     {
         /** @var MlModelPrediction $prediction */
-        $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+        $prediction = $this->mlModelPredictionRepository->findOneOrFailById($id);
         $this->authorize('view', $prediction->model->project);
 
         return view('predictions.show')
@@ -95,7 +93,7 @@ class MlModelPredictionController extends Controller
         $model = $this->mlModelRepository->findOneOrFailById($id);
         $this->authorize('view', $model->project);
 
-        $prediction = $this->mlModelPredicionRepository->getModel();
+        $prediction = $this->mlModelPredictionRepository->getModel();
 
         return view('predictions.form')
             ->with('prediction', $prediction)
@@ -118,7 +116,8 @@ class MlModelPredictionController extends Controller
         $model = $this->mlModelRepository->findOneOrFailById($params[self::MODEL_ID_PARAMETER]);
         $this->authorize('view', $model->project);
 
-        if ($model->getCurrentState() === false) {
+        /** MlState $currentState */
+        if (!($currentState = $model->getCurrentState())) {
             throw new UnprocessablePredictionException('No active model state was found for prediction.');
         }
 
@@ -126,16 +125,13 @@ class MlModelPredictionController extends Controller
             throw new DataFileErrorException('Prediction data file was corrupted.');
         }
 
-        $file = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->store('predictions');
-        $mime = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
+        $params['file_path'] = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->store('predictions');
+        $params['mime_type'] = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
+        $params['params'] = $currentState->params;
 
         /** @var MlModelPrediction $prediction */
-        $prediction = $this->mlModelPredicionRepository->create($params);
+        $prediction = $this->mlModelPredictionRepository->create($params);
         $prediction->setModel($model);
-
-        /** @var MlModelPredictionData $modelPredictionData */
-        $modelPredictionData = $this->mlModelPredictionDataService->create($prediction, $file, $mime);
-        $prediction->predictionData()->save($modelPredictionData);
 
         RunMachineLearningPredictionScript::dispatch($prediction);
 
@@ -151,7 +147,7 @@ class MlModelPredictionController extends Controller
     public function update($id)
     {
         /** @var MlModelPrediction $prediction */
-        $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+        $prediction = $this->mlModelPredictionRepository->findOneOrFailById($id);
         $this->authorize('view', $prediction->model->project);
 
         return view('predictions.form')
@@ -175,7 +171,7 @@ class MlModelPredictionController extends Controller
         $params = $this->getParams($request);
 
         /** @var MlModelPrediction $prediction */
-        $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+        $prediction = $this->mlModelPredictionRepository->findOneOrFailById($id);
         $this->authorize('view', $prediction->model->project);
 
         if ($prediction->model->getCurrentState() === false) {
@@ -189,23 +185,22 @@ class MlModelPredictionController extends Controller
         }
 
         /** @var MlModelPrediction $prediction */
-        $prediction = $this->mlModelPredicionRepository->update($prediction, $params);
+        $prediction = $this->mlModelPredictionRepository->update($prediction, $params);
 
         if ($request->hasFile('file')) {
             if (!$request->file(self::PREDICTION_DATA_FILE_PARAMETER)->isValid()) {
                 throw new DataFileErrorException('Prediction data file was corrupted.');
             }
 
-            $file = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->store('predictions');
-            $mime = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
+            $params['file_path'] = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->store('predictions');
+            $params['mime_type'] = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
 
-            /** @var MlModelPredictionData $modelPredictionData */
-            $this->mlModelPredictionDataService->update($prediction, $file, $mime);
-            $prediction->load('predictionData');
+            $prediction = $this->mlModelPredictionRepository->update($prediction, $params);
+
             RunMachineLearningPredictionScript::dispatch($prediction);
         }
 
-        return redirect()->action('MlModelPredictionController@index', ['id' => $model->id]);
+        return redirect()->action('MlModelPredictionController@index', ['id' => $prediction->model->id]);
     }
 
     /**
@@ -219,11 +214,11 @@ class MlModelPredictionController extends Controller
     public function delete($id)
     {
         /** @var MlModelPrediction $prediction */
-        $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+        $prediction = $this->mlModelPredictionRepository->findOneOrFailById($id);
         $model = $prediction->model;
 
         $this->authorize('view', $prediction->model->project);
-        $this->mlModelPredicionRepository->delete($prediction);
+        $this->mlModelPredictionRepository->delete($prediction);
 
         return redirect()->action('MlModelPredictionController@index', ['id' => $model->id]);
     }
@@ -240,11 +235,11 @@ class MlModelPredictionController extends Controller
     public function run($id)
     {
         /** @var MlModelPrediction $prediction */
-        $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+        $prediction = $this->mlModelPredictionRepository->findOneOrFailById($id);
 
         $this->authorize('view', $prediction->model->project);
 
-        if ($prediction->model->getCurrentState() && $prediction->predictionData) {
+        if ($prediction->model->getCurrentState() && $prediction->file_path) {
 
             RunMachineLearningPredictionScript::dispatch($prediction);
 

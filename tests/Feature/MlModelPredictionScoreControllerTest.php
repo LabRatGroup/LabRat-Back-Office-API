@@ -38,17 +38,12 @@ class MlModelPredictionScoreControllerTest extends ApiTestCase
         /** @var MlModelPrediction $prediction */
         $prediction = factory(MlModelPrediction::class)->create();
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-
         /** @var MlModelPredictionScore $predictionScore */
-        $predictionScore = factory(MlModelPredictionScore::class)->create();
+        $predictionScore = factory(MlModelPredictionScore::class)->create(['ml_model_prediction_data_id' => $prediction->id]);
 
         $model->setProject($project);
         $state->setModel($model);
         $prediction->setModel($model);
-        $predictionData->setPrediction($prediction);
-        $predictionScore->setPrediction($prediction);
 
         // When
         $response = $this->actingAs($user)->get(route('api.score.prediction.show', ['id' => $prediction->id]));
@@ -83,18 +78,12 @@ class MlModelPredictionScoreControllerTest extends ApiTestCase
 
         /** @var MlModelPrediction $prediction */
         $prediction = factory(MlModelPrediction::class)->create();
-
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-
         /** @var MlModelPredictionScore $predictionScore */
-        $predictionScore = factory(MlModelPredictionScore::class)->create();
+        $predictionScore = factory(MlModelPredictionScore::class)->create(['ml_model_prediction_data_id' => $prediction->id]);
 
         $model->setProject($project);
         $state->setModel($model);
         $prediction->setModel($model);
-        $predictionData->setPrediction($prediction);
-        $predictionScore->setPrediction($prediction);
 
         // When
         $response = $this->actingAs($member)->get(route('api.score.prediction.show', ['id' => $prediction->id]));
@@ -124,103 +113,17 @@ class MlModelPredictionScoreControllerTest extends ApiTestCase
         /** @var MlModelPrediction $prediction */
         $prediction = factory(MlModelPrediction::class)->create();
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-
         /** @var MlModelPredictionScore $predictionScore */
-        $predictionScore = factory(MlModelPredictionScore::class)->create();
+        $predictionScore = factory(MlModelPredictionScore::class)->create(['ml_model_prediction_data_id' => $prediction->id]);
 
         $model->setProject($project);
         $state->setModel($model);
         $prediction->setModel($model);
-        $predictionData->setPrediction($prediction);
-        $predictionScore->setPrediction($prediction);
 
         // When
         $response = $this->actingAs($member)->get(route('api.score.prediction.show', ['id' => $prediction->id]));
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
-    }
-
-    /** @test */
-    public function project_user_should_delete_prediction_score()
-    {
-        // Given
-        $user = factory(User::class)->create();
-        $this->be($user);
-
-        /** @var Project $project */
-        $project = factory(Project::class)->create();
-
-        /** @var MlModel $model */
-        $model = factory(MlModel::class)->create();
-
-        /** @var MlModelState $state */
-        $state = factory(MlModelState::class)->create(['is_current' => true]);
-
-        /** @var MlModelPrediction $prediction */
-        $prediction = factory(MlModelPrediction::class)->create();
-
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-
-        /** @var MlModelPredictionScore $predictionScore */
-        $predictionScore = factory(MlModelPredictionScore::class)->create();
-
-        $model->setProject($project);
-        $state->setModel($model);
-        $prediction->setModel($model);
-        $predictionData->setPrediction($prediction);
-        $predictionScore->setPrediction($prediction);
-
-        // When
-        $response = $this->actingAs($user)->delete(route('api.score.prediction.delete', ['id' => $prediction->id]), []);
-        $scores = MlModelPredictionScore::all();
-
-        // Then
-        $response->assertStatus(HttpResponse::HTTP_OK);
-        $this->assertEquals($scores->count(),0);
-    }
-
-    /** @test */
-    public function non_project_user_should_not_delete_prediction_score()
-    {
-        // Given
-        $user = factory(User::class)->create();
-        $member = factory(User::class)->create();
-        $this->be($user);
-
-        /** @var Project $project */
-        $project = factory(Project::class)->create();
-
-        /** @var MlModel $model */
-        $model = factory(MlModel::class)->create();
-
-        /** @var MlModelState $state */
-        $state = factory(MlModelState::class)->create(['is_current' => true]);
-
-        /** @var MlModelPrediction $prediction */
-        $prediction = factory(MlModelPrediction::class)->create();
-
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-
-        /** @var MlModelPredictionScore $predictionScore */
-        $predictionScore = factory(MlModelPredictionScore::class)->create();
-
-        $model->setProject($project);
-        $state->setModel($model);
-        $prediction->setModel($model);
-        $predictionData->setPrediction($prediction);
-        $predictionScore->setPrediction($prediction);
-
-        // When
-        $response = $this->actingAs($member)->delete(route('api.score.prediction.delete', ['id' => $prediction->id]), []);
-        $scores = MlModelPredictionScore::all();
-
-        // Then
-        $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
-        $this->assertEquals($scores->count(),1);
     }
 }

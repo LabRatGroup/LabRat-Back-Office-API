@@ -5,9 +5,7 @@ namespace Tests\Feature;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
-use App\Models\MlModelPredictionData;
 use App\Models\MlModelState;
-use App\Models\MlModelStateTrainingData;
 use App\Models\Project;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,10 +23,10 @@ class RealMicroServiceTest extends ApiTestCase
     /** @var User */
     private $user;
 
-    /** @var MlModelStateTrainingData */
-    private $stateTrainingData;
+    /** @var MlModelState */
+    private $state;
 
-    /** @var MlModelPredictionData */
+    /** @var MlModelPrediction */
     private $predictionData;
 
     /** @var MlModel */
@@ -80,31 +78,25 @@ class RealMicroServiceTest extends ApiTestCase
         );
 
         /** @var MlModelState $state */
-        $state = factory(MlModelState::class)->create(['params' => $this->algorithmParams,]);
+        $state = factory(MlModelState::class)->create(
+            [
+                'params'    => $this->algorithmParams,
+                'file_path' => 'training/data.csv',
+                'mime_type' => 'text/cvs',
+            ]
+        );
         $state->setAlgorithm($this->algorithm);
         $state->setModel($this->model);
 
-        $this->stateTrainingData = factory(MlModelStateTrainingData::class)->create(
-            [
-                'params'    => $state->params,
-                'file_path' => 'training/data.csv',
-                'mime_type' => 'text/cvs',
-            ]
-        );
-        $this->stateTrainingData->setState($state);
-
         /** @var MlModelPrediction $prediction */
-        $prediction = factory(MlModelPrediction::class)->create();
-        $prediction->setModel($this->model);
-
-        $this->predictionData = factory(MlModelPredictionData::class)->create(
+        $prediction = factory(MlModelPrediction::class)->create(
             [
-                'params'    => $state->params,
+                'params'    => $this->algorithmParams,
                 'file_path' => 'training/data.csv',
                 'mime_type' => 'text/cvs',
             ]
         );
-        $this->predictionData->setPrediction($prediction);
+        $prediction->setModel($this->model);
 
         $this->file = UploadedFile::fake()->create('data.csv', self::FILE_SIZE);
     }
@@ -121,7 +113,6 @@ class RealMicroServiceTest extends ApiTestCase
 
         // When
         $response = $this->actingAs($this->user)->postJson(route('api.state.create'), $data);
-//        dd($response->json());
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_CREATED);

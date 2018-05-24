@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Jenssegers\Mongodb\Eloquent\HybridRelations;
 use Jenssegers\Mongodb\Relations\HasMany;
@@ -18,6 +17,7 @@ use Jenssegers\Mongodb\Relations\HasMany;
  * @property mixed   title
  * @property mixed   score
  * @property string  code
+ * @property mixed   file_path
  */
 class MlModelPrediction extends BaseEntity
 {
@@ -35,13 +35,14 @@ class MlModelPrediction extends BaseEntity
     protected $fillable = [
         'title',
         'description',
+        'params',
+        'mime_type',
+        'file_path'
     ];
 
     protected $hidden = [
         'token',
     ];
-
-    protected $cascadeDeletes = ['predictionData'];
 
     /**
      * @return BelongsTo
@@ -60,15 +61,7 @@ class MlModelPrediction extends BaseEntity
     }
 
     /**
-     * @return HasOne
-     */
-    public function predictionData()
-    {
-        return $this->hasOne(MlModelPredictionData::class);
-    }
-
-    /**
-     * @return  HasMany
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany|HasMany
      */
     public function score()
     {

@@ -39,7 +39,7 @@ class RunMachineLearningPredictionScript implements ShouldQueue
      */
     public function handle()
     {
-        $token = $this->prediction->predictionData->token;
+        $token = $this->prediction->token;
         Log::info('Launching prediction job for data ' . $token);
 
         $client = new Client();

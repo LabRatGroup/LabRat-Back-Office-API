@@ -12,10 +12,13 @@ $factory->define(MlModelState::class, function (Faker $faker) {
         $faker->word => $faker->word,
         $faker->word => $faker->word,
     ]]);
+
     return [
         'ml_model_id'     => null,
         'ml_algorithm_id' => null,
         'params'          => $params,
         'is_current'      => true,
+        'mime_type' => $faker->mimeType,
+        'file_path' => $faker->word,
     ];
 });

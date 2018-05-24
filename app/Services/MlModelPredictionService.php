@@ -3,23 +3,23 @@
 namespace App\Services;
 
 use App\Models\MlModelPrediction;
-use App\Repositories\MlModelPredictionDataRepository;
+use App\Repositories\MlModelPredictionRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
 
-class MlModelPredictionDataService
+class MlModelPredictionService
 {
-    /** @var MlModelPredictionDataRepository */
-    private $mlModelPredictionDataRepository;
+    /** @var MlModelPredictionRepository */
+    private $mlModelPredictionRepository;
 
     /**
-     * MlModelStatePredictionDataService constructor.
+     * MlModelPredictionRepository constructor.
      *
-     * @param MlModelPredictionDataRepository $mlModelPredictionDataRepository
+     * @param MlModelPredictionRepository $mlModelPredictionRepository
      */
-    public function __construct(MlModelPredictionDataRepository $mlModelPredictionDataRepository)
+    public function __construct(MlModelPredictionRepository $mlModelPredictionRepository)
     {
-        $this->mlModelPredictionDataRepository = $mlModelPredictionDataRepository;
+        $this->mlModelPredictionRepository = $mlModelPredictionRepository;
     }
 
     /**
@@ -41,7 +41,7 @@ class MlModelPredictionDataService
         $params['mime_type'] = $mime;
         $params['file_path'] = $file;
 
-        return $this->mlModelPredictionDataRepository->create($params);
+        return $this->mlModelPredictionRepository->create($params);
     }
 
     /**
@@ -63,8 +63,8 @@ class MlModelPredictionDataService
             $params['file_path'] = $file;
         }
 
-        $predictionData = $this->mlModelPredictionDataRepository->findOneOrFailById($prediction->predictionData->id);
+        $predictionData = $this->mlModelPredictionRepository->findOneOrFailById($prediction->id);
 
-        return $this->mlModelPredictionDataRepository->update($predictionData, $params);
+        return $this->mlModelPredictionRepository->update($predictionData, $params);
     }
 }

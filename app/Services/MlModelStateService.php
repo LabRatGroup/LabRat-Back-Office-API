@@ -5,10 +5,24 @@ namespace App\Services;
 use App\Models\MlAlgorithm;
 use App\Models\MlAlgorithmParam;
 use App\Models\MlModel;
+use App\Repositories\MlModelStateRepository;
 use Illuminate\Database\Eloquent\Collection;
 
 class MlModelStateService
 {
+
+    /** @var MlModelStateRepository */
+    private $mlModelStateRepository;
+
+    /**
+     * MlModelStateService constructor.
+     *
+     * @param MlModelStateRepository $mlModelStateRepository
+     */
+    public function __construct(MlModelStateRepository $mlModelStateRepository)
+    {
+        $this->mlModelStateRepository = $mlModelStateRepository;
+    }
 
     public function generateGlobalPredictionParams(MlModel $model)
     {

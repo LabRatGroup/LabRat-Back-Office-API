@@ -46,7 +46,7 @@ class RunMachineLearningModelTrainingScript implements ShouldQueue
      */
     public function handle()
     {
-        $token = $this->state->trainingData->token;
+        $token = $this->state->token;
         Log::info('Launching model training job for data ' . $token);
 
         $client = new Client();

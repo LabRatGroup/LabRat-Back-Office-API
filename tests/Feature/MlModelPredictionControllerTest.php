@@ -6,7 +6,6 @@ use App\Jobs\RunMachineLearningPredictionScript;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
-use App\Models\MlModelPredictionData;
 use App\Models\MlModelState;
 use App\Models\Project;
 use App\Models\Role;
@@ -65,23 +64,25 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $data = [
             'title'       => $title,
             'ml_model_id' => $model->id,
-            'file'        => $this->file
+            'file'        => $this->file,
+            'params'      => $state->params,
         ];
 
         // When
         $response = $this->actingAs($user)->postJson(route('api.prediction.create'), $data);
+
 
         /** @var MlModelPrediction $predictionDB */
         $predictionDB = MlModelPrediction::find($response->json('data')['id']);
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_CREATED);
-        $this->assertInstanceOf(MlModelPredictionData::class, $predictionDB->predictionData);
+        $this->assertInstanceOf(MlModelPrediction::class, $predictionDB);
         $this->assertDatabaseHas('ml_model_predictions', [
             'ml_model_id' => $model->id,
             'title'       => $title,
         ]);
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->file_path);
         Bus::assertDispatched(RunMachineLearningPredictionScript::Class);
     }
 
@@ -122,7 +123,8 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $data = [
             'title'       => $title,
             'ml_model_id' => $model->id,
-            'file'        => $this->file
+            'file'        => $this->file,
+            'params'      => $state->params,
         ];
 
         // When
@@ -133,13 +135,13 @@ class MlModelPredictionControllerTest extends ApiTestCase
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_CREATED);
-        $this->assertInstanceOf(MlModelPredictionData::class, $predictionDB->predictionData);
+        $this->assertInstanceOf(MlModelPrediction::class, $predictionDB);
         $this->assertDatabaseHas('ml_model_predictions', [
             'ml_model_id' => $model->id,
             'title'       => $title,
         ]);
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->file_path);
         Bus::assertDispatched(RunMachineLearningPredictionScript::Class);
     }
 
@@ -172,7 +174,8 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $data = [
             'title'       => $title,
             'ml_model_id' => $model->id,
-            'file'        => $this->file
+            'file'        => $this->file,
+            'params'      => $state->params,
         ];
 
         // When
@@ -216,7 +219,8 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $data = [
             'title'       => $title,
             'ml_model_id' => $model->id,
-            'file'        => $this->file
+            'file'        => $this->file,
+            'params'      => $state->params,
         ];
 
         // When
@@ -259,13 +263,10 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         $data = [
-            'title' => $title,
-            'file'  => $this->file
+            'title'  => $title,
+            'file'   => $this->file,
+            'params' => $state->params,
         ];
 
         // When
@@ -275,11 +276,11 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $predictionDB = MlModelPrediction::find($response->json('data')['id']);
 
         /** @var Collection $trainingDataItems */
-        $predictionDataItems = MlModelPredictionData::all();
+        $predictionDataItems = MlModelPrediction::all();
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
-        $this->assertInstanceOf(MlModelPredictionData::class, $predictionDB->predictionData);
+        $this->assertInstanceOf(MlModelPrediction::class, $predictionDB);
         $this->assertCount(1, $predictionDataItems);
         $this->assertDatabaseHas('ml_model_predictions', [
             'ml_model_id' => $model->id,
@@ -287,7 +288,7 @@ class MlModelPredictionControllerTest extends ApiTestCase
         ]);
         $this->assertEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->file_path);
         Bus::assertDispatched(RunMachineLearningPredictionScript::Class);
     }
 
@@ -329,13 +330,11 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
 
         $data = [
-            'title' => $title,
-            'file'  => $this->file
+            'title'  => $title,
+            'file'   => $this->file,
+            'params' => $state->params,
         ];
 
         // When
@@ -345,11 +344,11 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $predictionDB = MlModelPrediction::find($response->json('data')['id']);
 
         /** @var Collection $trainingDataItems */
-        $predictionDataItems = MlModelPredictionData::all();
+        $predictionDataItems = MlModelPrediction::all();
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
-        $this->assertInstanceOf(MlModelPredictionData::class, $predictionDB->predictionData);
+        $this->assertInstanceOf(MlModelPrediction::class, $predictionDB);
         $this->assertCount(1, $predictionDataItems);
         $this->assertDatabaseHas('ml_model_predictions', [
             'ml_model_id' => $model->id,
@@ -357,7 +356,7 @@ class MlModelPredictionControllerTest extends ApiTestCase
         ]);
         $this->assertEquals($predictionDataItems->first()->mime_type, $this->file->getMimeType());
 
-        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->predictionData->file_path);
+        Storage::disk(env('FILESYSTEM_DRIVER'))->assertExists($predictionDB->file_path);
         Bus::assertDispatched(RunMachineLearningPredictionScript::Class);
     }
 
@@ -390,20 +389,17 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         $data = [
-            'title' => $title,
-            'file'  => $this->file
+            'title'  => $title,
+            'file'   => $this->file,
+            'params' => $state->params,
         ];
 
         // When
         $response = $this->actingAs($user)->postJson(route('api.prediction.update', ['id' => $prediction->id]), $data);
 
         /** @var Collection $trainingDataItems */
-        $predictionDataItems = MlModelPredictionData::all();
+        $predictionDataItems = MlModelPrediction::all();
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_INTERNAL_SERVER_ERROR);
@@ -445,20 +441,17 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         $data = [
-            'title' => $title,
-            'file'  => $this->file
+            'title'  => $title,
+            'file'   => $this->file,
+            'params' => $state->params,
         ];
 
         // When
         $response = $this->actingAs($member)->postJson(route('api.prediction.update', ['id' => $prediction->id]), $data);
 
         /** @var Collection $trainingDataItems */
-        $predictionDataItems = MlModelPredictionData::all();
+        $predictionDataItems = MlModelPrediction::all();
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -498,15 +491,11 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         // When
         $response = $this->actingAs($user)->deleteJson(route('api.prediction.delete', ['id' => $state->id]), []);
 
         /** @var Collection $predictionDataItems */
-        $predictionDataItems = MlModelPredictionData::all();
+        $predictionDataItems = MlModelPrediction::all();
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_OK);
@@ -549,15 +538,11 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         // When
         $response = $this->actingAs($member)->deleteJson(route('api.prediction.delete', ['id' => $state->id]), []);
 
         /** @var Collection $predictionDataItems */
-        $predictionDataItems = MlModelPredictionData::all();
+        $predictionDataItems = MlModelPrediction::all();
 
         // Then
         $response->assertStatus(HttpResponse::HTTP_FORBIDDEN);
@@ -593,10 +578,6 @@ class MlModelPredictionControllerTest extends ApiTestCase
         /** @var MlModelPrediction $prediction */
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
-
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
 
         // When
         $response = $this->actingAs($user)->get(route('api.prediction.index', ['id' => $model->id]));
@@ -640,10 +621,6 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         // When
         $response = $this->actingAs($member)->get(route('api.prediction.index', ['id' => $model->id]));
 
@@ -680,10 +657,6 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         // When
         $response = $this->actingAs($member)->get(route('api.prediction.index', ['id' => $model->id]));
 
@@ -717,10 +690,6 @@ class MlModelPredictionControllerTest extends ApiTestCase
         /** @var MlModelPrediction $prediction */
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
-
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
 
         // When
         $response = $this->actingAs($user)->get(route('api.prediction.show', ['id' => $prediction->id]));
@@ -764,10 +733,6 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         // When
         $response = $this->actingAs($member)->get(route('api.prediction.show', ['id' => $prediction->id]));
 
@@ -804,10 +769,6 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         // When
         $response = $this->actingAs($member)->get(route('api.prediction.show', ['id' => $prediction->id]));
 
@@ -842,10 +803,6 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         // When
         $response = $this->actingAs($user)->get(route('api.prediction.run', ['id' => $prediction->id]));
 
@@ -878,7 +835,7 @@ class MlModelPredictionControllerTest extends ApiTestCase
         ]);
 
         /** @var MlModelPrediction $prediction */
-        $prediction = factory(MlModelPrediction::class)->create();
+        $prediction = factory(MlModelPrediction::class)->create(['file_path' => '']);
         $prediction->setModel($model);
 
         // When
@@ -917,10 +874,6 @@ class MlModelPredictionControllerTest extends ApiTestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
-
         // When
         $response = $this->actingAs($user)->get(route('api.prediction.run', ['id' => $prediction->id]));
 
@@ -956,10 +909,6 @@ class MlModelPredictionControllerTest extends ApiTestCase
         /** @var MlModelPrediction $prediction */
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
-
-        /** @var MlModelPredictionData $predictionData */
-        $predictionData = factory(MlModelPredictionData::class)->create();
-        $prediction->predictionData()->save($predictionData);
 
         // When
         $response = $this->actingAs($member)->get(route('api.prediction.run', ['id' => $prediction->id]));
