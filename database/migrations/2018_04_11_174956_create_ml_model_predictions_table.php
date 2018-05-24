@@ -20,6 +20,11 @@ class CreateMlModelPredictionsTable extends Migration
             $table->string('token');
             $table->string('code')->nullable(true);
             $table->unsignedInteger('ml_model_id')->nullable(true);
+
+            $table->longText('params')->nullable(false);
+            $table->string('mime_type')->nullable(false);
+            $table->string('file_path')->nullable(false);
+
             $table->timestamps();
             $table->softDeletes();
         });

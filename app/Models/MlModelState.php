@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property mixed             file_extension
  * @property mixed             trainingData
  * @property  string           code
+ * @property mixed             file_path
+ * @property mixed             mime_type
  */
 class MlModelState extends BaseEntity
 {
@@ -38,6 +40,8 @@ class MlModelState extends BaseEntity
     protected $fillable = [
         'is_current',
         'params',
+        'mime_type',
+        'file_path',
     ];
 
     protected $hidden = [
@@ -68,14 +72,6 @@ class MlModelState extends BaseEntity
     public function score()
     {
         return $this->hasOne(MlModelStateScore::class);
-    }
-
-    /**
-     * @return HasOne
-     */
-    public function trainingData()
-    {
-        return $this->hasOne(MlModelStateTrainingData::class);
     }
 
     /**
@@ -121,9 +117,5 @@ class MlModelState extends BaseEntity
     {
         $this->code = $code;
         $this->save();
-    }
-
-    public function setCurrentState()
-    {
     }
 }

@@ -17,11 +17,12 @@ class MlModelPredictionScore extends Eloquent
     use HybridRelations;
 
     protected $connection = 'mongodb';
-    protected $collection = 'ml_training_score_collections';
+    protected $collection = 'ml_model_prediction_score';
 
     protected $fillable = [
-        'data',
-        'ml_model_prediction_id',
+        'prediction',
+        'sample',
+        'ml_model_prediction_data_id',
     ];
 
     /**
@@ -37,13 +38,13 @@ class MlModelPredictionScore extends Eloquent
         $this->state()->associate($state)->save();
     }
 
-    /**
-     * @return BelongsTo
-     */
-    public function prediction()
-    {
-        return $this->belongsTo(MlModelPrediction::class, 'ml_model_prediction_id');
-    }
+//    /**
+//     * @return BelongsTo
+//     */
+//    public function prediction()
+//    {
+//        return $this->belongsTo(MlModelPrediction::class);
+//    }
 
     public function setPrediction($prediction)
     {

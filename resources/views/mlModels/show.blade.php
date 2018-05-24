@@ -40,7 +40,7 @@
                                     <div class="row mb-3">
                                         <strong class="col-md-4">{{ $state->created_at }}</strong>
                                         <span class="col-md-4">{{ $state->algorithm->name }}</span>
-                                        @if($state->score)
+                                        @if($state->code == '200')
                                             <div class="col-md-3">
                                                 <span>
                                                     {{ __('frontend.accuracy', ['accuracy' =>$state->score->accuracy*100]) }}
@@ -48,9 +48,12 @@
                                                     {{ __('frontend.kappa', ['kappa' =>$state->score->kappa]) }}
                                                 </span>
                                             </div>
+                                        @elseif($state->code == '500')
+                                            <span>@lang("frontend.status_fail")</span>
                                         @else
                                             <span>@lang("frontend.status_pending")</span>
                                         @endif
+
                                     </div>
                                     <div class="col-md-12 align-content-lg-end">
                                         @if($state->code == '200')

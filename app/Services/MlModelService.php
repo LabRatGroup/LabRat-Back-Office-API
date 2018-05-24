@@ -18,21 +18,21 @@ class MlModelService
     /** @var MlModelStateScoreRepository */
     private $mlModelStateScoreRepository;
 
-    /** @var MlModelPredictionDataService */
-    private $mlModelPredictionDataService;
+    /** @var MlModelPredictionService */
+    private $mlModelPredictionService;
 
     /**
      * MlModelService constructor.
      *
-     * @param MlModelRepository            $mlModelRepository
-     * @param MlModelStateScoreRepository  $mlModelStateScoreRepository
-     * @param MlModelPredictionDataService $mlModelPredictionDataService
+     * @param MlModelRepository           $mlModelRepository
+     * @param MlModelStateScoreRepository $mlModelStateScoreRepository
+     * @param MlModelPredictionService    $mlModelPredictionService
      */
-    public function __construct(MlModelRepository $mlModelRepository, MlModelStateScoreRepository $mlModelStateScoreRepository, MlModelPredictionDataService $mlModelPredictionDataService)
+    public function __construct(MlModelRepository $mlModelRepository, MlModelStateScoreRepository $mlModelStateScoreRepository, MlModelPredictionService $mlModelPredictionService)
     {
         $this->mlModelRepository = $mlModelRepository;
         $this->mlModelStateScoreRepository = $mlModelStateScoreRepository;
-        $this->mlModelPredictionDataService = $mlModelPredictionDataService;
+        $this->mlModelPredictionService = $mlModelPredictionService;
     }
 
     public function reviewModelPerformance($token)
@@ -62,7 +62,7 @@ class MlModelService
     {
         /** @var MlModelPrediction $prediction */
         foreach ($model->predictions as $prediction) {
-            $this->mlModelPredictionDataService->update($prediction);
+            $this->mlModelPredictionService->update($prediction);
             RunMachineLearningPredictionScript::dispatch($prediction);
         }
     }

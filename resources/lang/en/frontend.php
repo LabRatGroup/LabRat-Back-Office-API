@@ -17,6 +17,7 @@ return [
     'states_count'             => '{0} No states defined yet |{1} :states available state|[2,*] :states available states ',
     'status_code'              => 'Status code: :status',
     'status_pending'           => 'In progress...',
+    'status_fail'              => 'Failed',
     'accuracy'                 => 'Accuracy: :accuracy%',
     'kappa'                    => 'Kappa: :kappa ',
     'sensitivity'              => 'Sensitivity: :sensitivity',

@@ -51,29 +51,4 @@ class MlModelPredictionScoreController extends ApiController
             return $this->responseInternalError($e->getMessage());
         }
     }
-
-    /**
-     * Deletes prediction score data.
-     *
-     * @param $id
-     *
-     * @return JsonResponse
-     */
-    public function delete($id)
-    {
-        try {
-            /** @var MlModelPrediction $prediction */
-            $prediction = $this->mlModelPredictionRepository->findOneOrFailById($id);
-            $this->authorize('view', $prediction->model->project);
-
-            $this->mlModelPredictionScoreRepository->delete($prediction->score);
-
-            return $this->responseDeleted();
-
-        } catch (AuthorizationException $authorizationException) {
-            return $this->responseForbidden($authorizationException->getMessage());
-        } catch (Exception $e) {
-            return $this->responseInternalError($e->getMessage());
-        }
-    }
 }

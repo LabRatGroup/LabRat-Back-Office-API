@@ -5,16 +5,15 @@ namespace Tests\Unit;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
-use App\Models\MlModelPredictionData;
 use App\Models\MlModelState;
-use App\Repositories\MlModelPredictionDataRepository;
-use App\Services\MlModelPredictionDataService;
+use App\Repositories\MlModelPredictionRepository;
+use App\Services\MlModelPredictionService;
 use Illuminate\Http\UploadedFile;
 use PHPUnit\Framework\MockObject\MockObject;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class MlModelPredictionDataServiceTest extends TestCase
+class MlModelPredictionServiceTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -41,22 +40,22 @@ class MlModelPredictionDataServiceTest extends TestCase
         $prediction = factory(MlModelPrediction::class)->create();
         $prediction->setModel($model);
 
-        $stubModel = factory(MlModelPredictionData::class)->make([
+        $stubModel = factory(MlModelPrediction::class)->make([
             'mime_type' => $file->getMimeType(),
             'data'      => $file->getFilename(),
         ]);
 
-        /** @var  MockObject|MlModelPredictionDataRepository $mlModelPredictionDataRepository */
-        $mlModelPredictionDataRepository = $this->createMock(MlModelPredictionDataRepository::class);
+        /** @var  MockObject|MlModelPredictionRepository $mlModelPredictionDataRepository */
+        $mlModelPredictionDataRepository = $this->createMock(MlModelPredictionRepository::class);
         $mlModelPredictionDataRepository->method('create')->willReturn($stubModel);
 
-        $predictionDataService = new MlModelPredictionDataService($mlModelPredictionDataRepository);
+        $predictionDataService = new MlModelPredictionService($mlModelPredictionDataRepository);
 
         // When
         $data = $predictionDataService->create($prediction, $file->getFilename(), $file->getMimeType());
 
         // Then
-        $this->assertInstanceOf(MlModelPredictionData::class, $data);
+        $this->assertInstanceOf(MlModelPrediction::class, $data);
         $this->assertEquals($data->getAttribute('mime_type'), $file->getMimeType());
     }
 }

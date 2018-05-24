@@ -8,10 +8,9 @@ use App\Http\Requests\MlModelPredictionRequest;
 use App\Jobs\RunMachineLearningPredictionScript;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
-use App\Models\MlModelPredictionData;
 use App\Repositories\MlModelPredictionRepository;
 use App\Repositories\MlModelRepository;
-use App\Services\MlModelPredictionDataService;
+use App\Services\MlModelPredictionService;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\JsonResponse;
@@ -23,11 +22,12 @@ class MlModelPredictionController extends ApiController
     private const PREDICTION_TITLE = 'title';
     private const PREDICTION_DESCRIPTION = 'description';
     private const PREDICTION_DATA_FILE_PARAMETER = 'file';
+    private const PREDICTION_STATE_PARAMS_PARAMETER = 'params';
 
     /** @var MlModelPredictionRepository */
-    private $mlModelPredicionRepository;
+    private $mlModelPredictionRepository;
 
-    /** @var MlModelPredictionDataService */
+    /** @var MlModelPredictionService */
     private $mlModelPredictionDataService;
 
     /** @var MlModelRepository */
@@ -36,13 +36,13 @@ class MlModelPredictionController extends ApiController
     /**
      * MlModelPredictionController constructor.
      *
-     * @param MlModelPredictionRepository  $mlModelPredicionRepository
-     * @param MlModelPredictionDataService $mlModelPredictionDataService
-     * @param MlModelRepository            $mlModelRepository
+     * @param MlModelPredictionRepository $mlModelPredicionRepository
+     * @param MlModelPredictionService    $mlModelPredictionDataService
+     * @param MlModelRepository           $mlModelRepository
      */
-    public function __construct(MlModelPredictionRepository $mlModelPredicionRepository, MlModelPredictionDataService $mlModelPredictionDataService, MlModelRepository $mlModelRepository)
+    public function __construct(MlModelPredictionRepository $mlModelPredicionRepository, MlModelPredictionService $mlModelPredictionDataService, MlModelRepository $mlModelRepository)
     {
-        $this->mlModelPredicionRepository = $mlModelPredicionRepository;
+        $this->mlModelPredictionRepository = $mlModelPredicionRepository;
         $this->mlModelPredictionDataService = $mlModelPredictionDataService;
         $this->mlModelRepository = $mlModelRepository;
     }
@@ -80,7 +80,7 @@ class MlModelPredictionController extends ApiController
     {
         try {
             /** @var MlModelPrediction $prediction */
-            $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+            $prediction = $this->mlModelPredictionRepository->findOneOrFailById($id);
             $this->authorize('view', $prediction->model->project);
 
             return $this->responseOk($prediction);
@@ -113,16 +113,12 @@ class MlModelPredictionController extends ApiController
                 throw new DataFileErrorException('Prediction data file was corrupted.');
             }
 
-            $file = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->store('predictions');
-            $mime = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
+            $params['file_path'] = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->store('predictions');
+            $params['mime_type'] = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
 
             /** @var MlModelPrediction $prediction */
-            $prediction = $this->mlModelPredicionRepository->create($params);
+            $prediction = $this->mlModelPredictionRepository->create($params);
             $prediction->setModel($model);
-
-            /** @var MlModelPredictionData $modelPredictionData */
-            $modelPredictionData = $this->mlModelPredictionDataService->create($prediction, $file, $mime);
-            $prediction->predictionData()->save($modelPredictionData);
 
             RunMachineLearningPredictionScript::dispatch($prediction);
 
@@ -149,7 +145,7 @@ class MlModelPredictionController extends ApiController
             $params = $this->getParams($request);
 
             /** @var MlModelPrediction $prediction */
-            $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+            $prediction = $this->mlModelPredictionRepository->findOneOrFailById($id);
             $this->authorize('view', $prediction->model->project);
 
             if ($prediction->model->getCurrentState() === false) {
@@ -163,19 +159,17 @@ class MlModelPredictionController extends ApiController
             }
 
             /** @var MlModelPrediction $prediction */
-            $prediction = $this->mlModelPredicionRepository->update($prediction, $params);
+            $prediction = $this->mlModelPredictionRepository->update($prediction, $params);
 
             if ($request->hasFile('file')) {
                 if (!$request->file(self::PREDICTION_DATA_FILE_PARAMETER)->isValid()) {
                     throw new DataFileErrorException('Prediction data file was corrupted.');
                 }
 
-                $file = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->store('predictions');
-                $mime = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
+                $params['file_path'] = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->store('predictions');
+                $params['mime_type'] = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
 
-                /** @var MlModelPredictionData $modelPredictionData */
-                $this->mlModelPredictionDataService->update($prediction, $file, $mime);
-                $prediction->load('predictionData');
+                $prediction = $this->mlModelPredictionRepository->update($prediction, $params);
                 RunMachineLearningPredictionScript::dispatch($prediction);
             }
 
@@ -198,10 +192,10 @@ class MlModelPredictionController extends ApiController
     {
         try {
             /** @var MlModelPrediction $prediction */
-            $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+            $prediction = $this->mlModelPredictionRepository->findOneOrFailById($id);
 
             $this->authorize('view', $prediction->model->project);
-            $this->mlModelPredicionRepository->delete($prediction);
+            $this->mlModelPredictionRepository->delete($prediction);
 
             return $this->responseDeleted();
         } catch (AuthorizationException $authorizationException) {
@@ -222,11 +216,11 @@ class MlModelPredictionController extends ApiController
     {
         try {
             /** @var MlModelPrediction $prediction */
-            $prediction = $this->mlModelPredicionRepository->findOneOrFailById($id);
+            $prediction = $this->mlModelPredictionRepository->findOneOrFailById($id);
 
             $this->authorize('view', $prediction->model->project);
 
-            if ($prediction->model->getCurrentState() && $prediction->predictionData) {
+            if ($prediction->model->getCurrentState() && $prediction->file_path) {
 
                 RunMachineLearningPredictionScript::dispatch($prediction);
 
@@ -255,6 +249,7 @@ class MlModelPredictionController extends ApiController
             self::PREDICTION_DATA_FILE_PARAMETER,
             self::PREDICTION_TITLE,
             self::PREDICTION_DESCRIPTION,
+            self::PREDICTION_STATE_PARAMS_PARAMETER,
             self::MODEL_ID_PARAMETER,
         ]);
     }

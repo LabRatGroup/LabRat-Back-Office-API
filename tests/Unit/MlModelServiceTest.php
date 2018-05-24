@@ -6,13 +6,12 @@ use App\Jobs\RunMachineLearningPredictionScript;
 use App\Models\MlAlgorithm;
 use App\Models\MlModel;
 use App\Models\MlModelPrediction;
-use App\Models\MlModelPredictionData;
 use App\Models\MlModelState;
 use App\Models\MlModelStateScore;
-use App\Repositories\MlModelPredictionDataRepository;
+use App\Repositories\MlModelPredictionRepository;
 use App\Repositories\MlModelRepository;
 use App\Repositories\MlModelStateScoreRepository;
-use App\Services\MlModelPredictionDataService;
+use App\Services\MlModelPredictionService;
 use App\Services\MlModelService;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
@@ -73,6 +72,7 @@ class MlModelServiceTest extends TestCase
         $prediction1 = factory(MlModelPrediction::class)->create(
             [
                 'ml_model_id' => $model->id,
+                'params'                 => $state1->params,
             ]
         );
 
@@ -80,22 +80,7 @@ class MlModelServiceTest extends TestCase
         $prediction2 = factory(MlModelPrediction::class)->create(
             [
                 'ml_model_id' => $model->id,
-            ]
-        );
-
-        /** @var MlModelPredictionData $predictionData1 */
-        $predictionData1 = factory(MlModelPredictionData::class)->create(
-            [
                 'params'                 => $state1->params,
-                'ml_model_prediction_id' => $prediction1->id,
-            ]
-        );
-
-        /** @var MlModelPredictionData $predictionData1 */
-        $predictionData2 = factory(MlModelPredictionData::class)->create(
-            [
-                'params'                 => $state1->params,
-                'ml_model_prediction_id' => $prediction2->id,
             ]
         );
 
@@ -105,11 +90,11 @@ class MlModelServiceTest extends TestCase
         /** @var MlModelStateScoreRepository $mlModelStateScoreRepository */
         $mlModelStateScoreRepository = new MlModelStateScoreRepository(new MlModelStateScore());
 
-        /** @var MlModelPredictionDataRepository */
-        $mlModelPredictionDataRepository = new MlModelPredictionDataRepository(new MlModelPredictionData());
+        /** @var MlModelPredictionRepository */
+        $mlModelPredictionRepository = new MlModelPredictionRepository(new MlModelPrediction());
 
-        /** @var MlModelPredictionDataService $mlModelPredictionDataService */
-        $mlModelPredictionDataService = new MlModelPredictionDataService($mlModelPredictionDataRepository);
+        /** @var MlModelPredictionService $mlModelPredictionDataService */
+        $mlModelPredictionDataService = new MlModelPredictionService($mlModelPredictionRepository);
 
         /** MlModelService $mlModelService */
         $mlModelService = new MlModelService($mlModelRepository, $mlModelStateScoreRepository, $mlModelPredictionDataService);
@@ -118,10 +103,10 @@ class MlModelServiceTest extends TestCase
         $mlModelService->reviewModelPerformance($model->token);
 
         /** @var MlModelPredictionData $predictionDataDB1 */
-        $predictionDataDB1 = MlModelPredictionData::find($predictionData1->id);
+        $predictionDataDB1 = MlModelPrediction::find($prediction1->id);
 
         /** @var MlModelPredictionData $predictionDataDB2 */
-        $predictionDataDB2 = MlModelPredictionData::find($predictionData2->id);
+        $predictionDataDB2 = MlModelPrediction::find($prediction2->id);
 
         // Then
         $this->assertDatabaseHas('ml_model_states', [

@@ -105,6 +105,5 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 Route::group(['middleware' => ['auth:api']], function () {
     Route::get('score/prediction/{id}/show', 'Api\MlModelPredictionScoreController@show')->name('api.score.prediction.show');
-    Route::delete('score/prediction/{id}/delete', 'Api\MlModelPredictionScoreController@delete')->name('api.score.prediction.delete');
 
 });

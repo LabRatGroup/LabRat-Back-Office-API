@@ -7,14 +7,10 @@ use Illuminate\Database\Eloquent\Factory;
 
 /** @var Factory $factory */
 $factory->define(MlModelPredictionScore::class, function (Faker $faker) {
-    $data = json_encode([
-        $faker->word => $faker->word,
-        $faker->word => $faker->word,
-        $faker->word => $faker->word,
-    ]);
 
     return [
-        'ml_model_prediction_id' => null,
-        'data'                  => $data,
+        'ml_model_prediction_data_id' => null,
+        'prediction'                  => $faker->word,
+        'sample'                      => $faker->word,
     ];
 });
