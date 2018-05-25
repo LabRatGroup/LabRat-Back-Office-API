@@ -211,17 +211,17 @@ class MlAlgorithmParamSeeder extends Seeder
             'classType'       => 'character',
             'options'         => json_encode([
                 [
-                    'key'   => 'Rules',
-                    'value' => 'rules',
+                    'key'   => 'Rule',
+                    'value' => 'rule',
                 ],
                 [
                     'key'   => 'Tree',
-                    'value' => 'trees',
+                    'value' => 'tree',
                 ],
             ]),
             'default_value'   => json_encode([
                 'model' => [
-                    'value' => 'A',
+                    'value' => 'tree',
                 ],
             ]),
             'ml_algorithm_id' => $model->id,

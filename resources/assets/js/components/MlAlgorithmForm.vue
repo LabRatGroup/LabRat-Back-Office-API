@@ -125,6 +125,7 @@
                     this.ml_algorithm_id = this.algorithms[index]['id'];
                 } else {
                     this.params = [];
+                    this.ml_algorithm_id = null;
                 }
             }
         },
