@@ -39,7 +39,7 @@
                                 <li class="list-group-item {{$color}} ">
                                     <div class="row mb-3">
                                         <strong class="col-md-4">{{ $state->created_at }}</strong>
-                                        <span class="col-md-4">{{ $state->algorithm->name }}</span>
+                                        <span class="col-md-4">{{ isset($state->algorithm) ? $state->algorithm->name : __('Best performance analysis') }}</span>
                                         @if($state->code == '200')
                                             <div class="col-md-3">
                                                 <span>

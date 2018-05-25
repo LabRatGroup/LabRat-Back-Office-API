@@ -72,7 +72,7 @@ class MlModelServiceTest extends TestCase
         $prediction1 = factory(MlModelPrediction::class)->create(
             [
                 'ml_model_id' => $model->id,
-                'params'                 => $state1->params,
+                'params'      => $state1->params,
             ]
         );
 
@@ -80,7 +80,7 @@ class MlModelServiceTest extends TestCase
         $prediction2 = factory(MlModelPrediction::class)->create(
             [
                 'ml_model_id' => $model->id,
-                'params'                 => $state1->params,
+                'params'      => $state1->params,
             ]
         );
 
@@ -122,6 +122,101 @@ class MlModelServiceTest extends TestCase
         $this->assertTrue($predictionDataDB1->params == $state2->params);
         $this->assertTrue($predictionDataDB2->params == $state2->params);
         Queue::assertPushed(RunMachineLearningPredictionScript::class, 2);
+    }
+
+    /** @test */
+    public function should_not_reschedule_predictions_on_same_performance_model()
+    {
+
+        Queue::fake();
+
+        // Given
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state1 */
+        $state1 = factory(MlModelState::class)->create(
+            [
+                'is_current'      => true,
+                'ml_model_id'     => $model->id,
+                'ml_algorithm_id' => $algorithm->id,
+            ]
+        );
+
+        /** @var MlModelStateScore $score1 */
+        $score1 = factory(MlModelStateScore::class)->create(
+            [
+                'accuracy'          => 0.87,
+                'ml_model_state_id' => $state1->id,
+            ]
+        );
+
+        /** @var MlModelState $state2 */
+        $state2 = factory(MlModelState::class)->create(
+            [
+                'is_current'      => false,
+                'ml_model_id'     => $model->id,
+                'ml_algorithm_id' => $algorithm->id,
+            ]
+        );
+
+        /** @var MlModelStateScore $score1 */
+        $score2 = factory(MlModelStateScore::class)->create(
+            [
+                'accuracy'          => 0.87,
+                'ml_model_state_id' => $state2->id,
+            ]
+        );
+
+        /** @var MlModelPrediction $prediction1 */
+        $prediction1 = factory(MlModelPrediction::class)->create(
+            [
+                'ml_model_id' => $model->id,
+                'params'      => $state1->params,
+            ]
+        );
+
+        /** @var MlModelPrediction $prediction2 */
+        $prediction2 = factory(MlModelPrediction::class)->create(
+            [
+                'ml_model_id' => $model->id,
+                'params'      => $state1->params,
+            ]
+        );
+
+        /** @var MlModelRepository $mlModelRepository */
+        $mlModelRepository = new MlModelRepository(new MlModel());
+
+        /** @var MlModelStateScoreRepository $mlModelStateScoreRepository */
+        $mlModelStateScoreRepository = new MlModelStateScoreRepository(new MlModelStateScore());
+
+        /** @var MlModelPredictionRepository */
+        $mlModelPredictionRepository = new MlModelPredictionRepository(new MlModelPrediction());
+
+        /** @var MlModelPredictionService $mlModelPredictionDataService */
+        $mlModelPredictionDataService = new MlModelPredictionService($mlModelPredictionRepository);
+
+        /** MlModelService $mlModelService */
+        $mlModelService = new MlModelService($mlModelRepository, $mlModelStateScoreRepository, $mlModelPredictionDataService);
+
+        // When
+        $mlModelService->reviewModelPerformance($model->token);
+
+        // Then
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state1->id,
+            'is_current' => 1,
+        ]);
+
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state2->id,
+            'is_current' => 0,
+        ]);
+
+        Queue::assertNotPushed(RunMachineLearningPredictionScript::class, 2);
     }
 
 }

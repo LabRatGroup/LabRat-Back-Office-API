@@ -60,7 +60,7 @@ class RunMachineLearningModelTrainingScript implements ShouldQueue
     public function failed(Exception $exception)
     {
         $this->state->load('score');
-        if ($this->state->score()) {
+        if ($this->state->score()->count() > 0) {
             $this->runHappyPath();
         } else {
             $this->state->setStatus("500");
@@ -70,6 +70,7 @@ class RunMachineLearningModelTrainingScript implements ShouldQueue
     private function runHappyPath()
     {
         $this->state->setStatus("200");
+        $this->state->model->load('states');
         if ($this->state->model->states->count() > 1) {
             $this->mlModelService->reviewModelPerformance($this->state->model->token);
         } else {

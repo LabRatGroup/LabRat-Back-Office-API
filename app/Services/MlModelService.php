@@ -42,7 +42,7 @@ class MlModelService
         $currentState = $model->getCurrentState();
 
         /** @var MlModelStateScore $topScore */
-        $topScore = $this->mlModelStateScoreRepository->getModel();
+        $topScore = $currentState->score;
 
         /** @var MlModelState $state */
         foreach ($model->states as $state) {
@@ -62,6 +62,7 @@ class MlModelService
     {
         /** @var MlModelPrediction $prediction */
         foreach ($model->predictions as $prediction) {
+            $prediction->code = null;
             $this->mlModelPredictionService->update($prediction);
             RunMachineLearningPredictionScript::dispatch($prediction);
         }
