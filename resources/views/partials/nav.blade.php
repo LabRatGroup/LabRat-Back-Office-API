@@ -6,6 +6,6 @@
         <a class="nav-link" href="{{route('team.index')}}">Teams</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">States</a>
+        <a class="nav-link" href="{{ route('profile.update') }}">Profile</a>
     </li>
 </ul>
