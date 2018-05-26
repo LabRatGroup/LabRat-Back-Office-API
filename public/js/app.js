@@ -49211,53 +49211,49 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "col-sm-12" }, [
-      _c(
-        "div",
-        { staticClass: "list-group collaborator-panel" },
-        _vm._l(_vm.collaborators, function(collaborator) {
-          return _c(
-            "div",
-            { staticClass: "list-group-item added-collaborators" },
-            [
-              _c("div", { staticClass: "row" }, [
-                _c("div", { staticClass: "col-sm-10" }, [
-                  _c("span", { staticClass: "name" }, [
-                    _vm._v(_vm._s(collaborator.name))
-                  ]),
-                  _c("br"),
-                  _vm._v(" "),
-                  _c("span", { staticClass: "email" }, [
-                    _vm._v(_vm._s(collaborator.email))
-                  ])
+    _c("br"),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "list-group collaborator-panel" },
+      _vm._l(_vm.collaborators, function(collaborator) {
+        return _c(
+          "div",
+          { staticClass: "list-group-item added-collaborators" },
+          [
+            _c("div", { staticClass: "row" }, [
+              _c("div", { staticClass: "col-sm-10" }, [
+                _c("span", { staticClass: "name" }, [
+                  _vm._v(_vm._s(collaborator.name))
                 ]),
+                _c("br"),
                 _vm._v(" "),
-                !collaborator.pivot ||
-                (collaborator.pivot && collaborator.pivot.is_owner == 0)
-                  ? _c(
-                      "button",
-                      {
-                        staticClass: "btn btn-danger",
-                        attrs: { type: "button" },
-                        on: {
-                          click: function($event) {
-                            _vm.remove(collaborator.id)
-                          }
+                _c("span", { staticClass: "email" }, [
+                  _vm._v(_vm._s(collaborator.email))
+                ])
+              ]),
+              _vm._v(" "),
+              !collaborator.pivot ||
+              (collaborator.pivot && collaborator.pivot.is_owner == 0)
+                ? _c(
+                    "button",
+                    {
+                      staticClass: "btn btn-danger",
+                      attrs: { type: "button" },
+                      on: {
+                        click: function($event) {
+                          _vm.remove(collaborator.id)
                         }
-                      },
-                      [
-                        _vm._v(
-                          "\n                        Remove\n                    "
-                        )
-                      ]
-                    )
-                  : _vm._e()
-              ])
-            ]
-          )
-        })
-      )
-    ])
+                      }
+                    },
+                    [_vm._v("\n                    Remove\n                ")]
+                  )
+                : _vm._e()
+            ])
+          ]
+        )
+      })
+    )
   ])
 }
 var staticRenderFns = [

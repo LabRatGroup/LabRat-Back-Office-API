@@ -5,7 +5,7 @@
 @section('content_header')
     <h1>
         @lang('Projects')
-        <small>{{ $project->id? __('Edit a machie learning project'): __('Create a machine learning project') }}</small>
+        <small>{{ $project->id? __('Edit a machine learning project'): __('Create a machine learning project') }}</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('home') }}"><i class="fa fa-home"></i> @lang('Home')</a></li>

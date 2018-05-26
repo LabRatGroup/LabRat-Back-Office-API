@@ -27,22 +27,22 @@
             </button>
             </span>
         </div>
+        <br/>
 
-        <div class="col-sm-12">
-            <div class="list-group collaborator-panel">
-                <div v-for="collaborator in collaborators" class="list-group-item added-collaborators" v-cloak>
-                    <div class="row">
-                        <div class="col-sm-10">
-                            <span class="name">{{ collaborator.name }}</span><br/>
-                            <span class="email">{{ collaborator.email }}</span>
-                        </div>
-                        <button type="button" class="btn btn-danger" v-if="!collaborator.pivot || (collaborator.pivot && collaborator.pivot.is_owner == 0)" @click="remove(collaborator.id)">
-                            Remove
-                        </button>
+        <div class="list-group collaborator-panel">
+            <div v-for="collaborator in collaborators" class="list-group-item added-collaborators" v-cloak>
+                <div class="row">
+                    <div class="col-sm-10">
+                        <span class="name">{{ collaborator.name }}</span><br/>
+                        <span class="email">{{ collaborator.email }}</span>
                     </div>
+                    <button type="button" class="btn btn-danger" v-if="!collaborator.pivot || (collaborator.pivot && collaborator.pivot.is_owner == 0)" @click="remove(collaborator.id)">
+                        Remove
+                    </button>
                 </div>
             </div>
         </div>
+
 
     </div>
 </template>
