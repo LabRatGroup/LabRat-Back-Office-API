@@ -11,6 +11,11 @@ class UserPolicy
 {
     use HandlesAuthorization;
 
+    public function update(User $user, User $currentUser)
+    {
+        return $user->token == $currentUser->token;
+    }
+
     public function delete(User $user)
     {
         $projectFlag = true;

@@ -20,6 +20,13 @@ Route::get('/', 'Auth\LoginController@login')->name('home');
 Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
 Route::get('/home', 'DashboardController@index')->name('home');
 
+
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('profile', 'ProfileController@update')->name('profile.update');
+    Route::patch('profile/save', 'ProfileController@save')->name('profile.save');
+});
+
+
 Route::group(['middleware' => ['auth']], function () {
     Route::get('projects', 'ProjectController@index')->name('project.index');
     Route::get('projects/{id}/show', 'ProjectController@show')->name('project.show');
