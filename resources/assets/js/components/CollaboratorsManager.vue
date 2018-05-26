@@ -1,56 +1,50 @@
 <template>
-    <div class="card  mb-2">
-        <div class="card-header">Manage Collaborators</div>
-        <div class="card-body">
+    <div>
 
-            <div class="form-group row">
-                <div class="col-sm-12">
-                    <input type="hidden" v-model="users" id="users" name="users"/>
-                    <div class="alert alert-danger alert-dismissible fade show col-md-12" role="alert" v-if="showEmailExist" v-cloak>
-                        Collaborator already added
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close" @click="closeEmailExist()">
-                            <span aria-hidden="true">&times;</span>
+
+        <div class="alert alert-warning alert-dismissible" v-if="showEmailExist" v-cloak>
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true" @click="closeEmailExist()">×
+            </button>
+            <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+            Collaborator already added
+        </div>
+
+        <div class="alert danger alert-dismissible" v-if="showEmailError" v-cloak>
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true" @click="closeEmailExist()">×
+            </button>
+            <h4><i class="icon fa fa-ban"></i> Alert!</h4>
+            Invalid collaborator email
+        </div>
+
+
+        <label for="collaboratorEmail">Add collaborators by email</label>
+        <div class="input-group">
+            <input type="hidden" v-model="users" id="users" name="users"/>
+            <input type="text" class="form-control" id="collaboratorEmail" v-model="collaboratorEmail" placeholder="Collaborator email address">
+            <span class="input-group-btn">
+            <button type="button" @click="invite()" class="btn btn-primary ">Add new
+                collaborator
+            </button>
+            </span>
+        </div>
+
+        <div class="col-sm-12">
+            <div class="list-group collaborator-panel">
+                <div v-for="collaborator in collaborators" class="list-group-item added-collaborators" v-cloak>
+                    <div class="row">
+                        <div class="col-sm-10">
+                            <span class="name">{{ collaborator.name }}</span><br/>
+                            <span class="email">{{ collaborator.email }}</span>
+                        </div>
+                        <button type="button" class="btn btn-danger" v-if="!collaborator.pivot || (collaborator.pivot && collaborator.pivot.is_owner == 0)" @click="remove(collaborator.id)">
+                            Remove
                         </button>
                     </div>
-                    <div class="alert alert-danger alert-dismissible fade show  col-md-12" role="alert" v-if="showEmailError" v-cloak>
-                        Invalid collaborator email
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close" @click="closeEmailError()">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="form-inline row">
-                        <div class="form-group mx-sm-0 mb-2 col-sm-8">
-                            <input type="text" class="form-control col-sm-12" id="collaboratorEmail" v-model="collaboratorEmail" placeholder="Collaborator email address">
-                        </div>
-                        <div class="col-sm-4 text-sm-right">
-                            <button type="button" @click="invite()" class="btn btn-primary mb-2 col-sm-12">Add new
-                                collaborator
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-sm-12">
-
-                    <div class="list-group collaborator-panel">
-                        <div v-for="collaborator in collaborators" class="list-group-item added-collaborators" v-cloak>
-                            <div class="row">
-                                <div class="col-sm-10">
-                                    <span class="name">{{ collaborator.name }}</span><br/>
-                                    <span class="email">{{ collaborator.email }}</span>
-                                </div>
-                                <button type="button" class="btn btn-danger" v-if="!collaborator.pivot || (collaborator.pivot && collaborator.pivot.is_owner == 0)" @click="remove(collaborator.id)">
-                                    Remove
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
-    </div>
 
+    </div>
 </template>
 
 <script>

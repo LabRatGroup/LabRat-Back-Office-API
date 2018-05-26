@@ -34,7 +34,6 @@ trait Collaboration
         return $owners;
     }
 
-
     /**
      * @param User $user
      *
