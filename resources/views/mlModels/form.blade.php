@@ -1,72 +1,67 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+
+@section('title', 'Projects')
+
+@section('content_header')
+    <h1>
+        @lang('Trained Models')
+        <small>{{ is_null($project->id)? __('Edit a machine learning model'): __('Create a machine learning model') }}</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{{ route('home') }}"><i class="fa fa-home"></i> @lang('Home')</a></li>
+        <li><a href="{{ route('project.index') }}"><i class="glyphicon glyphicon-th"></i> @lang('Projects')</a></li>
+        <li>
+            <a href="{{ route('project.show', ['id'=>$project->id]) }}"><i class="glyphicon glyphicon-folder-open"></i>{{ $project->title }}
+            </a>
+        </li>
+        <li class="active">{{ is_null($model->id)? __('Create model') : __('Edit model') }}</li>
+    </ol>
+@stop
 
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
+    <div class="row">
+        <div class="col-md-push-2 col-md-8">
+
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">{{ is_null($model->id) ? __('Create model') : __('Edit model') }}</h3>
+                </div>
 
                 <form method="POST" action="{{ $model->id? route('model.save', ['id'=>$model->id]) : route('model.store') }}">
                     <input type="hidden" name="_method" value="{{ $model->id ? 'PATCH' : 'POST' }}">
+                    <input type="hidden" id="project_id" name="project_id" value="{{ $project->id }}"/>
                     @csrf
 
-                    <div class="card  mb-2">
-                        <div class="card-header">{{ $model->id? __('Edit Model'): __('Create Model') }}</div>
-                        <div class="card-body">
-
-                            <div class="form-group row">
-                                <label for="title" class="col-sm-4 col-form-label text-md-right">{{ __('Model title') }}</label>
-
-                                <div class="col-md-6">
-                                    <input id="title" type="text" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="title" value="{{ $model->title }}" autofocus>
-
-                                    @if ($errors->has('title'))
-                                        <span class="invalid-feedback">
-                                        <strong>{{ $errors->first('title') }}</strong>
-                                    </span>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="title" class="col-sm-4 col-form-label text-md-right">{{ __('Model positive class') }}</label>
-
-                                <div class="col-md-6">
-                                    <input id="positive" type="text" class="form-control{{ $errors->has('positive') ? ' is-invalid' : '' }}" name="positive" value="{{ $model->positive }}" autofocus>
-
-                                    @if ($errors->has('positive'))
-                                        <span class="invalid-feedback">
-                                        <strong>{{ $errors->first('positive') }}</strong>
-                                    </span>
-                                    @endif
-                                </div>
-                            </div>
-
-                            <div class="form-group row">
-                                <label for="description" class="col-md-4 col-form-label text-md-right">{{ __('Model description') }}</label>
-
-                                <div class="col-md-6">
-                                    <textarea id="description" type="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description">{{ $model->description }}</textarea>
-                                </div>
-                                @if ($errors->has('description'))
-                                    <span class="invalid-feedback">
-                                        <strong>{{ $errors->first('description') }}</strong>
-                                    </span>
-                                @endif
-                            </div>
-
-                            <input type="hidden" name="project_id" id="project_id" value="{{ $model->id ? $model->project->id : $project->id }}"/>
-                            <div class="form-group row mb-0">
-                                <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ __('Save') }}
-                                    </button>
-                                </div>
-                            </div>
+                    <div class="box-body">
+                        <div class="form-group {{ $errors->has('title') ? ' has-error' : '' }}">
+                            <label for="exampleInputEmail1">{{ __('Model title') }}</label>
+                            <input id="title" type="text" class="form-control" name="title" value="{{ $model->title }}" autofocus>
+                            @if ($errors->has('title'))
+                                <span class="help-block">{{ $errors->first('title') }}</span>
+                            @endif
+                        </div>
+                        <div class="form-group {{ $errors->has('positive') ? ' has-error' : '' }}">
+                            <label for="positive">{{ __('Model positive class') }}</label>
+                            <input id="positive" type="text" class="form-control{{ $errors->has('positive') ? ' is-invalid' : '' }}" name="positive" value="{{ $model->positive }}" autofocus>
+                            @if ($errors->has('positive'))
+                                <span class="help-block">{{ $errors->first('positive') }}</span>
+                            @endif
+                        </div>
+                        <div class="form-group">
+                            <label for="description">{{ __('Model description') }}</label>
+                            <textarea id="description" type="description" class="form-control" name="description">{{ $model->description }}</textarea>
                         </div>
                     </div>
-
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">@lang('Save')</button>
+                    </div>
                 </form>
             </div>
+
+
         </div>
     </div>
+
+
+
 @endsection

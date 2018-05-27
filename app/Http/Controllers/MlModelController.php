@@ -135,7 +135,8 @@ class MlModelController extends Controller
         $this->authorize('update', $model->project);
 
         return view('mlModels.form')
-            ->with('model', $model);
+            ->with('model', $model)
+            ->with('project', $model->project);
     }
 
     /**

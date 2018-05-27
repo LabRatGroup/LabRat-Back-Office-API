@@ -43,14 +43,16 @@
                                 <td>{{ array_first($project->owners())->name }}</td>
                                 <td>{{ $project->updated_at }}</td>
                                 <td>
-                                    <a href="{{ route('model.create', ['id'=>$project->id]) }}" class="btn  btn-success btn-xs" title="@lang('Create new model')"><i class="fa fa-cogs"></i></a>
-                                    <a href="{{ route('project.update', ['id'=>$project->id]) }}" class="btn  btn-primary btn-xs" title="@lang('Update project')"><i class="fa fa-edit"></i></a>
-                                    <button title="@lang('Delete project')" type="button" class="btn  btn-danger btn-xs" onclick="$('#delete-form-{{ $project->id }}').submit();">
-                                        <i class="fa fa-trash"></i></button>
-                                    <form id="delete-form-{{ $project->id }}" action="{{ route('project.delete', ['id' => $project->id]) }}" method="POST">
-                                        {{ csrf_field() }}
-                                        <input type="hidden" name="_method" value="DELETE">
-                                    </form>
+                                    <div class="btn-group">
+                                        <a href="{{ route('model.create', ['id'=>$project->id]) }}" class="btn  btn-success btn-xs" title="@lang('Create new model')"><i class="fa fa-cogs"></i></a>
+                                        <a href="{{ route('project.update', ['id'=>$project->id]) }}" class="btn  btn-primary btn-xs" title="@lang('Update project')"><i class="fa fa-edit"></i></a>
+                                        <button title="@lang('Delete project')" type="button" class="btn  btn-danger btn-xs" onclick="$('#delete-form-{{ $project->id }}').submit();">
+                                            <i class="fa fa-trash"></i></button>
+                                        <form id="delete-form-{{ $project->id }}" action="{{ route('project.delete', ['id' => $project->id]) }}" method="POST">
+                                            {{ csrf_field() }}
+                                            <input type="hidden" name="_method" value="DELETE">
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

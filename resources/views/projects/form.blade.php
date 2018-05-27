@@ -33,17 +33,15 @@
                     <div class="box-body">
 
                         <div class="col-md-6">
-                            <div class="form-group">
-                                <div class="form-group {{ $errors->has('title') ? 'has-errors' : '' }}">
-                                    <label for="title">{{ __('Project title') }}</label>
-                                    <input id="title" type="title" class="form-control" name="title" value="{{ $project->title }}" autofocus>
-                                    @if ($errors->has('title'))
-                                        <span class="help-block">
-                                        <strong>{{ $errors->first('title') }}</strong>
-                                    </span>
-                                    @endif
-                                </div>
+
+                            <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
+                                <label for="title">{{ __('Project title') }}</label>
+                                <input id="title" type="title" class="form-control" name="title" value="{{ $project->title }}" autofocus>
+                                @if ($errors->has('title'))
+                                    <span class="help-block">{{ $errors->first('title') }}</span>
+                                @endif
                             </div>
+
                             <div class="form-group">
                                 <label for="teams">{{ __('Team access') }}</label>
 
@@ -55,7 +53,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="description">{{ __('Project description') }}</label>
-                                <textarea id="description" namr="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description">{{ $project->description }}</textarea>
+                                <textarea id="description" name="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description">{{ $project->description }}</textarea>
                             </div>
                         </div>
 

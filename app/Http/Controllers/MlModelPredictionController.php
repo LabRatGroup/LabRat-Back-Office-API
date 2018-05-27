@@ -135,7 +135,7 @@ class MlModelPredictionController extends Controller
 
         RunMachineLearningPredictionScript::dispatch($prediction);
 
-        return redirect()->action('MlModelPredictionController@index', ['id' => $model->id]);
+        return redirect()->action('MlModelController@show', ['id' => $model->id]);
     }
 
     /**
@@ -200,7 +200,7 @@ class MlModelPredictionController extends Controller
             RunMachineLearningPredictionScript::dispatch($prediction);
         }
 
-        return redirect()->action('MlModelPredictionController@index', ['id' => $prediction->model->id]);
+        return redirect()->action('MlModelController@show', ['id' => $prediction->model->id]);
     }
 
     /**
@@ -220,7 +220,7 @@ class MlModelPredictionController extends Controller
         $this->authorize('view', $prediction->model->project);
         $this->mlModelPredictionRepository->delete($prediction);
 
-        return redirect()->action('MlModelPredictionController@index', ['id' => $model->id]);
+        return redirect()->action('MlModelController@show', ['id' => $model->id]);
     }
 
     /**
@@ -243,7 +243,7 @@ class MlModelPredictionController extends Controller
 
             RunMachineLearningPredictionScript::dispatch($prediction);
 
-            return redirect()->action('MlModelPredictionController@index', ['id' => $prediction->model->id]);
+            return redirect()->action('MlModelController@show', ['id' => $prediction->model->id]);
 
         }
 
