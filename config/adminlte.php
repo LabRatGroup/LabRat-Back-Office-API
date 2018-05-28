@@ -128,11 +128,11 @@ return [
             'url'  => 'predictions',
             'icon' => 'bar-chart',
         ],
-        [
-            'text' => 'Algorithms',
-            'url'  => 'algorithms',
-            'icon' => 'cube',
-        ],
+//        [
+//            'text' => 'Algorithms',
+//            'url'  => 'algorithms',
+//            'icon' => 'cube',
+//        ],
         //        [
         //            'text'    => 'Multilevel',
         //            'icon'    => 'share',
@@ -178,10 +178,16 @@ return [
             'icon' => 'user',
         ],
         [
-            'text'        => 'Collaboration teams',
+            'text'        => 'Collaboration Teams',
             'url'         => 'teams',
             'icon'        => 'users',
             'label_color' => 'success',
+        ],
+        'DEMO DATA',
+        [
+            'text' => 'Download Demo Data',
+            'url'  => 'demo',
+            'icon' => 'database',
         ],
     ],
 

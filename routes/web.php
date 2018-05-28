@@ -26,6 +26,10 @@ Route::group(['middleware' => ['auth']], function () {
     Route::patch('profile/save', 'ProfileController@save')->name('profile.save');
 });
 
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('demo', 'HomeController@demo')->name('demo');
+});
+
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('projects', 'ProjectController@index')->name('project.index');
