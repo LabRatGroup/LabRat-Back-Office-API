@@ -116,8 +116,7 @@ class MlModelController extends Controller
         $model = $this->mlModelRepository->create($params);
         $model->setProject($project);
 
-        return redirect()->action('ProjectController@index')
-            ->with('model', $model);
+        return redirect()->action('MlModelController@show', ['id' => $model->id]);
     }
 
     /**
@@ -167,8 +166,7 @@ class MlModelController extends Controller
 
         $model = $this->mlModelRepository->update($model, $params);
 
-        return redirect()->action('ProjectController@index')
-            ->with('model', $model);
+        return redirect()->action('MlModelController@show', ['id' => $model->id]);
     }
 
     /**
@@ -184,10 +182,13 @@ class MlModelController extends Controller
     {
         /** @var MlModel $model */
         $model = $this->mlModelRepository->findOneOrFailById($id);
-        $this->authorize('delete', $model->project);
+
+        /** @var Project $project */
+        $project = $model->project;
+
+        $this->authorize('delete', $project);
         $this->mlModelRepository->delete($model);
 
-        return redirect()->action('ProjectController@index')
-            ->with('model', $model);
+        return redirect()->action('ProjectController@show', ['id' => $project->id]);
     }
 }

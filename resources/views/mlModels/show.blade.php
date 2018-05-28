@@ -21,23 +21,33 @@
 @section('content')
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#states" data-toggle="tab"><i class="fa fa-tasks"></i> Trained Model States</a></li>
-            <li><a href="#predictions" data-toggle="tab"><i class="fa fa-bar-chart"></i> Prediction Jobs</a></li>
+            <li class="active"><a href="#states" data-toggle="tab"><i class="fa fa-tasks"></i> Trained Model States</a>
+            </li>
+            @if($model->getCurrentState())
+                <li><a href="#predictions" data-toggle="tab"><i class="fa fa-bar-chart"></i> Prediction Jobs</a></li>
+            @endif
             <li><a href="#info" data-toggle="tab"><i class="fa fa-info-circle"></i> General Information</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="states">
                 @include('mlModelStates.partials.list', ['states'=>$model->states])
             </div>
-            <div class="tab-pane" id="predictions">
-                @include('predictions.partials.list', ['predictions'=>$model->predictions])
-            </div>
+            @if($model->getCurrentState())
+                <div class="tab-pane" id="predictions">
+                    @include('predictions.partials.list', ['predictions'=>$model->predictions])
+                </div>
+            @endif
             <div class="tab-pane" id="info">
                 <div class="row">
                     <div class="col-md-12">
-                        <p>{{$model->description}}</p>
+                        @if($model->description)
+                            <p>{{$model->description}}</p>
+                        @else
+                            <p><i>@lang('No description has been provided for this model.')</i></p>
+                        @endif
                         <p class="text-green">Positive class: <strong>{{ $model->positive }}</strong></p>
-                        <a href="{{ $currentState ? route('state.update', ['id'=>$currentState->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success"><i class="fa fa-tasks"></i> @lang('Train model')</a>
+                        <a href="{{ $currentState ? route('state.update', ['id'=>$currentState->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success"><i class="fa fa-tasks"></i> @lang('Train model')
+                        </a>
                     </div>
                 </div>
             </div>
