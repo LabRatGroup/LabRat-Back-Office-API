@@ -1,16 +1,16 @@
 @extends('adminlte::page')
 
-@section('title', 'Projects')
+@section('title', (is_null($project->id)? __('Create a machine learning project') : __('Edit Project: ').$project->title))
 
 @section('content_header')
     <h1>
-        @lang('Projects')
-        <small>{{ $project->id? __('Edit a machine learning project'): __('Create a machine learning project') }}</small>
+        <i class="fa fa-folder-open"></i>  @lang('Project')
+        <small>{{ is_null($project->id)? __('Create a machine learning project') : __('Edit a machine learning project') }}</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('home') }}"><i class="fa fa-home"></i> @lang('Home')</a></li>
         <li><a href="{{ route('project.index') }}"><i class="glyphicon glyphicon-th"></i> @lang('Projects')</a></li>
-        <li class="active">{{ $project->id? __('Edit Project'): __('Create Project') }}</li>
+        <li class="active"><i class="fa fa-folder-open"></i> {{ $project->id? __('Edit Project: '.$project->title): __('Create Project') }}</li>
     </ol>
 @stop
 

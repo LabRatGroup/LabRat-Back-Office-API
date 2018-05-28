@@ -3,12 +3,12 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header">
-                    <h3 class="box-title">All available model states</h3>
+                   <br/>
 
                     <div class="box-tools">
                         <div class="input-group input-group-sm" style="width: 50px;">
                             <div class="input-group-btn">
-                                <a href="{{ $currentState ? route('state.update', ['id'=>$currentState->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success">@lang('Train model')</a>
+                                <a href="{{ $currentState ? route('state.update', ['id'=>$currentState->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success"><i class="fa fa-tasks"></i> @lang('Train model')</a>
                             </div>
                         </div>
                     </div>

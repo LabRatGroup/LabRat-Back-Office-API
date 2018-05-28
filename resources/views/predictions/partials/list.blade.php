@@ -2,17 +2,19 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
+                @if(isset($model))
                 <div class="box-header">
-                    <h3 class="box-title">All available prediction jobs</h3>
-
+                    <br/>
                     <div class="box-tools">
                         <div class="input-group input-group-sm" style="width: 50px;">
                             <div class="input-group-btn">
-                                <a href="{{ route('prediction.create', ['id'=>$model->id])  }}" class="btn btn-success">@lang('Run prediction job')</a>
+                                <a href="{{ route('prediction.create', ['id'=>$model->id])  }}" class="btn btn-success"><i class="fa fa-bar-chart"></i> @lang('Run prediction job')</a>
                             </div>
                         </div>
                     </div>
                 </div>
+                @endif
+
                 <!-- /.box-header -->
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-hover">
@@ -43,7 +45,7 @@
                             <tr>
                                 <td>{{ $prediction->id }}</td>
                                 <td>{{ $prediction->updated_at }}</td>
-                                <td>{{ $currentState->algorithm->name }}</td>
+                                <td>{{ $prediction->model->getCurrentState()->algorithm->name }}</td>
                                 <td><span class="label label-{{$color}}">{{ $status }}</span></td>
                                 <td>{{ $prediction->score->count() }}</td>
 

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Projects')
+@section('title', __('Machine Learning Model Training'))
 
 @section('content_header')
     <h1>
@@ -15,7 +15,7 @@
             </a></li>
         <li><a href="{{ route('model.show', ['id' => $model->id]) }}"><i class="fa fa-cogs"></i>{{ $model->title }}</a>
         </li>
-        <li class="active">@lang('Train model')</li>
+        <li class="active"><i class="fa fa-tasks"></i> @lang('Train model')</li>
     </ol>
 @stop
 @section('content')

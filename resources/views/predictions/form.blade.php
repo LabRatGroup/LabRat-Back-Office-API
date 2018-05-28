@@ -1,11 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Predictions')
+@section('title', 'Data Prediction - '.is_null($prediction->id)? __('Edit data prediction: '.$prediction->title ): __('Create a data prediction'))
 
 @section('content_header')
     <h1>
         @lang('Data Prediction')
-        <small>{{ is_null($prediction->id)? __('Edit a model prediction'): __('Create a model prediction') }}</small>
+        <small>{{ is_null($prediction->id)? __('Edit data prediction: '.$prediction->title ): __('Create data prediction') }}</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('home') }}"><i class="fa fa-home"></i> @lang('Home')</a></li>
@@ -18,7 +18,7 @@
             <a href="{{ route('model.show', ['id'=>$model->project->id]) }}"><i class="fa fa-cogs"></i>{{ $model->project->title }}
             </a>
         </li>
-        <li class="active">{{ is_null($prediction->id)? __('Create prediction') : __('Edit prediction') }}</li>
+        <li class="active"><i class="fa fa-bar-chart"></i> {{ is_null($prediction->id)? __('Create prediction') : __('Edit prediction') }}</li>
     </ol>
 @stop
 

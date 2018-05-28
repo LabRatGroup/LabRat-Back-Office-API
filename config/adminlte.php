@@ -15,7 +15,7 @@ return [
 
     'title' => 'LabRat',
 
-    'title_prefix' => '',
+    'title_prefix' => 'LabRat - ',
 
     'title_postfix' => '',
 
@@ -173,12 +173,12 @@ return [
         //        ],
         'USER MANAGEMENT',
         [
-            'text' => 'Profile',
+            'text' => 'User Profile',
             'url'  => 'profile',
             'icon' => 'user',
         ],
         [
-            'text'        => 'Teams',
+            'text'        => 'Collaboration teams',
             'url'         => 'teams',
             'icon'        => 'users',
             'label_color' => 'success',

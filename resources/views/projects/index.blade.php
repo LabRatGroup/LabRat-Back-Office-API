@@ -4,12 +4,12 @@
 
 @section('content_header')
     <h1>
-        @lang('Projects')
+        <i class="glyphicon glyphicon-th"></i> @lang('Projects')
         <small>@lang('Machine learning projects')</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('home') }}"><i class="fa fa-home"></i> @lang('Home')</a></li>
-        <li class="active">@lang('Projects')</li>
+        <li class="active"><i class="fa fa-th"></i> @lang('Projects')</li>
     </ol>
 @stop
 
@@ -18,9 +18,10 @@
         <div class="col-xs-12">
             <div class="box box-primary">
                 <div class="box-header">
-                    <h3 class="box-title">@lang('All projects')</h3>
+                    <br/>
                     <div class="box-tools">
-                        <a href="{{ route('project.create') }}" class="btn btn-block btn-success btn-sm" title="@lang("Create new project")">@lang("Create new project")</a>
+                        <a href="{{ route('project.create') }}" class="btn btn-block btn-success btn-sm" title="@lang("Create new project")"><i class="fa fa-folder-open"></i> @lang("Create new project")
+                        </a>
                     </div>
                 </div>
 

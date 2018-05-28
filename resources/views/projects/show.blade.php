@@ -1,24 +1,24 @@
 @extends('adminlte::page')
 
-@section('title', 'Projects')
+@section('title', 'Project Details - '.$project->title)
 
 @section('content_header')
     <h1>
-        {{ $project->title }}
+        <i class="fa fa-folder-open"></i> {{ $project->title }}
         <small>@lang('Project details')</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('home') }}"><i class="fa fa-home"></i> @lang('Home')</a></li>
         <li><a href="{{ route('project.index') }}"><i class="glyphicon glyphicon-th"></i> @lang('Projects')</a></li>
-        <li class="active">{{ $project->title }}</li>
+        <li class="active"><i class="fa fa-folder-open"></i> {{ $project->title }}</li>
     </ol>
 @stop
 
 @section('content')
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab_1" data-toggle="tab">General Information</a></li>
-            <li><a href="#tab_2" data-toggle="tab">Available models</a></li>
+            <li class="active"><a href="#tab_1" data-toggle="tab"><i class="fa fa-info-circle"></i>  General Information</a></li>
+            <li><a href="#tab_2" data-toggle="tab"><i class="fa fa-cogs"></i>  Available models</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="tab_1">

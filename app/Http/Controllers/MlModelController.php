@@ -9,6 +9,7 @@ use App\Repositories\MlModelRepository;
 use App\Repositories\ProjectRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -44,14 +45,13 @@ class MlModelController extends Controller
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function index($id)
+    public function index()
     {
-        /** @var Project $project */
-        $project = $this->projectRepository->findOneOrFailById($id);
-        $this->authorize('view', $project);
+        /** @var Collection $models */
+        $models = $this->mlModelRepository->findAllByUserOrTeamMember();
 
         return view('mlModels.index')
-            ->with('models', $project->models);
+            ->with('models', $models);
     }
 
     /**

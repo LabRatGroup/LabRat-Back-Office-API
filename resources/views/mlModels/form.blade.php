@@ -1,11 +1,11 @@
 @extends('adminlte::page')
 
-@section('title', 'Projects')
+@section('title', is_null($model->id)? __('Create trained model') : __('Edit trained model: '.$model->title) )
 
 @section('content_header')
     <h1>
-        @lang('Trained Models')
-        <small>{{ is_null($project->id)? __('Edit a machine learning model'): __('Create a machine learning model') }}</small>
+        <i class="fa fa-cogs"></i> @lang('Trained Models')
+        <small>{{ is_null($project->id)? __('Edit trained model').': '.$model->title: __('Create trained model') }}</small>
     </h1>
     <ol class="breadcrumb">
         <li><a href="{{ route('home') }}"><i class="fa fa-home"></i> @lang('Home')</a></li>
@@ -14,7 +14,9 @@
             <a href="{{ route('project.show', ['id'=>$project->id]) }}"><i class="glyphicon glyphicon-folder-open"></i>{{ $project->title }}
             </a>
         </li>
-        <li class="active">{{ is_null($model->id)? __('Create model') : __('Edit model') }}</li>
+        <li class="active">
+            <i class="fa fa-cogs"></i> {{ is_null($model->id)? __('Create trained model') : __('Edit trained model') }}
+        </li>
     </ol>
 @stop
 

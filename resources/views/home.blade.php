@@ -1,9 +1,14 @@
 @extends('adminlte::page')
 
-@section('title', 'AdminLTE')
+@section('title', __('Dashboard'))
 
 @section('content_header')
-    <h1>Dashboard</h1>
+    <h1>
+        @lang('Dashboard')
+    </h1>
+    <ol class="breadcrumb">
+        <li><i class="fa fa-home"></i> @lang('Home')</li>
+    </ol>
 @stop
 
 @section('content')

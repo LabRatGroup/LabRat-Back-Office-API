@@ -1,3 +1,13 @@
+@if(isset($project))
+    <div class="box-header">
+        <br/>
+        <div class="box-tools">
+            <a href="{{ route('model.create', ['id'=>$project->id]) }}" class="btn btn-block btn-success btn-sm" title="@lang("Create new trained model")"><i class="fa fa-cogs"></i> @lang("Create new trained model")
+            </a>
+        </div>
+    </div>
+@endif
+
 <div class="box-body table-responsive no-padding">
     <table class="table table-hover">
         <tbody>
@@ -8,7 +18,7 @@
             <th style="width: 15%">Predictions</th>
             <th style="width: 15%">&nbsp;</th>
         </tr>
-        @foreach($project->models as $model)
+        @foreach($models as $model)
             @php
                 $currentState = $model->getCurrentState();
                 if(!$currentState) $currentState = $model->states()->first();
@@ -21,7 +31,8 @@
                 <td>
                     {{ trans_choice('frontend.states_count', $stateCount, ['states' =>$stateCount]) }}
                     @if($model->states->count() > 0 && $currentState)
-                        <br/><small>{{ $currentState->updated_at }}</small>
+                        <br/>
+                        <small>{{ $currentState->updated_at }}</small>
                         @if(isset($currentState->code))
                             <br/>
                             <small class="text-{{ $currentState->code =='200' ?'success':'danger'  }}">
@@ -36,7 +47,7 @@
                     @endif
                 </td>
                 <td>
-                    <a href="{{route('prediction.index', ['id'=>$model->id])}}">{{ trans_choice('frontend.predictions_count', $predictionCount, ['predictions' =>$predictionCount]) }}</a>
+                   {{ trans_choice('frontend.predictions_count', $predictionCount, ['predictions' =>$predictionCount]) }}
                 </td>
                 <td>
                     <div class="btn-group">
@@ -49,8 +60,6 @@
                         @if($model->states->count() > 0 && $currentState)
                             <a href="{{ route('prediction.create', ['id'=>$model->id]) }}" class="btn  btn-warning btn-xs" title="@lang('Predict')"><i class="fa fa-bar-chart"></i></a>
                         @endif
-
-
                     </div>
                     <form id="delete-form-{{ $model->id }}" action="{{ route('model.delete', ['id' => $model->id]) }}" method="POST">
                         {{ csrf_field() }}

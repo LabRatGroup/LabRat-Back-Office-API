@@ -1,10 +1,10 @@
 @extends('adminlte::page')
 
-@section('title', 'Model state performance details')
+@section('title', __('Model state performance details'. ' - '.$state->model->title))
 
 @section('content_header')
     <h1>
-        {{ $state->model->title }}
+        <i class="fa fa-tasks"></i> {{ $state->model->title }}
         <small>@lang('Model state performance details')</small>
     </h1>
     <ol class="breadcrumb">
@@ -18,7 +18,7 @@
             <a href="{{ route('model.show', ['id'=>$state->model->id]) }}"><i class="fa fa-cogs"></i>{{ $state->model->title }}
             </a>
         </li>
-        <li class="active">Performance details</li>
+        <li class="active"><i class="fa fa-tasks"></i> Performance details</li>
     </ol>
 @stop
 
