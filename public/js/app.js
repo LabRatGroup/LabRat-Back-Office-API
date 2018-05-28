@@ -45437,7 +45437,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -45466,13 +45466,14 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-    name: "MlStateForm"
+    name: "MlStateForm",
+    data: function data() {
+        return {
+            visibility: true
+        };
+    }
 });
 
 /***/ }),
@@ -45488,19 +45489,38 @@ var render = function() {
     [
       _c("ml-algorithm-form"),
       _vm._v(" "),
-      _c("br"),
+      _c("ml-preprocessing-form", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.visibility,
+            expression: "visibility"
+          }
+        ]
+      }),
       _vm._v(" "),
-      _c("ml-preprocessing-form"),
+      _c("ml-resampling-form", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.visibility,
+            expression: "visibility"
+          }
+        ]
+      }),
       _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("ml-resampling-form"),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("ml-metric-form"),
-      _vm._v(" "),
-      _c("br"),
+      _c("ml-metric-form", {
+        directives: [
+          {
+            name: "show",
+            rawName: "v-show",
+            value: _vm.visibility,
+            expression: "visibility"
+          }
+        ]
+      }),
       _vm._v(" "),
       _vm._m(0)
     ],
@@ -45627,7 +45647,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -45749,9 +45769,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 var index = items.index(this.method);
                 this.params = this.algorithms[index]['params'];
                 this.ml_algorithm_id = this.algorithms[index]['id'];
+                this.$parent.visibility = true;
             } else {
                 this.params = [];
                 this.ml_algorithm_id = null;
+                this.$parent.visibility = false;
             }
         }
     },
@@ -46081,7 +46103,9 @@ var render = function() {
             _vm.tune = $event.target.value
           }
         }
-      })
+      }),
+      _vm._v(" "),
+      _c("br")
     ],
     2
   )
@@ -46411,6 +46435,8 @@ var render = function() {
       ])
     ]),
     _vm._v(" "),
+    _c("br"),
+    _vm._v(" "),
     _c("input", {
       directives: [
         {
@@ -46529,7 +46555,7 @@ exports = module.exports = __webpack_require__(2)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -46540,6 +46566,7 @@ exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+//
 //
 //
 //
@@ -46678,7 +46705,9 @@ var render = function() {
           _vm.preprocessing = $event.target.value
         }
       }
-    })
+    }),
+    _vm._v(" "),
+    _c("br")
   ])
 }
 var staticRenderFns = []
@@ -46900,6 +46929,8 @@ var render = function() {
         ])
       ])
     ]),
+    _vm._v(" "),
+    _c("br"),
     _vm._v(" "),
     _c("input", {
       directives: [

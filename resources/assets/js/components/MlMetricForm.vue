@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-
+        <br/>
         <input type="hidden" id="metric" name="metric" v-model="metric"/>
     </div>
 </template>

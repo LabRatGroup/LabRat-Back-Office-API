@@ -32,7 +32,7 @@
                 </div>
             </div>
         </div>
-
+        <br/>
 
         <input type="hidden" id="control" name="control" v-model="control"/>
     </div>

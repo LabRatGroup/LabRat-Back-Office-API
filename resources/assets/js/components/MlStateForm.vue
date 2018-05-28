@@ -1,13 +1,9 @@
 <template>
     <div>
         <ml-algorithm-form></ml-algorithm-form>
-        <br/>
-        <ml-preprocessing-form></ml-preprocessing-form>
-        <br/>
-        <ml-resampling-form></ml-resampling-form>
-        <br/>
-        <ml-metric-form></ml-metric-form>
-        <br/>
+        <ml-preprocessing-form v-show="visibility"></ml-preprocessing-form>
+        <ml-resampling-form v-show="visibility"></ml-resampling-form>
+        <ml-metric-form v-show="visibility"></ml-metric-form>
         <div>
             <h4>Training data upload</h4>
             <div class="form-group">
@@ -22,7 +18,12 @@
 
 <script>
     export default {
-        name: "MlStateForm"
+        name: "MlStateForm",
+        data() {
+            return {
+                visibility: true
+            }
+        },
     }
 </script>
 

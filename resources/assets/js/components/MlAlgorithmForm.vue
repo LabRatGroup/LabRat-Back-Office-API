@@ -71,7 +71,7 @@
         <input type="hidden" id="ml_algorithm_id" name="ml_algorithm_id" v-model="ml_algorithm_id"/>
         <input type="hidden" id="method" name="method" v-model="method"/>
         <input type="hidden" id="tune" name="tune" v-model="tune"/>
-
+        <br/>
     </div>
 </template>
 
@@ -108,9 +108,11 @@
                     let index = items.index(this.method);
                     this.params = this.algorithms[index]['params'];
                     this.ml_algorithm_id = this.algorithms[index]['id'];
+                    this.$parent.visibility = true;
                 } else {
                     this.params = [];
                     this.ml_algorithm_id = null;
+                    this.$parent.visibility = false;
                 }
             }
         },
