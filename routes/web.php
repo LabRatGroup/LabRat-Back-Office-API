@@ -17,13 +17,17 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::get('/', 'Auth\LoginController@login')->name('home');
-Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
-Route::get('/home', 'DashboardController@index')->name('home');
+Route::get('/dashboard', 'HomeController@index')->name('dashboard');
+Route::get('/home', 'HomeController@index')->name('home');
 
 
 Route::group(['middleware' => ['auth']], function () {
     Route::get('profile', 'ProfileController@update')->name('profile.update');
     Route::patch('profile/save', 'ProfileController@save')->name('profile.save');
+});
+
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('demo', 'HomeController@demo')->name('demo');
 });
 
 
@@ -70,7 +74,7 @@ Route::group(['middleware' => ['auth']], function () {
 });
 
 Route::group(['middleware' => ['auth']], function () {
-    Route::get('predictions/{id}/model', 'MlModelPredictionController@index')->name('prediction.index');
+    Route::get('predictions', 'MlModelPredictionController@index')->name('prediction.index');
     Route::get('predictions/{id}/show', 'MlModelPredictionController@show')->name('prediction.show');
     Route::get('predictions/{id}/create', 'MlModelPredictionController@create')->name('prediction.create');
     Route::post('predictions/store', 'MlModelPredictionController@store')->name('prediction.store');
@@ -83,3 +87,7 @@ Route::group(['middleware' => ['auth']], function () {
 
 
 
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');

@@ -12,6 +12,7 @@ use App\Repositories\MlModelPredictionRepository;
 use App\Repositories\MlModelRepository;
 use App\Services\MlModelPredictionService;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -48,19 +49,15 @@ class MlModelPredictionController extends Controller
     /**
      * Retrieves all model predictions.
      *
-     * @param $id
-     *
      * @return JsonResponse
-     * @throws AuthorizationException
      */
-    public function index($id)
+    public function index()
     {
-        /** @var MlModel $model */
-        $model = $this->mlModelRepository->findOneOrFailById($id);
-        $this->authorize('view', $model->project);
+        /** @var Collection $predictions */
+        $predictions = $this->mlModelPredictionRepository->findAllByUserOrTeamMember();
 
         return view('predictions.index')
-            ->with('predictions', $model->predictions);
+            ->with('predictions', $predictions);
     }
 
     /**
@@ -135,7 +132,7 @@ class MlModelPredictionController extends Controller
 
         RunMachineLearningPredictionScript::dispatch($prediction);
 
-        return redirect()->action('MlModelPredictionController@index', ['id' => $model->id]);
+        return redirect()->action('MlModelController@show', ['id' => $model->id]);
     }
 
     /**
@@ -200,7 +197,7 @@ class MlModelPredictionController extends Controller
             RunMachineLearningPredictionScript::dispatch($prediction);
         }
 
-        return redirect()->action('MlModelPredictionController@index', ['id' => $prediction->model->id]);
+        return redirect()->action('MlModelController@show', ['id' => $prediction->model->id]);
     }
 
     /**
@@ -220,7 +217,7 @@ class MlModelPredictionController extends Controller
         $this->authorize('view', $prediction->model->project);
         $this->mlModelPredictionRepository->delete($prediction);
 
-        return redirect()->action('MlModelPredictionController@index', ['id' => $model->id]);
+        return redirect()->action('MlModelController@show', ['id' => $model->id]);
     }
 
     /**
@@ -243,7 +240,7 @@ class MlModelPredictionController extends Controller
 
             RunMachineLearningPredictionScript::dispatch($prediction);
 
-            return redirect()->action('MlModelPredictionController@index', ['id' => $prediction->model->id]);
+            return redirect()->action('MlModelController@show', ['id' => $prediction->model->id]);
 
         }
 

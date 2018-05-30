@@ -9,6 +9,7 @@ use App\Repositories\MlModelRepository;
 use App\Repositories\ProjectRepository;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -44,14 +45,13 @@ class MlModelController extends Controller
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function index($id)
+    public function index()
     {
-        /** @var Project $project */
-        $project = $this->projectRepository->findOneOrFailById($id);
-        $this->authorize('view', $project);
+        /** @var Collection $models */
+        $models = $this->mlModelRepository->findAllByUserOrTeamMember();
 
         return view('mlModels.index')
-            ->with('models', $project->models);
+            ->with('models', $models);
     }
 
     /**
@@ -116,8 +116,7 @@ class MlModelController extends Controller
         $model = $this->mlModelRepository->create($params);
         $model->setProject($project);
 
-        return redirect()->action('ProjectController@index')
-            ->with('model', $model);
+        return redirect()->action('MlModelController@show', ['id' => $model->id]);
     }
 
     /**
@@ -135,7 +134,8 @@ class MlModelController extends Controller
         $this->authorize('update', $model->project);
 
         return view('mlModels.form')
-            ->with('model', $model);
+            ->with('model', $model)
+            ->with('project', $model->project);
     }
 
     /**
@@ -166,8 +166,7 @@ class MlModelController extends Controller
 
         $model = $this->mlModelRepository->update($model, $params);
 
-        return redirect()->action('ProjectController@index')
-            ->with('model', $model);
+        return redirect()->action('MlModelController@show', ['id' => $model->id]);
     }
 
     /**
@@ -183,10 +182,13 @@ class MlModelController extends Controller
     {
         /** @var MlModel $model */
         $model = $this->mlModelRepository->findOneOrFailById($id);
-        $this->authorize('delete', $model->project);
+
+        /** @var Project $project */
+        $project = $model->project;
+
+        $this->authorize('delete', $project);
         $this->mlModelRepository->delete($model);
 
-        return redirect()->action('ProjectController@index')
-            ->with('model', $model);
+        return redirect()->action('ProjectController@show', ['id' => $project->id]);
     }
 }

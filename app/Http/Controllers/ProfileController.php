@@ -55,7 +55,7 @@ class ProfileController extends Controller
 
         $this->userRepository->update($current, $params);
 
-        return view('dashboard');
+        return view('home');
 
     }
 }

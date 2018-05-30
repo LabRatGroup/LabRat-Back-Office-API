@@ -1,80 +1,57 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+
+@section('title', 'Trained Model - '.$model->title)
+
+@section('content_header')
+    <h1>
+        <i class="fa fa-cogs"></i> {{ $model->title }}
+        <small>@lang('Trained model details')</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{{ route('home') }}"><i class="fa fa-home"></i> @lang('Home')</a></li>
+        <li><a href="{{ route('project.index') }}"><i class="glyphicon glyphicon-th"></i> @lang('Projects')</a></li>
+        <li>
+            <a href="{{ route('project.show', ['id'=>$model->project->id]) }}"><i class="glyphicon glyphicon-folder-open"></i>{{ $model->project->title }}
+            </a>
+        </li>
+        <li class="active"><i class="fa fa-cogs"></i> {{ $model->title }}</li>
+    </ol>
+@stop
 
 @section('content')
-    <div class="container">
-
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-                <li class="breadcrumb-item">
-                    <a href="{{ route('project.show', ['id'=>$model->project->id]) }}">{{ $model->project->title }}</a>
-                </li>
-                <li class="breadcrumb-item active" aria-current="page">{{ $model->title }}</li>
-            </ol>
-        </nav>
-
-
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card mb-3">
-                    <div class="card-header">{{ $model->title }}</div>
-
-                    <div class="card-body">
-                        <p>{{$model->description}}</p>
-                        <a href="{{ $currentState ? route('state.update', ['id'=>$currentState->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success">@lang('Train model')</a>
+    <div class="nav-tabs-custom">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#states" data-toggle="tab"><i class="fa fa-tasks"></i> Trained Model States</a>
+            </li>
+            @if($model->getCurrentState())
+                <li><a href="#predictions" data-toggle="tab"><i class="fa fa-bar-chart"></i> Prediction Jobs</a></li>
+            @endif
+            <li><a href="#info" data-toggle="tab"><i class="fa fa-info-circle"></i> General Information</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="states">
+                @include('mlModelStates.partials.list', ['states'=>$model->states])
+            </div>
+            @if($model->getCurrentState())
+                <div class="tab-pane" id="predictions">
+                    @include('predictions.partials.list', ['predictions'=>$model->predictions])
+                </div>
+            @endif
+            <div class="tab-pane" id="info">
+                <div class="row">
+                    <div class="col-md-12">
+                        @if($model->description)
+                            <p>{{$model->description}}</p>
+                        @else
+                            <p><i>@lang('No description has been provided for this model.')</i></p>
+                        @endif
+                        <p class="text-green">Positive class: <strong>{{ $model->positive }}</strong></p>
+                        <a href="{{ $currentState ? route('state.update', ['id'=>$currentState->id]) : route('state.create', ['id'=>$model->id]) }}" class="btn btn-success"><i class="fa fa-tasks"></i> @lang('Train model')
+                        </a>
                     </div>
                 </div>
-
-                <div class="list-group">
-                    @if($model->states()->count() > 0)
-                        <ul class="list-group">
-                            @foreach($model->states as $state)
-                                @php
-                                    $prefix = "list-group-item-";
-                                    if(is_null($state->code)) $color = $prefix.'warning';
-                                    if($state->code == '500') $color =  $prefix.'danger';
-                                    if($state->code == '200') $color = '';
-                                    if($currentState && $state->id == $currentState->id) $color =  $prefix.'success';
-                                @endphp
-                                <li class="list-group-item {{$color}} ">
-                                    <div class="row mb-3">
-                                        <strong class="col-md-4">{{ $state->created_at }}</strong>
-                                        <span class="col-md-4">{{ isset($state->algorithm) ? $state->algorithm->name : __('Best performance analysis') }}</span>
-                                        @if($state->code == '200')
-                                            <div class="col-md-3">
-                                                <span>
-                                                    {{ __('frontend.accuracy', ['accuracy' =>$state->score->accuracy*100]) }}
-                                                    <br/>
-                                                    {{ __('frontend.kappa', ['kappa' =>$state->score->kappa]) }}
-                                                </span>
-                                            </div>
-                                        @elseif($state->code == '500')
-                                            <span>@lang("frontend.status_fail")</span>
-                                        @else
-                                            <span>@lang("frontend.status_pending")</span>
-                                        @endif
-
-                                    </div>
-                                    <div class="col-md-12 align-content-lg-end">
-                                        @if($state->code == '200')
-                                            <a href="{{ route('state.show', ['id'=>$state->id]) }}" class="btn btn-primary btn-sm">@lang('Details')</a>
-                                            @if($currentState && $state->id != $currentState->id)
-                                                <a href="{{ route('state.current', ['id'=>$state->id]) }}" class="btn btn-warning btn-sm">@lang('Set as current')</a>
-                                                <button type="button" class="btn btn-danger btn-sm" onclick="$('#delete-form-{{ $state->id }}').submit();">@lang('Delete')</button>
-                                                <form id="delete-form-{{ $state->id }}" action="{{ route('state.delete', ['id' => $state->id]) }}" method="POST">
-                                                    {{ csrf_field() }}
-                                                    <input type="hidden" name="_method" value="DELETE">
-                                                </form>
-                                            @endif
-                                        @endif
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ul>
-                    @endif
-                </div>
-
             </div>
+
         </div>
     </div>
 @endsection

@@ -1,66 +1,76 @@
-@extends('layouts.app')
+@extends('adminlte::page')
+
+@section('title', (is_null($project->id)? __('Create a machine learning project') : __('Edit Project: ').$project->title))
+
+@section('content_header')
+    <h1>
+        <i class="fa fa-folder-open"></i>  @lang('Project')
+        <small>{{ is_null($project->id)? __('Create a machine learning project') : __('Edit a machine learning project') }}</small>
+    </h1>
+    <ol class="breadcrumb">
+        <li><a href="{{ route('home') }}"><i class="fa fa-home"></i> @lang('Home')</a></li>
+        <li><a href="{{ route('project.index') }}"><i class="glyphicon glyphicon-th"></i> @lang('Projects')</a></li>
+        <li class="active"><i class="fa fa-folder-open"></i> {{ $project->id? __('Edit Project: '.$project->title): __('Create Project') }}</li>
+    </ol>
+@stop
 
 @section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">@lang('Basic project information')</h3>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
 
                 <form method="POST" action="{{ $project->id? route('project.save', ['id'=>$project->id]) : route('project.store') }}">
                     <input type="hidden" name="_method" value="{{ $project->id ? 'PATCH' : 'POST' }}">
                     @csrf
 
-                    <div class="card mb-2">
-                        <div class="card-header">{{ $project->id? __('Edit Project'): __('Create Project') }}</div>
-                        <div class="card-body">
+                    <div class="box-body">
 
-                            <div class="form-group row">
-                                <label for="title" class="col-sm-4 col-form-label text-md-right">{{ __('Project title') }}</label>
+                        <div class="col-md-6">
 
-                                <div class="col-md-6">
-                                    <input id="title" type="title" class="form-control{{ $errors->has('title') ? ' is-invalid' : '' }}" name="title" value="{{ $project->title }}" autofocus>
-
-                                    @if ($errors->has('title'))
-                                        <span class="invalid-feedback">
-                                        <strong>{{ $errors->first('title') }}</strong>
-                                    </span>
-                                    @endif
-                                </div>
+                            <div class="form-group {{ $errors->has('title') ? 'has-error' : '' }}">
+                                <label for="title">{{ __('Project title') }}</label>
+                                <input id="title" type="title" class="form-control" name="title" value="{{ $project->title }}" autofocus>
+                                @if ($errors->has('title'))
+                                    <span class="help-block">{{ $errors->first('title') }}</span>
+                                @endif
                             </div>
 
-                            <div class="form-group row">
-                                <label for="teams" class="col-sm-4 col-form-label text-md-right">{{ __('Team access') }}</label>
-                                <div class="col-md-6">
-                                    <select class="selectpicker  show-menu-arrow form-control" multiple name="teams[]" id="teams" title="{{ __('Select team access for this project') }}">
-                                        @foreach($teams as $team)
-                                            <option value="{{ $team->id }}" {{ $team->projects->contains($project->id)  ? 'selected=""' : '' }}>{{ $team->name }}</option>
-                                        @endforeach
-                                    </select>
+                            <div class="form-group">
+                                <label for="teams">{{ __('Team access') }}</label>
 
-                                </div>
+                                <select class="form-control" multiple name="teams[]" id="teams" title="{{ __('Select team access for this project') }}">
+                                    @foreach($teams as $team)
+                                        <option value="{{ $team->id }}" {{ $team->projects->contains($project->id)  ? 'selected=""' : '' }}>{{ $team->name }}</option>
+                                    @endforeach
+                                </select>
                             </div>
-
-                            <div class="form-group row">
-                                <label for="description" class="col-md-4 col-form-label text-md-right">{{ __('Project description') }}</label>
-
-                                <div class="col-md-6">
-                                    <textarea id="description" type="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description">{{ $project->description }}</textarea>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group row mb-0">
-                                <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ __('Save') }}
-                                    </button>
-                                </div>
+                            <div class="form-group">
+                                <label for="description">{{ __('Project description') }}</label>
+                                <textarea id="description" name="description" class="form-control{{ $errors->has('description') ? ' is-invalid' : '' }}" name="description">{{ $project->description }}</textarea>
                             </div>
                         </div>
+
+                        <div class="col-md-6">
+                            <collaborators-manager :items="{{ $project->users }}" model="project"></collaborators-manager>
+                        </div>
+
+
+                    </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-success"> {{ __('Save') }}</button>
                     </div>
 
-                    <collaborators-manager :items="{{ $project->users }}" model="project"></collaborators-manager>
                 </form>
+
             </div>
         </div>
     </div>
+
 @endsection

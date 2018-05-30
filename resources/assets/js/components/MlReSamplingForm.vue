@@ -1,34 +1,39 @@
 <template>
     <div>
-        <div class="card mb-2">
-            <div class="card-header">Resampling optimization method</div>
-            <div class="card-body">
-                <div class="form-group row">
-                    <div class="offset-1 col-md-10 mb-3">
-                        <label for="ml_algorithm_methods_id">Please select the desired re-sampling method</label>
-                        <select class="form-control" id="ml_algorithm_methods_id" v-model="trainControlMethod" :onchange="setResamplingParams()">
-                            <option v-for="option in methods" v-bind:value="option.alias">
-                                {{ option.name }}
-                            </option>
-                        </select>
-                    </div>
+        <h4>Resampling optimization method</h4>
 
-                    <div class="offset-1 col-md-10 col-md-pull-1">
-                        <div class="row mb-2" v-for="item in tune">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="formControlRange">{{ item.description }} ({{
-                                        item.default }}) </label>
-                                    <input type="range" :min="item.low" :max="item.high" :step="item.step" class="form-control-range" id="formControlRange" v-model="item.default">
-                                </div>
-                                <small>min: {{ item.low }}, max: {{ item.high }}, steps: {{ item.step }}
-                                </small>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-push-1 col-md-10">
+                    <label for="ml_algorithm_methods_id">Please select the desired re-sampling method</label>
+                    <select class="form-control" id="ml_algorithm_methods_id" v-model="trainControlMethod" :onchange="setResamplingParams()">
+                        <option v-for="option in methods" v-bind:value="option.alias">
+                            {{ option.name }}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-push-1 col-md-10">
+                    <div class="row mb-2" v-for="item in tune">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="formControlRange">{{ item.description }} ({{
+                                    item.default }}) </label>
+                                <input type="range" :min="item.low" :max="item.high" :step="item.step" class="form-control-range" id="formControlRange" v-model="item.default">
                             </div>
+                            <small>min: {{ item.low }}, max: {{ item.high }}, steps: {{ item.step }}
+                            </small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <br/>
+
         <input type="hidden" id="control" name="control" v-model="control"/>
     </div>
 </template>

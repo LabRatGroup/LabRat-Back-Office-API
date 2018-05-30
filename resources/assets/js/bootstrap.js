@@ -1,4 +1,3 @@
-
 window._ = require('lodash');
 window.Popper = require('popper.js').default;
 
@@ -9,12 +8,12 @@ window.Popper = require('popper.js').default;
  */
 
 try {
-     window.$ = window.jQuery = require('jquery');
+    window.$ = window.jQuery = require('jquery');
 
-    require('bootstrap');
-    require('bootstrap-select');
+    //require('bootstrap');
 
-} catch (e) {}
+} catch (e) {
+}
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -27,6 +26,7 @@ window.jsonq = require('jsonq');
 window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
 
 /**
  * Next we will register the CSRF Token as a common header with Axios so that
