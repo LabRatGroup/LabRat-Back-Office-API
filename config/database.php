@@ -80,6 +80,7 @@ return [
 
         'mongodb' => [
             'driver'   => 'mongodb',
+    	    'dsn'      => 'mongodb://' . env('DB_MONGO_USERNAME', '') . ':' . env('DB_MONGO_PASSWORD', '') . '@' . env('DB_MONGO_HOST', 'localhost') . ':' . env('DB_MONGO_PORT', 27017) . '/' . env('DB_MONGO_USERNAME', ''),
             'host'     => env('DB_MONGO_HOST', 'localhost'),
             'port'     => env('DB_MONGO_PORT', 27017),
             'database' => env('DB_MONGO_DATABASE', 'labrat'),
