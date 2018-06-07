@@ -131,6 +131,8 @@
 
                                 <p>On the other hand, the factorial version of the data works very well with all the
                                     algorithms and it is ideal to optimistically test the system.</p>
+
+                                <p>For both dataset, please use <strong>Normal</strong> as the positive class.</p>
                                 <ul>
                                     <li>
                                         <a href="{{ asset('storage/data/cancer/cancer_data_numerical_predict.csv') }}">Cancer
