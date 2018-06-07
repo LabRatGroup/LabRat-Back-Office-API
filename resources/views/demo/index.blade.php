@@ -57,6 +57,12 @@
                                 <p>Please
                                     <a href="{{ asset('storage/data/hiv/hiv_predictions_manual _analysis.pdf') }}" target="_blank">click
                                         here</a> for a detailed manual analysis process for this dataset. </p>
+
+                                <p>This dataset contains 160 predictors and two classes, being <strong>Cleaved</strong>
+                                    the positive class. It uses quite a large amount to processing time and
+                                    may not work with all the machine learning algorithms because of the nature of the
+                                    data itself. This dataset has been found to work very well with the kNN and
+                                    neural algorithms among others.</p>
                                 <ul>
                                     <li><a href="{{ asset('storage/data/hiv/hiv_predictions.csv') }}">HIV prediction
                                             dataset</a></li>
@@ -109,13 +115,22 @@
                                     <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/1520-6661%28200009/10%299%3A5%3C311%3A%3AAID-MFM12%3E3.0.CO%3B2-9" target="_blank">here</a>.
                                 </p>
 
-                                <p>There are two different data version for this study. The first data group is raw
-                                    numerical data, while the the second has been trasformed into factors for a more
-                                    simple analysis process.</p>
                                 <p>Please
                                     <a href="{{ asset('storage/data/cancer/cancer_predictions_manual _analysis.pdf') }}" target="_blank">click
                                         here</a> for a detailed manual analysis process for this dataset. </p>
                                 <strong>Numerical Data</strong>
+
+                                <p>There are two different data version for this study. The first data group is raw
+                                    numerical data, while the the second has been transformed into factors for a more
+                                    simple analysis process.</p>
+
+                                <p>The numerical, and unprocessed, version of the data may fail with some algorithms
+                                    because of the multiple zero values found in the samples. This is normal, as we do
+                                    not expect LabRat to be successful with all the possible dataset and algorithm
+                                    combinations.</p>
+
+                                <p>On the other hand, the factorial version of the data works very well with all the
+                                    algorithms and it is ideal to optimistically test the system.</p>
                                 <ul>
                                     <li>
                                         <a href="{{ asset('storage/data/cancer/cancer_data_numerical_predict.csv') }}">Cancer
