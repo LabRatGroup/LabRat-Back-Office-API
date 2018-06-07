@@ -25,6 +25,9 @@ class MlModelStateScore extends Model
     const ITEM_TOKEN_LENGTH = 25;
     const PERFORMANCE_PARAMETER = 'accuracy';
 
+    protected $accuracy = 0;
+    protected $kappa = 0;
+
     protected $dates = [
         'created_at',
         'updated_at',

@@ -219,4 +219,212 @@ class MlModelServiceTest extends TestCase
         Queue::assertNotPushed(RunMachineLearningPredictionScript::class, 2);
     }
 
+    /** @test */
+    public function should_set_scored_state_to_current_when_other_failed()
+    {
+
+        Queue::fake();
+
+        // Given
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state1 */
+        $state1 = factory(MlModelState::class)->create(
+            [
+                'is_current'      => false,
+                'ml_model_id'     => $model->id,
+                'ml_algorithm_id' => $algorithm->id,
+            ]
+        );
+
+
+        /** @var MlModelState $state2 */
+        $state2 = factory(MlModelState::class)->create(
+            [
+                'is_current'      => false,
+                'ml_model_id'     => $model->id,
+                'ml_algorithm_id' => $algorithm->id,
+            ]
+        );
+
+        /** @var MlModelStateScore $score1 */
+        $score2 = factory(MlModelStateScore::class)->create(
+            [
+                'accuracy'          => 0.9,
+                'ml_model_state_id' => $state2->id,
+            ]
+        );
+
+        /** @var MlModelRepository $mlModelRepository */
+        $mlModelRepository = new MlModelRepository(new MlModel());
+
+        /** @var MlModelStateScoreRepository $mlModelStateScoreRepository */
+        $mlModelStateScoreRepository = new MlModelStateScoreRepository(new MlModelStateScore());
+
+        /** @var MlModelPredictionRepository */
+        $mlModelPredictionRepository = new MlModelPredictionRepository(new MlModelPrediction());
+
+        /** @var MlModelPredictionService $mlModelPredictionDataService */
+        $mlModelPredictionDataService = new MlModelPredictionService($mlModelPredictionRepository);
+
+        /** MlModelService $mlModelService */
+        $mlModelService = new MlModelService($mlModelRepository, $mlModelStateScoreRepository, $mlModelPredictionDataService);
+
+        // When
+        $mlModelService->reviewModelPerformance($model->token);
+
+        // Then
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state1->id,
+            'is_current' => 0,
+        ]);
+
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state2->id,
+            'is_current' => 1,
+        ]);
+
+        Queue::assertNotPushed(RunMachineLearningPredictionScript::class);
+    }
+
+    /** @test */
+    public function should_not_set_non_scored_state_to_current_when_other_failed()
+    {
+
+        Queue::fake();
+
+        // Given
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state1 */
+        $state1 = factory(MlModelState::class)->create(
+            [
+                'is_current'      => false,
+                'ml_model_id'     => $model->id,
+                'ml_algorithm_id' => $algorithm->id,
+            ]
+        );
+
+
+        /** @var MlModelState $state2 */
+        $state2 = factory(MlModelState::class)->create(
+            [
+                'is_current'      => false,
+                'ml_model_id'     => $model->id,
+                'ml_algorithm_id' => $algorithm->id,
+            ]
+        );
+
+        /** @var MlModelRepository $mlModelRepository */
+        $mlModelRepository = new MlModelRepository(new MlModel());
+
+        /** @var MlModelStateScoreRepository $mlModelStateScoreRepository */
+        $mlModelStateScoreRepository = new MlModelStateScoreRepository(new MlModelStateScore());
+
+        /** @var MlModelPredictionRepository */
+        $mlModelPredictionRepository = new MlModelPredictionRepository(new MlModelPrediction());
+
+        /** @var MlModelPredictionService $mlModelPredictionDataService */
+        $mlModelPredictionDataService = new MlModelPredictionService($mlModelPredictionRepository);
+
+        /** MlModelService $mlModelService */
+        $mlModelService = new MlModelService($mlModelRepository, $mlModelStateScoreRepository, $mlModelPredictionDataService);
+
+        // When
+        $mlModelService->reviewModelPerformance($model->token);
+
+        // Then
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state1->id,
+            'is_current' => 0,
+        ]);
+
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state2->id,
+            'is_current' => 0,
+        ]);
+
+        Queue::assertNotPushed(RunMachineLearningPredictionScript::class);
+    }
+
+    /** @test */
+    public function should_not_set_non_scored_state_to_current_when_other_current()
+    {
+
+        Queue::fake();
+
+        // Given
+        /** @var MlModel $model */
+        $model = factory(MlModel::class)->create();
+
+        /** @var MlAlgorithm $algorithm */
+        $algorithm = MlAlgorithm::where('alias', 'knn')->first();
+
+        /** @var MlModelState $state1 */
+        $state1 = factory(MlModelState::class)->create(
+            [
+                'is_current'      => true,
+                'ml_model_id'     => $model->id,
+                'ml_algorithm_id' => $algorithm->id,
+            ]
+        );
+
+        /** @var MlModelStateScore $score1 */
+        $score1 = factory(MlModelStateScore::class)->create(
+            [
+                'accuracy'          => 0.87,
+                'ml_model_state_id' => $state1->id,
+            ]
+        );
+
+
+        /** @var MlModelState $state2 */
+        $state2 = factory(MlModelState::class)->create(
+            [
+                'is_current'      => false,
+                'ml_model_id'     => $model->id,
+                'ml_algorithm_id' => $algorithm->id,
+            ]
+        );
+
+        /** @var MlModelRepository $mlModelRepository */
+        $mlModelRepository = new MlModelRepository(new MlModel());
+
+        /** @var MlModelStateScoreRepository $mlModelStateScoreRepository */
+        $mlModelStateScoreRepository = new MlModelStateScoreRepository(new MlModelStateScore());
+
+        /** @var MlModelPredictionRepository */
+        $mlModelPredictionRepository = new MlModelPredictionRepository(new MlModelPrediction());
+
+        /** @var MlModelPredictionService $mlModelPredictionDataService */
+        $mlModelPredictionDataService = new MlModelPredictionService($mlModelPredictionRepository);
+
+        /** MlModelService $mlModelService */
+        $mlModelService = new MlModelService($mlModelRepository, $mlModelStateScoreRepository, $mlModelPredictionDataService);
+
+        // When
+        $mlModelService->reviewModelPerformance($model->token);
+
+        // Then
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state1->id,
+            'is_current' => 1,
+        ]);
+
+        $this->assertDatabaseHas('ml_model_states', [
+            'id'         => $state2->id,
+            'is_current' => 0,
+        ]);
+
+        Queue::assertNotPushed(RunMachineLearningPredictionScript::class);
+    }
+
 }
