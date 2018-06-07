@@ -118,7 +118,7 @@
                                 <p>Please
                                     <a href="{{ asset('storage/data/cancer/cancer_predictions_manual _analysis.pdf') }}" target="_blank">click
                                         here</a> for a detailed manual analysis process for this dataset. </p>
-                                <strong>Numerical Data</strong>
+
 
                                 <p>There are two different data version for this study. The first data group is raw
                                     numerical data, while the the second has been transformed into factors for a more
@@ -133,6 +133,8 @@
                                     algorithms and it is ideal to optimistically test the system.</p>
 
                                 <p>For both dataset, please use <strong>Normal</strong> as the positive class.</p>
+
+                                <strong>Numerical Data</strong>
                                 <ul>
                                     <li>
                                         <a href="{{ asset('storage/data/cancer/cancer_data_numerical_predict.csv') }}">Cancer
