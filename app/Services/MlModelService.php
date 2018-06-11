@@ -41,21 +41,30 @@ class MlModelService
         $model = $this->mlModelRepository->findOneOrFailByToken($token);
         $currentState = $model->getCurrentState();
 
-        /** @var MlModelStateScore $topScore */
-        $topScore = $currentState->score;
+        /** @var MlModelState $topState */
+        $topState = $currentState;
 
         /** @var MlModelState $state */
         foreach ($model->states as $state) {
-            if ($state->score->getPerformanceParamValue() > $topScore->getPerformanceParamValue()) {
-                $topScore = $state->score;
+            if (isset($state->score)) {
+                if (!$topState) $topState = $state;
+                if ($state->score->getPerformanceParamValue() > $topState->score->getPerformanceParamValue()) {
+                    $topState = $state;
+                }
             }
         }
 
-        if ($topScore->state->token != $currentState->token) {
-            $topScore->state->setIsCurrent(true);
-            $currentState->setIsCurrent(false);
+        if (!$topState && !$currentState) return false;
+
+        if ($topState && !$currentState) {
+            $topState->setIsCurrent(true);
+        } elseif ($topState->token != $currentState->token) {
+            $topState->setIsCurrent(true);
+            if ($currentState) $currentState->setIsCurrent(false);
             $this->updateModelPredictions($model);
         }
+
+        return true;
     }
 
     public function updateModelPredictions(MlModel $model)

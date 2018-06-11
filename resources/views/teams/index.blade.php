@@ -20,7 +20,7 @@
                 <div class="box-header">
                     <br/>
                     <div class="box-tools">
-                        <a href="{{ route('team.create') }}" class="btn btn-block btn-success btn-sm" title="@lang("Create new project")"><i class="fa fa-users"></i> @lang("Create collaboration team")
+                        <a href="{{ route('team.create') }}" class="btn btn-block btn-success btn-sm" title="@lang("Create new collaboration team")"><i class="fa fa-users"></i> @lang("Create collaboration team")
                         </a>
                     </div>
                 </div>
@@ -38,13 +38,13 @@
                             @foreach($teams as $team)
                                 <tr>
                                     <td>
-                                        <a href="{{ route('team.show', ['id'=>$team->id]) }}">{{ $team->name }}</a>
+                                        {{ $team->name }}
                                     </td>
                                     <td>{{ array_first($team->owners())->name }}</td>
                                     <td>{{ $team->updated_at }}</td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="{{ route('team.update', ['id'=>$team->id]) }}" class="btn  btn-primary btn-xs" title="@lang('Update project')"><i class="fa fa-edit"></i></a>
+                                            <a href="{{ route('team.update', ['id'=>$team->id]) }}" class="btn  btn-primary btn-xs" title="@lang('Update tem')"><i class="fa fa-edit"></i></a>
                                             <button title="@lang('Delete team')" type="button" class="btn  btn-danger btn-xs" onclick="$('#delete-form-{{ $team->id }}').submit();">
                                                 <i class="fa fa-trash"></i></button>
                                         </div>
@@ -62,7 +62,7 @@
                         <div class="col-md-push-2 col-md-8">
                             <div class="alert alert-info alert-dismissible">
                                 <h4><i class="icon fa fa-info"></i> @lang('Alert!')</h4>
-                                @lang('There are data collaboration teams available.')
+                                @lang('There are no collaboration teams available.')
                             </div>
                         </div>
                     @endif
