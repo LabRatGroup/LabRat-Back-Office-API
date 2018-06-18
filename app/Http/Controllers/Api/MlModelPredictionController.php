@@ -117,6 +117,8 @@ class MlModelPredictionController extends ApiController
             $params['mime_type'] = $request->file(self::PREDICTION_DATA_FILE_PARAMETER)->getMimeType();
 
             /** @var MlModelPrediction $prediction */
+
+            $params[self::PREDICTION_STATE_PARAMS_PARAMETER] = $model->getCurrentState()->params;
             $prediction = $this->mlModelPredictionRepository->create($params);
             $prediction->setModel($model);
 
